@@ -8,6 +8,7 @@ from matminer.featurizers.composition.thermo import CohesiveEnergy, CohesiveEner
 
 
 class ThermoFeaturesTest(CompositionFeaturesTest):
+
     def test_cohesive_energy(self):
         mpr = MPRester()
         if not mpr.api_key:
@@ -19,7 +20,9 @@ class ThermoFeaturesTest(CompositionFeaturesTest):
         mpr = MPRester()
         if not mpr.api_key:
             raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
-        df_cohesive_energy = CohesiveEnergyMP().featurize_dataframe(self.df, col_id="composition")
+        ce = CohesiveEnergyMP()
+        ce.set_n_jobs(1)
+        df_cohesive_energy = ce.featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_cohesive_energy["cohesive energy (MP)"][0], 5.778053364, 2)
 
 
