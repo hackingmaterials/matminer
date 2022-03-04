@@ -961,5 +961,21 @@
     "reference": "https://citrination.com/datasets/150557/",
     "url": "https://ndownloader.figshare.com/files/28333845",
     "hash": "7d0c9c74fd52995b876bd251a7732b5498314702441fa463197fb492be68ecc0"
+  },
+  "zhang_brgoch_load_vickers_hardness": {
+    "bibtex_refs": [
+       "@article{Zhang2020,\n  doi = {10.1002/adma.202005112},\n  url = {https://doi.org/10.1002/adma.202005112},\n  year = {2020},\n  month = dec,\n  publisher = {Wiley},\n  volume = {33},\n  number = {5},\n  pages = {2005112},\n  author = {Ziyan Zhang and Aria Mansouri Tehrani and Anton O. Oliynyk and Blake Day and Jakoah Brgoch},\n  title = {Finding the Next Superhard Material through Ensemble Learning},\n  journal = {Advanced Materials}\n}",
+    ],
+    "columns":{
+      "composition": "Chemical formula. One chemical formula may correspond to multiple separate measurements.",
+      "hardness": "Vicker's load-dependent hardness, in GPa.",
+      "load": "Applied load, in N."
+    },
+    "description": "Dataset of 1061 experimentally measured load-dependent Vicker's hardness measurements. Multiple measurements may correspond to one composition. Collated by Zhang et al.",
+    "file_type": "json.gz",
+    "num_entries": 1061,
+    "reference": "https://doi.org/10.1002/adma.202005112",
+    "url": null,
+    "hash": null
   }
 }
