@@ -657,8 +657,7 @@ class MatminerDatasetsTest(DataSetsTest):
             "sigma [S/cm]",
             "T [K]",
         ]
-        self.universal_dataset_check("ucsb_thermoelectrics", object_headers,
-                                     numeric_headers)
+        self.universal_dataset_check("ucsb_thermoelectrics", object_headers, numeric_headers)
 
 
 class MatbenchDatasetsTest(DataSetsTest):

@@ -8,7 +8,6 @@ from matminer.featurizers.composition.thermo import CohesiveEnergy, CohesiveEner
 
 
 class ThermoFeaturesTest(CompositionFeaturesTest):
-
     def test_cohesive_energy(self):
         mpr = MPRester()
         if not mpr.api_key:
