@@ -961,5 +961,24 @@
     "reference": "https://citrination.com/datasets/150557/",
     "url": "https://ndownloader.figshare.com/files/28333845",
     "hash": "7d0c9c74fd52995b876bd251a7732b5498314702441fa463197fb492be68ecc0"
+  },
+  "tholander_nitrides": {
+    "bibtex_refs": [
+      "@article{tholander2016strong,\n  title={Strong piezoelectric response in stable TiZnN2, ZrZnN2, and HfZnN2 found by ab initio high-throughput approach},\n  author={Tholander, Christopher and Andersson, CBA and Armiento, Rickard and Tasnadi, Ferenc and Alling, Bj{\\\"o}rn},\n  journal={Journal of Applied Physics},\n  volume={120},\n  number={22},\n  pages={225102},\n  year={2016},\n  publisher={AIP Publishing LLC}\n}"
+    ],
+    "columns": {
+      "material_id": "Human readable identifier for each material.",
+      "ht_id": "Unique identifier to track the calculation in httk",
+      "initial_structure": "A pymatgen structure object representing the structure before relaxation.",
+      "final_structure": "A pymatgen structure object representing the structure after relaxation.",
+      "E_vasp_per_atom": "The VASP calculated energy per atom for the final structure, in eV/atom",
+      "chemical_system": "The chemical system represented by the atoms actually contained in the structure"
+    },
+    "description": "A challenging data set for quantum machine learning containing a diverse set of 12.8k polymorphs in the Zn-Ti-N, Zn-Zr-N and Zn-Hf-N chemical systems. The phase diagrams of the Ti-Zn-N, Zr-Zn-N, and Hf-Zn-N systems are determined using large-scale high-throughput density functional calculations (DFT-GGA) (PBE). In total 12,815 relaxed structures are shared alongside their energy calculated using the VASP DFT code. The High-Throughput Toolkit was used to manage the calculations. Data adapted and deduplicated from the original data on Zenodo at https://zenodo.org/record/5530535#.YjJ3ZhDMJLQ, published under MIT licence. Collated from separate files of chemical systems and deduplicated according to identical structures matching ht_ids. Prepared in collaboration with Rhys Goodall.",
+    "file_type": "json.gz",
+    "num_entries": 12815,
+    "reference": "https://zenodo.org/record/5530535#.YjJ3ZhDMJLQ",
+    "url": "https://figshare.com/ndownloader/files/34423997",
+    "hash": "6b3f9f5f4d2564fcf39dc5797bbc4eeffc033ce382b7c467386bd0a1050a0872"
   }
 }
