@@ -659,6 +659,11 @@ class MatminerDatasetsTest(DataSetsTest):
         ]
         self.universal_dataset_check("ucsb_thermoelectrics", object_headers, numeric_headers)
 
+    def test_tholander_nitrides_e_form(self):
+        object_headers = ["material_id", "ht_id", "initial_structure", "final_structure", "chemical_system"]
+        numeric_headers = ["E_vasp_per_atom"]
+        self.universal_dataset_check("tholander_nitrides", object_headers, numeric_headers)
+
 
 class MatbenchDatasetsTest(DataSetsTest):
     """

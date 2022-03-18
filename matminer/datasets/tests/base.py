@@ -56,6 +56,7 @@ class DatasetTest(unittest.TestCase):
             "matbench_phonons",
             "matbench_steels",
             "ucsb_thermoelectrics",
+            "tholander_nitrides",
         ]
         self.dataset_attributes = [
             "file_type",
