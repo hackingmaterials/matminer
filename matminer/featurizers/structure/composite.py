@@ -413,13 +413,16 @@ class JarvisCFID(BaseFeaturizer):
         try:
             chg = self.el_chrg_json[element]
         except KeyError:
-            raise ValueError(f"Element {element} not found in charge descriptor file! Non-applicable element for charge descriptors.")
-
+            raise ValueError(
+                f"Element {element} not found in charge descriptor file! Non-applicable element for charge descriptors."
+            )
 
         try:
             arr = chg[0][1]
         except IndexError:
-            raise ValueError(f"Element {element} descriptor array not found! Non-applicable element for charge descriptors.")
+            raise ValueError(
+                f"Element {element} descriptor array not found! Non-applicable element for charge descriptors."
+            )
 
         return arr
 
@@ -439,7 +442,9 @@ class JarvisCFID(BaseFeaturizer):
                 arr.append(v)
             arr = np.array(arr).astype(float)
         except (KeyError, IndexError):
-            raise ValueError(f"Element {element} not found in chemical descriptor file! Non-applicable element for chemical descriptors.")
+            raise ValueError(
+                f"Element {element} not found in chemical descriptor file! Non-applicable element for chemical descriptors."
+            )
         return arr
 
     def citations(self):

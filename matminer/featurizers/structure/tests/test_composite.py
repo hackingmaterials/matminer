@@ -8,6 +8,7 @@ from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 class CompositeStructureFeaturesTest(StructureFeaturesTest):
     def test_jarvisCFID(self):
         # default (all descriptors)
@@ -25,7 +26,6 @@ class CompositeStructureFeaturesTest(StructureFeaturesTest):
         fvec = jcf.featurize(self.diamond)
         self.assertAlmostEqual(fvec[-1], 24, places=3)
         self.assertAlmostEqual(fvec[0], 0, places=3)
-
 
         # test compounds with missing elements for chemical or
         # charge descriptors raise the correct errors
