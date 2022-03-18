@@ -1,8 +1,12 @@
 import unittest
+import os
+
+from monty.serialization import loadfn
 
 from matminer.featurizers.structure.composite import JarvisCFID
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
+TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class CompositeStructureFeaturesTest(StructureFeaturesTest):
     def test_jarvisCFID(self):
@@ -21,6 +25,19 @@ class CompositeStructureFeaturesTest(StructureFeaturesTest):
         fvec = jcf.featurize(self.diamond)
         self.assertAlmostEqual(fvec[-1], 24, places=3)
         self.assertAlmostEqual(fvec[0], 0, places=3)
+
+
+        # test compounds with missing elements for chemical or
+        # charge descriptors raise the correct errors
+        # Li4Eu4P4, mp-1211143
+        s = loadfn(os.path.join(TEST_DIR, "JarvisCFID_problem_file.json"))
+
+        jcf_nochem = JarvisCFID(use_chem=False)
+        jcf_wchem = JarvisCFID(use_chem=True)
+        with self.assertRaises(ValueError):
+            jcf_wchem.featurize(s)
+
+        self.assertAlmostEqual(jcf_nochem.featurize(s)[0], 3.04999, 3)
 
 
 if __name__ == "__main__":
