@@ -6,7 +6,7 @@ pymongo==4.0.2
 six==1.16.0
 future==0.18.2
 scikit_learn==1.0.1
-sympy==1.10
+sympy==1.10.1
 monty==2022.1.12.1
 pymatgen==2022.3.7
 jsonschema==4.4.0
