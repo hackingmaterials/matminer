@@ -279,8 +279,8 @@ class PartialsSiteStatsFingerprint(SiteStatsFingerprint):
             max_oxi (int): maximum site oxidation state for inclusion
             covariance (bool): Whether to compute the covariance of site features
         """
-        
-        self.include_elems = list(include_elems)  # Makes sure the element lists are ordered
+
+        self.include_elems = list(include_elems)
         self.exclude_elems = list(exclude_elems)
         super().__init__(site_featurizer, stats, min_oxi, max_oxi, covariance)
 
@@ -292,26 +292,23 @@ class PartialsSiteStatsFingerprint(SiteStatsFingerprint):
                 must be Pymatgen Structure objects.
             y: *Not used*
             fit_kwargs: *not used*
-        Returns:
-            self
         """
-        
+
         # This method largely copies code from the partial-RDF fingerprint
 
         # Initialize list with included elements
-        elements = {Element(e) for e in self.include_elems}
+        elements = [Element(e) for e in self.include_elems]
 
-        # Get all of elements that appaer
-        for strc in X:
-            elements.update([e.element if isinstance(e, Specie) else e for e in strc.composition.keys()])
-
-        # Remove the elements excluded by the user
-        elements.difference_update([Element(e) for e in self.exclude_elems])
+        # Get all of elements that appear
+        for structure in X:
+            for element in structure.composition.elements:
+                if isinstance(element, Specie):
+                    element = element.element  # converts from Specie to Element object
+                if element not in elements and element.name not in self.exclude_elems:
+                    elements.append(element)
 
         # Store the elements
         self.elements_ = [e.symbol for e in sorted(elements)]
-
-        return self
 
     def featurize(self, s):
         """
@@ -335,8 +332,8 @@ class PartialsSiteStatsFingerprint(SiteStatsFingerprint):
         return np.hstack(output)
 
     def compute_pssf(self, s, e):
-        
-        # This code is extremely similar to super().featurize(). The key 
+
+        # This code is extremely similar to super().featurize(). The key
         # difference is that only one specific element is analyzed.
 
         # Get each feature for each site
@@ -374,7 +371,7 @@ class PartialsSiteStatsFingerprint(SiteStatsFingerprint):
     def feature_labels(self):
         if self.elements_ is None:
             raise Exception("You must run 'fit' first!")
-        
+
         labels = []
         for e in self.elements_:
             e_labels = [f"{e} {l}" for l in super().feature_labels()]
