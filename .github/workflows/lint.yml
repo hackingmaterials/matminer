@@ -30,9 +30,9 @@ jobs:
 #      - name: pydocstyle
 #        run: |
 #          pydocstyle --count matminer
-      - name: pylint
-        run: |
-          pylint matminer
+#      - name: pylint
+#        run: |
+#          pylint matminer
       - name: black
         run: |
           black --version
