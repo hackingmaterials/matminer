@@ -766,7 +766,7 @@ class WenAlloys(BaseFeaturizer):
             float
         """
         if yang_delta != 0:
-            return entropy / yang_delta ** 2
+            return entropy / yang_delta**2
         else:
             return 0
 
@@ -791,8 +791,8 @@ class WenAlloys(BaseFeaturizer):
         mrmin = miracle_radius_stats["min"]
         mrmax = miracle_radius_stats["max"]
 
-        numerator = 1 - np.sqrt((mrmean * mrmin + mrmin ** 2) / (mrmean + mrmin) ** 2)
-        denominator = 1 - np.sqrt((mrmean * mrmax + mrmax ** 2) / (mrmean + mrmax) ** 2)
+        numerator = 1 - np.sqrt((mrmean * mrmin + mrmin**2) / (mrmean + mrmin) ** 2)
+        denominator = 1 - np.sqrt((mrmean * mrmax + mrmax**2) / (mrmean + mrmax) ** 2)
         return numerator / denominator
 
     @staticmethod

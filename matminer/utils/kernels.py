@@ -18,4 +18,4 @@ def gaussian_kernel(arr0, arr1, SIGMA):
     kernel trick.
     """
     diff = arr0 - arr1
-    return np.exp(-np.linalg.norm(diff.A1, ord=2) ** 2 / 2 / SIGMA ** 2)
+    return np.exp(-np.linalg.norm(diff.A1, ord=2) ** 2 / 2 / SIGMA**2)
