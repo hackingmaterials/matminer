@@ -6,7 +6,7 @@
 
 ## MPDS
 ujson==5.2.0
-jmespath==0.10.0
+jmespath==1.0.0
 httplib2==0.20.2
 ase==3.22.1
 
