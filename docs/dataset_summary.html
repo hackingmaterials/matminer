@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Table of Datasets &#8212; matminer 0.7.6 documentation</title>
+    <title>Table of Datasets &#8212; matminer 0.7.8 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Table of Datasets</a></li> 
       </ul>
     </div>  
@@ -40,7 +40,7 @@
             
   <div class="section" id="table-of-datasets">
 <h1>Table of Datasets<a class="headerlink" href="#table-of-datasets" title="Permalink to this headline">¶</a></h1>
-<p>Find a table of all 43 datasets available in matminer here.</p>
+<p>Find a table of all 45 datasets available in matminer here.</p>
 <table class="colwidths-given docutils align-left">
 <colgroup>
 <col style="width: 20%" />
@@ -221,6 +221,14 @@
 <tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">superconductivity2018</span></code></p></td>
 <td><p>Dataset of ~16,000 experimental superconductivity records (critical temperatures) from Stanev et al., originally from the Japanese National Institute for Materials Science</p></td>
 <td><p>16414</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">tholander_nitrides</span></code></p></td>
+<td><p>A challenging data set for quantum machine learning containing a diverse set of 12.8k polymorphs in the Zn-Ti-N, Zn-Zr-N and Zn-Hf-N chemical systems</p></td>
+<td><p>12815</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">ucsb_thermoelectrics</span></code></p></td>
+<td><p>Database of ~1,100 experimental thermoelectric materials from UCSB aggregated from 108 source publications and personal communications</p></td>
+<td><p>1093</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">wolverton_oxides</span></code></p></td>
 <td><p>4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies</p></td>
@@ -2361,6 +2369,110 @@ Ricci F, Chen W, Aydemir U, Snyder J, Rignanese G, Jain A, Hautier G (2017) Data
 </pre></div>
 </div>
 </div>
+<div class="section" id="tholander-nitrides">
+<h2>tholander_nitrides<a class="headerlink" href="#tholander-nitrides" title="Permalink to this headline">¶</a></h2>
+<p>A challenging data set for quantum machine learning containing a diverse set of 12.8k polymorphs in the Zn-Ti-N, Zn-Zr-N and Zn-Hf-N chemical systems. The phase diagrams of the Ti-Zn-N, Zr-Zn-N, and Hf-Zn-N systems are determined using large-scale high-throughput density functional calculations (DFT-GGA) (PBE). In total 12,815 relaxed structures are shared alongside their energy calculated using the VASP DFT code. The High-Throughput Toolkit was used to manage the calculations. Data adapted and deduplicated from the original data on Zenodo at <a class="reference external" href="https://zenodo.org/record/5530535#.YjJ3ZhDMJLQ">https://zenodo.org/record/5530535#.YjJ3ZhDMJLQ</a>, published under MIT licence. Collated from separate files of chemical systems and deduplicated according to identical structures matching ht_ids. Prepared in collaboration with Rhys Goodall.</p>
+<p><strong>Number of entries:</strong> 12815</p>
+<table class="colwidths-given docutils align-left">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">material_id</span></code></p></td>
+<td><p>Human readable identifier for each material.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">ht_id</span></code></p></td>
+<td><p>Unique identifier to track the calculation in httk</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">initial_structure</span></code></p></td>
+<td><p>A pymatgen structure object representing the structure before relaxation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">final_structure</span></code></p></td>
+<td><p>A pymatgen structure object representing the structure after relaxation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">E_vasp_per_atom</span></code></p></td>
+<td><p>The VASP calculated energy per atom for the final structure, in eV/atom</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">chemical_system</span></code></p></td>
+<td><p>The chemical system represented by the atoms actually contained in the structure</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://zenodo.org/record/5530535#.YjJ3ZhDMJLQ">https://zenodo.org/record/5530535#.YjJ3ZhDMJLQ</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>@article{tholander2016strong,   title={Strong piezoelectric response in stable TiZnN2, ZrZnN2, and HfZnN2 found by ab initio high-throughput approach},   author={Tholander, Christopher and Andersson, CBA and Armiento, Rickard and Tasnadi, Ferenc and Alling, Bj{\&quot;o}rn},   journal={Journal of Applied Physics},   volume={120},   number={22},   pages={225102},   year={2016},   publisher={AIP Publishing LLC} }
+</pre></div>
+</div>
+</div>
+<div class="section" id="ucsb-thermoelectrics">
+<h2>ucsb_thermoelectrics<a class="headerlink" href="#ucsb-thermoelectrics" title="Permalink to this headline">¶</a></h2>
+<p>Database of ~1,100 experimental thermoelectric materials from UCSB aggregated from 108 source publications and personal communications. Downloaded from Citrine. Source UCSB webpage is <a class="reference external" href="http://www.mrl.ucsb.edu:8080/datamine/thermoelectric.jsp">http://www.mrl.ucsb.edu:8080/datamine/thermoelectric.jsp</a>. See reference for more information on original data aggregation. No duplicate entries are present, but each src may result in multiple measurements of the same materials’ properties at different temperatures or conditions.</p>
+<p><strong>Number of entries:</strong> 1093</p>
+<table class="colwidths-given docutils align-left">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">composition</span></code></p></td>
+<td><p>Chemical formula.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">crystallinity</span></code></p></td>
+<td><p>Either single crystal, polycrystalline, or nanoparticles.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">synthesis</span></code></p></td>
+<td><p>Brief string describing the synthesis method</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">spacegroup</span></code></p></td>
+<td><p>Spacegroup number, if available</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">rho</span> <span class="pre">(ohm.cm)</span></code></p></td>
+<td><p>Electrical resistivity, in ohm.cm</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">S</span> <span class="pre">[muV/K]</span></code></p></td>
+<td><p>Seebeck coefficient, in microVolts/K, if available</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">PF</span> <span class="pre">[W/mK^2]</span></code></p></td>
+<td><p>Thermoelectric power factor, conductivity * Seebeck^2, in [W/mK^2] if available</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">zT</span></code></p></td>
+<td><p>Thermoelectric figure of merit, PF * T/K, unitless, if available</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">kappa</span> <span class="pre">[W/mK]</span></code></p></td>
+<td><p>Thermal conductivity in Watt/ meter * Kelvin, if available</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">[S/cm]</span></code></p></td>
+<td><p>Electrical conductivity, in Siemens/cm, if available</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">T</span> <span class="pre">[K]</span></code></p></td>
+<td><p>Temperature in Kelvin at which these properties were obtained, if available</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">src</span></code></p></td>
+<td><p>Original source of the recording. To cite the aggregator of the data, see the bibtext_refs section of this metadata.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference</strong></p>
+<p><a class="reference external" href="https://citrination.com/datasets/150557/">https://citrination.com/datasets/150557/</a></p>
+<p><strong>Bibtex Formatted Citations</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>@article{Gaultois2013,   doi = {10.1021/cm400893e},   url = {https://doi.org/10.1021/cm400893e},   year = {2013},   month = may,   publisher = {American Chemical Society ({ACS})},   volume = {25},   number = {15},   pages = {2911--2920},   author = {Michael W. Gaultois and Taylor D. Sparks and Christopher K. H. Borg and Ram Seshadri and William D. Bonificio and David R. Clarke},   title = {Data-Driven Review of Thermoelectric Materials: Performance and Resource Considerations},   journal = {Chemistry of Materials} }
+
+@misc{Citrine Informatics, title = {UCSB Thermoelectrics Database}, howpublished = {\url{https://citrination.com/datasets/150557/}, }
+</pre></div>
+</div>
+</div>
 <div class="section" id="wolverton-oxides">
 <h2>wolverton_oxides<a class="headerlink" href="#wolverton-oxides" title="Permalink to this headline">¶</a></h2>
 <p>4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies. All perovskites are of the form ABO3. Adapted from a dataset presented by Emery and Wolverton.</p>
@@ -2491,6 +2603,8 @@ Emery, A. A., &amp; Wolverton, C. Figshare <a class="reference external" href="h
 <li><a class="reference internal" href="#ricci-boltztrap-mp-tabular">ricci_boltztrap_mp_tabular</a></li>
 <li><a class="reference internal" href="#steel-strength">steel_strength</a></li>
 <li><a class="reference internal" href="#superconductivity2018">superconductivity2018</a></li>
+<li><a class="reference internal" href="#tholander-nitrides">tholander_nitrides</a></li>
+<li><a class="reference internal" href="#ucsb-thermoelectrics">ucsb_thermoelectrics</a></li>
 <li><a class="reference internal" href="#wolverton-oxides">wolverton_oxides</a></li>
 </ul>
 </li>
@@ -2526,7 +2640,7 @@ Emery, A. A., &amp; Wolverton, C. Figshare <a class="reference external" href="h
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.7.8 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Table of Datasets</a></li> 
       </ul>
     </div>
