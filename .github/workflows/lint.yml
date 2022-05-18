@@ -4,34 +4,42 @@ on: [push, pull_request]
 
 jobs:
   build:
+    # prevent this action from running on forks
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 1
       matrix:
         python-version: [3.9]
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements-dev.txt --quiet
-    - name: black
-      run: |
-
-        # Black step should fail if there are any errors
-        black --version
-        black --check --diff --color matminer
-    - name: pylint
-      run: |
-        pylint --fail-under=9 matminer
-    - name: flake8
-      run: |
-        flake8 --version
-        # exit-zero treats all errors as warnings.
-        flake8 --count --exit-zero --max-complexity=20 --statistics matminer
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt --quiet
+      - name: mypy
+        run: |
+          mypy --version
+          rm -rf .mypy_cache
+          mypy matminer
+      - name: pydocstyle
+        run: |
+          pydocstyle --count matminer
+      - name: pylint
+        run: |
+          pylint matminer
+      - name: black
+        run: |
+          black --version
+          black --check --diff --color matminer
+      - name: flake8
+        run: |
+          flake8 --version
+          flake8 --count --show-source --statistics matminer
+          # exit-zero treats all errors as warnings.
+          flake8 --count --exit-zero --max-complexity=20 --statistics matminer
