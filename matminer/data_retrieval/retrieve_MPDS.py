@@ -9,9 +9,9 @@ import os
 import sys
 import time
 import warnings
+from urllib.parse import urlencode
 
 import httplib2
-from six.moves.urllib_parse import urlencode
 
 from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 

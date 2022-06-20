@@ -28,7 +28,7 @@ extras_list = [r for d in extras_dict.values() for r in d]
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.7.6',
+        version='0.7.8',
         description='matminer is a library that contains tools for data '
                     'mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
@@ -42,9 +42,8 @@ if __name__ == "__main__":
         install_requires=reqs_list,
         extras_require=extras_dict,
         classifiers=[
-            'Programming Language :: Python :: 3.6',
-            'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
             'Development Status :: 4 - Beta',
             'Intended Audience :: Science/Research',
             'Intended Audience :: System Administrators',

@@ -74,7 +74,7 @@ class GaussianSymmFunc(BaseFeaturizer):
         Returns:
             (float) Gaussian radial symmetry function.
         """
-        ridge = np.exp(-eta * (rs ** 2.0) / (cutoff ** 2.0)) * GaussianSymmFunc.cosine_cutoff(rs, cutoff)
+        ridge = np.exp(-eta * (rs**2.0) / (cutoff**2.0)) * GaussianSymmFunc.cosine_cutoff(rs, cutoff)
         return ridge.sum()
 
     @staticmethod
@@ -118,7 +118,7 @@ class GaussianSymmFunc(BaseFeaturizer):
             ind = 0
             for eta in etas:
                 # Compute the eta term
-                eta_term = np.exp(-eta * (r_ij ** 2.0 + r_ik ** 2.0 + r_jk ** 2.0) / (cutoff ** 2.0)) * cutoff_fun
+                eta_term = np.exp(-eta * (r_ij**2.0 + r_ik**2.0 + r_jk**2.0) / (cutoff**2.0)) * cutoff_fun
                 for zeta in zetas:
                     for gamma in gammas:
                         term = (1.0 + gamma * cos_theta) ** zeta * eta_term

@@ -35,7 +35,7 @@ class GRDFTests(PymatgenTest):
     def test_histogram(self):
         h = Histogram(1, 4)
         self.assertArrayAlmostEqual([0, 1, 0], h([0.5, 2, 5]))
-        self.assertAlmostEqual(h.volume(10), 4 / 3.0 * np.pi * (5 ** 3 - 1 ** 3))
+        self.assertAlmostEqual(h.volume(10), 4 / 3.0 * np.pi * (5**3 - 1**3))
 
     def test_cosine(self):
         c = Cosine(2)

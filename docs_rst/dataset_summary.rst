@@ -1,7 +1,7 @@
 =================
 Table of Datasets
 =================
-Find a table of all 43 datasets available in matminer here.
+Find a table of all 45 datasets available in matminer here.
 
 .. list-table::
    :align: left
@@ -137,6 +137,12 @@ Find a table of all 43 datasets available in matminer here.
    * - :code:`superconductivity2018`
      - Dataset of ~16,000 experimental superconductivity records (critical temperatures) from Stanev et al., originally from the Japanese National Institute for Materials Science
      - 16414
+   * - :code:`tholander_nitrides`
+     - A challenging data set for quantum machine learning containing a diverse set of 12.8k polymorphs in the Zn-Ti-N, Zn-Zr-N and Zn-Hf-N chemical systems
+     - 12815
+   * - :code:`ucsb_thermoelectrics`
+     - Database of ~1,100 experimental thermoelectric materials from UCSB aggregated from 108 source publications and personal communications
+     - 1093
    * - :code:`wolverton_oxides`
      - 4,914 perovskite oxides containing composition data, lattice constants, and formation + vacancy formation energies
      - 4914
@@ -2320,6 +2326,110 @@ https://doi.org/10.1038/s41524-018-0085-8
 	@article{Stanev2018,   doi = {10.1038/s41524-018-0085-8},   url = {https://doi.org/10.1038/s41524-018-0085-8},   year = {2018},   month = jun,   publisher = {Springer Science and Business Media {LLC}},   volume = {4},   number = {1},   author = {Valentin Stanev and Corey Oses and A. Gilad Kusne and Efrain Rodriguez and Johnpierre Paglione and Stefano Curtarolo and Ichiro Takeuchi},   title = {Machine learning modeling of superconducting critical temperature},   journal = {npj Computational Materials} }
 
 	@misc{NIMSSuperCon, howpublished={http://supercon.nims.go.jp/index_en.html},  title={SuperCon}, author={National Institute of Materials Science, Materials Information Station}} 
+
+
+
+
+------------------
+tholander_nitrides
+------------------
+A challenging data set for quantum machine learning containing a diverse set of 12.8k polymorphs in the Zn-Ti-N, Zn-Zr-N and Zn-Hf-N chemical systems. The phase diagrams of the Ti-Zn-N, Zr-Zn-N, and Hf-Zn-N systems are determined using large-scale high-throughput density functional calculations (DFT-GGA) (PBE). In total 12,815 relaxed structures are shared alongside their energy calculated using the VASP DFT code. The High-Throughput Toolkit was used to manage the calculations. Data adapted and deduplicated from the original data on Zenodo at https://zenodo.org/record/5530535#.YjJ3ZhDMJLQ, published under MIT licence. Collated from separate files of chemical systems and deduplicated according to identical structures matching ht_ids. Prepared in collaboration with Rhys Goodall.
+
+**Number of entries:** 12815
+
+.. list-table::
+   :align: left
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Column
+     - Description
+   * - :code:`material_id`
+     - Human readable identifier for each material.
+   * - :code:`ht_id`
+     - Unique identifier to track the calculation in httk
+   * - :code:`initial_structure`
+     - A pymatgen structure object representing the structure before relaxation.
+   * - :code:`final_structure`
+     - A pymatgen structure object representing the structure after relaxation.
+   * - :code:`E_vasp_per_atom`
+     - The VASP calculated energy per atom for the final structure, in eV/atom
+   * - :code:`chemical_system`
+     - The chemical system represented by the atoms actually contained in the structure
+
+
+
+**Reference**
+
+https://zenodo.org/record/5530535#.YjJ3ZhDMJLQ
+
+
+
+**Bibtex Formatted Citations**
+
+.. code-block:: text
+
+
+	@article{tholander2016strong,   title={Strong piezoelectric response in stable TiZnN2, ZrZnN2, and HfZnN2 found by ab initio high-throughput approach},   author={Tholander, Christopher and Andersson, CBA and Armiento, Rickard and Tasnadi, Ferenc and Alling, Bj{\"o}rn},   journal={Journal of Applied Physics},   volume={120},   number={22},   pages={225102},   year={2016},   publisher={AIP Publishing LLC} }
+
+
+
+
+--------------------
+ucsb_thermoelectrics
+--------------------
+Database of ~1,100 experimental thermoelectric materials from UCSB aggregated from 108 source publications and personal communications. Downloaded from Citrine. Source UCSB webpage is http://www.mrl.ucsb.edu:8080/datamine/thermoelectric.jsp. See reference for more information on original data aggregation. No duplicate entries are present, but each src may result in multiple measurements of the same materials' properties at different temperatures or conditions.
+
+**Number of entries:** 1093
+
+.. list-table::
+   :align: left
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Column
+     - Description
+   * - :code:`composition`
+     - Chemical formula.
+   * - :code:`crystallinity`
+     - Either single crystal, polycrystalline, or nanoparticles.
+   * - :code:`synthesis`
+     - Brief string describing the synthesis method
+   * - :code:`spacegroup`
+     - Spacegroup number, if available
+   * - :code:`rho (ohm.cm)`
+     - Electrical resistivity, in ohm.cm
+   * - :code:`S [muV/K]`
+     - Seebeck coefficient, in microVolts/K, if available
+   * - :code:`PF [W/mK^2]`
+     - Thermoelectric power factor, conductivity * Seebeck^2, in [W/mK^2] if available
+   * - :code:`zT`
+     - Thermoelectric figure of merit, PF * T/K, unitless, if available
+   * - :code:`kappa [W/mK]`
+     - Thermal conductivity in Watt/ meter * Kelvin, if available
+   * - :code:`sigma [S/cm]`
+     - Electrical conductivity, in Siemens/cm, if available
+   * - :code:`T [K]`
+     - Temperature in Kelvin at which these properties were obtained, if available
+   * - :code:`src`
+     - Original source of the recording. To cite the aggregator of the data, see the bibtext_refs section of this metadata.
+
+
+
+**Reference**
+
+https://citrination.com/datasets/150557/
+
+
+
+**Bibtex Formatted Citations**
+
+.. code-block:: text
+
+
+	@article{Gaultois2013,   doi = {10.1021/cm400893e},   url = {https://doi.org/10.1021/cm400893e},   year = {2013},   month = may,   publisher = {American Chemical Society ({ACS})},   volume = {25},   number = {15},   pages = {2911--2920},   author = {Michael W. Gaultois and Taylor D. Sparks and Christopher K. H. Borg and Ram Seshadri and William D. Bonificio and David R. Clarke},   title = {Data-Driven Review of Thermoelectric Materials: Performance and Resource Considerations},   journal = {Chemistry of Materials} }
+
+	@misc{Citrine Informatics, title = {UCSB Thermoelectrics Database}, howpublished = {\url{https://citrination.com/datasets/150557/}, }
 
 
 
