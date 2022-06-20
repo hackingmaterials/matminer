@@ -321,7 +321,7 @@ class PartialsSiteStatsFingerprint(SiteStatsFingerprint):
 
         if not s.is_ordered:
             raise ValueError("Disordered structure support not built yet")
-        if self.elements_ is None:
+        if not hasattr(self, "elements_") or self.elements_ is None:
             raise Exception("You must run 'fit' first!")
 
         output = []
@@ -369,7 +369,7 @@ class PartialsSiteStatsFingerprint(SiteStatsFingerprint):
         return stats
 
     def feature_labels(self):
-        if self.elements_ is None:
+        if not hasattr(self, "elements_") or self.elements_ is None:
             raise Exception("You must run 'fit' first!")
 
         labels = []
