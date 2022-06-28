@@ -159,7 +159,7 @@ class ElementProperty(BaseFeaturizer):
 
         elif preset_name == "refractiveindex.info":
             data_source = "refractiveindex.info"
-            stats = ["minimum", "maximum", "range", "mean", "std_dev"]
+            stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
             features = OpticalData().prop_names
 
         else:
