@@ -575,3 +575,58 @@ class IUCrBondValenceData:
         ]
         return bond_val_list.iloc[0]  # If multiple values exist, take first one
         # as recommended for reliability.
+
+
+class OpticalData(AbstractData):
+    """
+    Class to use optical data from https://www.refractiveindex.info
+    The properties are the refractive index n and the extinction coefficient ĸ
+    (measured or computed with DFT), and the reflectivity R as obtained from
+    Fresnel's equation.
+    Data has been considered if available from 380 to 780 nm.
+
+    The initial database has been used to extract:
+    1) the properties of single elements when available.
+    2) the pseudo-inverse of the properties of single elements,
+       based on the data for ~200 compounds.
+    Using the pseudo-inverses instead of the elemental properties
+    leads to better results as far as we have checked.
+
+    n, ĸ, and R are spectra. We split these spectra into bins (initially 10)
+    where their average values are taken as features.
+
+    """
+    def __init__(self, bins=10, props=None, pseudo_inverse=True):
+
+        if props is None:
+            props = ['refractive', 'extinction', 'reflectivity']
+
+        all_element_data = None
+        labels = []
+        for prop in props:
+            if pseudo_inverse:
+                dfile = os.path.join(module_dir, "data_files/optical_polyanskiy/pseudo_inverse", prop + ".csv")
+            else:
+                dfile = os.path.join(module_dir, "data_files/optical_polyanskiy", prop + ".csv")
+            data = pd.read_csv(dfile)
+            data.set_index('Element', inplace=True)
+
+            # Split into bins
+            slices = np.linspace(0, len(data.T), bins + 1, True).astype(int)
+            counts = np.diff(slices)
+            cols = data.columns[slices[:-1] + counts // 2]
+            labels += [col for col in cols]
+            mean = pd.DataFrame(np.add.reduceat(data.values, slices[:-1], axis=1) / counts,
+                                columns=cols, index=data.index)
+
+            if all_element_data is None:
+                all_element_data = mean
+            else:
+                all_element_data = pd.concat([all_element_data, mean], axis=1)
+
+        self.all_element_data = all_element_data
+        self.prop_names = labels
+
+    def get_elemental_property(self, elem, property_name):
+        estr = str(elem)
+        return self.all_element_data.loc[estr][property_name]

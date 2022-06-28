@@ -12,6 +12,7 @@ from matminer.utils.data import (
     MatscholarElementData,
     MEGNetElementData,
     PymatgenData,
+    OpticalData
 )
 
 
@@ -56,6 +57,8 @@ class ElementProperty(BaseFeaturizer):
             self.data_source = MatscholarElementData()
         elif data_source == "megnet_el":
             self.data_source = MEGNetElementData()
+        elif data_source == "refractiveindex.info":
+            self.data_source = OpticalData()
         else:
             self.data_source = data_source
 
@@ -153,6 +156,11 @@ class ElementProperty(BaseFeaturizer):
             data_source = "megnet_el"
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
             features = MEGNetElementData().prop_names
+
+        elif preset_name == "refractiveindex.info":
+            data_source = "refractiveindex.info"
+            stats = ["minimum", "maximum", "range", "mean", "std_dev"]
+            features = OpticalData().prop_names
 
         else:
             raise ValueError("Invalid preset_name specified!")

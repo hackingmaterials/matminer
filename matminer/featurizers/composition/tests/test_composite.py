@@ -88,6 +88,11 @@ class CompositeFeaturesTest(CompositionFeaturesTest):
         self.assertAlmostEqual(df_fere_corr["DemlData mean FERE correction"][0], 0.077146274)
         self.assertAlmostEqual(df_fere_corr["DemlData std_dev FERE correction"][0], 0.270209766)
 
+    def test_elem_optical(self):
+        df_elem = ElementProperty.from_preset("refractiveindex.info").featurize_dataframe(self.df, col_id="composition")
+        self.assertAlmostEqual(df_elem["OpticalData mean n_400.0"].iloc[0], 1.98536829506)
+        self.assertAlmostEqual(df_elem["OpticalData range k_760.0"].iloc[1], 4.89860718551219)
+        self.assertAlmostEqual(df_elem["OpticalData maximum R_720.0"].iloc[0], 0.622343006825)
 
 if __name__ == "__main__":
     unittest.main()

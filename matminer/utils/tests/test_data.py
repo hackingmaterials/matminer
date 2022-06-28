@@ -13,6 +13,7 @@ from matminer.utils.data import (
     MEGNetElementData,
     MixingEnthalpy,
     PymatgenData,
+    OpticalData,
 )
 
 
@@ -129,6 +130,19 @@ class TestIUCrBondValenceData(TestCase):
     def test_get_data(self):
         nacl = self.data.get_bv_params("Na", "Cl", 1, -1)
         self.assertAlmostEqual(nacl["Ro"], 2.15)
+
+
+class TestOpticalData(TestCase):
+    def setUp(self):
+        self.data_source = OpticalData()
+
+    def test_get_data(self):
+        au_r = self.data_source.get_elemental_property(elem='Au', property_name="R_400.0")
+        self.assertAlmostEqual(au_r, 0.25475940237500005)
+        ag_n = self.data_source.get_elemental_property(elem='Ag', property_name="n_600.0")
+        self.assertAlmostEqual(ag_n, 0.13636543137500007)
+        c_k = self.data_source.get_elemental_property(elem='C', property_name='k_760.0')
+        self.assertAlmostEqual(c_k, 0.7196687757804877)
 
 
 if __name__ == "__main__":
