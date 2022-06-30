@@ -12,6 +12,10 @@ from glob import glob
 import numpy as np
 import pandas as pd
 from pymatgen.core.periodic_table import Element, _pt_data
+from pymatgen.core import Composition
+from numpy.linalg import pinv
+import yaml
+from scipy.interpolate import interp1d
 
 __author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"
 
@@ -572,7 +576,7 @@ class IUCrBondValenceData:
             & (bv_data["Atom1_valence"] == cat_val)
             & (bv_data["Atom2"] == str(anion))
             & (bv_data["Atom2_valence"] == an_val)
-        ]
+            ]
         return bond_val_list.iloc[0]  # If multiple values exist, take first one
         # as recommended for reliability.
 
@@ -583,7 +587,8 @@ class OpticalData(AbstractData):
     The properties are the refractive index n and the extinction coefficient ĸ
     (measured or computed with DFT), and the reflectivity R as obtained from
     Fresnel's equation.
-    Data has been considered if available from 380 to 780 nm.
+    Data has been initially considered if available from 380 to 780 nm,
+    but other ranges can be chosen as well.
 
     The initial database has been used to extract:
     1) the properties of single elements when available.
@@ -595,37 +600,447 @@ class OpticalData(AbstractData):
     n, ĸ, and R are spectra. We split these spectra into bins (initially 10)
     where their average values are taken as features.
 
+    Args:
+        bins: number of bins to split the spectra. This is also the number
+              of elemental features for each property.
+        props: optical properties to include. Should be a list with
+               'refractive' and/or 'extinction' and/or 'reflectivity.
+        pseudo_inverse: whether to use or not the pseudo-inversed values
+        method: type of values, either 'exact', 'pseudo_inverse', or 'combined'
+                if 'combined', takes the exact values when available, and the pseudo-inversed
+                ones otherwise
+        min_wl: minimum wavelength to include in the spectra (µm) - before binning
+        max_wl : maximum wavelength to include in the spectra (µm)
+        n_wl: number of wavelengths to include in the spectra
     """
-    def __init__(self, bins=10, props=None, pseudo_inverse=True):
 
+    def __init__(self, bins=10, props=None, method='combined',
+                 min_wl=0.38, max_wl=0.78, n_wl=401):
+
+        # Handle the selection of properties
         if props is None:
             props = ['refractive', 'extinction', 'reflectivity']
+        else:
+            if not all([prop in ['refractive', 'extinction', 'reflectivity'] for prop in props]):
+                raise ValueError('This property is not available: choose from refractive, extinction, or reflectivity')
 
-        all_element_data = None
-        labels = []
-        for prop in props:
-            if pseudo_inverse:
-                dfile = os.path.join(module_dir, "data_files/optical_polyanskiy/pseudo_inverse", prop + ".csv")
-            else:
-                dfile = os.path.join(module_dir, "data_files/optical_polyanskiy", prop + ".csv")
+        self.props = props
+        self.method = method
+        self.n_wl = n_wl
+        self.min_wl = min_wl
+        self.max_wl = max_wl
+        self.wavelengths = np.linspace(min_wl, max_wl, n_wl)
+
+        # The data has already been treated for the default values : this is faster in this case
+        if self.min_wl == 0.38 and self.max_wl == 0.78 and self.n_wl == 401:
+            dfile = os.path.join(module_dir, "data_files/optical_polyanskiy/optical_polyanskiy.csv")
             data = pd.read_csv(dfile)
-            data.set_index('Element', inplace=True)
+            data.set_index('Compound', inplace=True)
+            self.data = data
+        else:
+            # Recompute the data file from the database
+            print("Selecting non-default wavelengths: recollecting the data from the database...")
+            self.data = self._get_optical_data_from_database()
+            print("The data has been collected.")
 
-            # Split into bins
-            slices = np.linspace(0, len(data.T), bins + 1, True).astype(int)
-            counts = np.diff(slices)
-            cols = data.columns[slices[:-1] + counts // 2]
-            labels += [col for col in cols]
-            mean = pd.DataFrame(np.add.reduceat(data.values, slices[:-1], axis=1) / counts,
-                                columns=cols, index=data.index)
+        self.elem_data = self._get_element_props()
 
-            if all_element_data is None:
-                all_element_data = mean
-            else:
-                all_element_data = pd.concat([all_element_data, mean], axis=1)
+        # Split into bins
+        bins *= len(props)
+        slices = np.linspace(0, len(self.elem_data.T), bins + 1, True).astype(int)
+        counts = np.diff(slices)
+
+        cols = self.elem_data.columns[slices[:-1] + counts // 2]
+        labels = [col for col in cols]
+
+        all_element_data = pd.DataFrame(np.add.reduceat(self.elem_data.values, slices[:-1], axis=1) / counts,
+                                        columns=cols, index=self.elem_data.index)
 
         self.all_element_data = all_element_data
         self.prop_names = labels
+
+    def _get_elem_in_data(self, as_pure=False):
+        """
+        Look for all elements present in the compounds from the dataframe
+
+        Args:
+             as_pure: if True, consider only the pure compounds
+
+        Returns:
+            List of elements (str)
+        """
+        elements = ['H', 'He',
+                    'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
+                    'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar',
+                    'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co',
+                    'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr',
+                    'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh',
+                    'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe',
+                    'Cs', 'Ba', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt',
+                    'Au', 'Hg', 'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn',
+                    'Fr', 'Ra', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds',
+                    'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og',
+                    'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb',
+                    'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Ac', 'Th', 'Pa',
+                    'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr']
+
+        elems_in_df = []
+        elems_not_in_df = []
+
+        df = self.data.copy()
+
+        # Find the elements in the data, as pure or not
+        if not as_pure:
+            for elem in elements:
+                for compound in df.index.to_list():
+                    if elem in compound and elem not in elems_in_df:
+                        elems_in_df.append(elem)
+
+        else:
+            for elem in elements:
+                if elem in df.index:
+                    elems_in_df.append(elem)
+
+        # Find the elements not in the data
+        for elem in elements:
+            if elem not in elems_in_df:
+                elems_not_in_df.append(elem)
+
+        return elems_in_df, elems_not_in_df
+
+    def _get_element_props(self):
+        """
+        Returns the properties of single elements from the data contained in the database.
+        """
+
+        data = self.data.copy()
+
+        cols = []
+        if 'refractive' in self.props:
+            cols += [name for name in data.columns if 'n_' in name]
+        if 'extinction' in self.props:
+            cols += [name for name in data.columns if 'k_' in name]
+        if 'reflectivity' in self.props:
+            cols += [name for name in data.columns if 'R_' in name]
+
+        data = data[cols]
+
+        # Compute the exact values
+        res = []
+        elem, elem_absent = self._get_elem_in_data(as_pure=True)
+        for e in elem:
+            res.append(data.loc[e].values)
+        for e in elem_absent:
+            res.append(np.nan * np.ones(len(self.props) * self.n_wl))
+
+        res = np.array(res)
+        df_exact = pd.DataFrame(res, columns=cols, index=pd.Index(elem + elem_absent))
+
+        # Compute the pseudo-inversed values
+        # We have to create a matrix with n_elem_tot (all available element in the database) cols and len(df) rows,
+        # containing the compositions of each material from the database
+        elems_in_df, elems_not_in_df = self._get_elem_in_data(as_pure=False)
+        n_elem_tot = len(elems_in_df)
+
+        # Initialize the matrix
+        A = np.zeros([len(self.data), n_elem_tot])
+
+        compos = self.data['Composition']
+        for i, comp in enumerate(compos):
+            comp = Composition(comp)
+            for j in range(n_elem_tot):
+                if elems_in_df[j] in comp:
+                    A[i, j] = comp.get_atomic_fraction(elems_in_df[j])
+
+        pi_A = pinv(A)
+
+        res_pi = pi_A @ data.values
+        res_pi = np.vstack([res_pi, np.nan * np.ones([len(elems_not_in_df), len(self.props) * self.n_wl])])
+        df_pi = pd.DataFrame(res_pi, columns=cols, index=pd.Index(elems_in_df + elems_not_in_df))
+
+        if self.method == 'exact':
+            return df_exact
+        elif self.method == 'pseudo_inverse':
+            return df_pi
+        elif self.method == 'combined':
+            res_combined = []
+            for i, e in df_exact.iterrows():
+                if e.isnull().sum() == 0:
+                    res_combined.append(e.values)
+                else:
+                    res_combined.append(df_pi.loc[i].values)
+            res_combined = np.array(res_combined)
+            df_combined = pd.DataFrame(res_combined, columns=cols, index=df_exact.index)
+            return df_combined
+
+        else:
+            raise ValueError('The method should be either exact or pseudo_inverse.')
+
+    def _get_optical_data_from_database(self):
+        """
+        Get a dataframe with the refractive index, extinction coefficients, and reflectivity
+        as obtained from the initial database, for an array of wavelengths.
+        We need to handle the database that is in different formats...
+
+        Returns:
+            DataFrame with the data
+        """
+
+        db_dir = [os.path.join(module_dir, "data_files/optical_polyanskiy/database/other/semiconductor alloys/"),
+                  os.path.join(module_dir, 'data_files/optical_polyanskiy/database/other/alloys'),
+                  os.path.join(module_dir, 'data_files/optical_polyanskiy/database/main'),
+                  os.path.join(module_dir, 'data_files/optical_polyanskiy/database/other/intermetallics')]
+
+        names = []
+        compos = []
+        N = []
+        K = []
+
+        for dir in db_dir:
+            for material in os.listdir(dir):
+                # Some materials have the data in the needed wavelengths range,
+                # others don't and throw an error
+                try:
+                    if 'main' in dir:
+                        n_avg = self._get_nk_avg(os.path.join(dir, material))
+                        compos.append(Composition(material))
+                        names.append(material)
+                        N.append(n_avg.real)
+                        K.append(n_avg.imag)
+                    elif 'intermetallics' in dir:
+                        n_avg = self._get_nk_avg(os.path.join(dir, material))
+                        names.append(material)
+                        compos.append(Composition(material))
+                        N.append(n_avg.real)
+                        K.append(n_avg.imag)
+                    elif 'alloys' in dir:
+                        files = os.listdir(dir + '/' + material)
+                        alloy = ''
+                        for f in files:
+                            if material == 'Au-Ag':
+                                alloy = f[6:-4]
+                            elif material == 'Cu-Zn':
+                                alloy = f[7:-4]
+                            elif material == 'Ni-Fe':
+                                alloy = 'Ni80Fe20'
+                            elif material == 'AlAs-GaAs':
+                                x_Al = float(f.split('-')[1][:-4])
+                                alloy = 'Al' + str(x_Al) + 'Ga' + str(np.round(100 - x_Al, 2)) + 'As100'
+                            elif material == 'AlN-Al2O3':
+                                x_N = np.round(float(f.split('-')[1][:-4]), 2)
+                                x_Al = np.round((64 + x_N) / 3, 2)
+                                x_O = np.round(32 - x_N, 2)
+                                alloy = 'Al' + str(x_Al) + 'O' + str(x_O) + 'N' + str(x_N)
+                            elif material == 'AlSb-GaSb':
+                                x_Al = np.round(float(f.split('-')[1][:-4]), 2)
+                                x_Sb = 100
+                                x_Ga = np.round(100 - x_Al, 2)
+                                alloy = 'Al' + str(x_Al) + 'Ga' + str(x_Ga) + 'Sb' + str(x_Sb)
+                            elif material == 'GaAs-InAs':
+                                alloy = 'In52Ga48As100'
+                            elif material == 'GaAs-InAs-GaP-InP':
+                                alloy = 'In52Ga48As24P76'
+                            elif material == 'GaP-InP':
+                                alloy = 'Ga51In49P100'
+                            elif material == 'Si-Ge':
+                                x_Si = np.round(float(f.split('-')[1][:-4]), 2)
+                                x_Ge = np.round(100 - x_Si, 2)
+                                alloy = 'Si' + str(x_Si) + 'Ge' + str(x_Ge)
+                            else:
+                                raise Warning('Material of unknown type: ' + material)
+
+                            n_avg = self._get_optical_data_from_file(os.path.join(dir + '/' + material + '/' + f))
+
+                            names.append(alloy)
+                            compos.append(Composition(alloy))
+                            N.append(n_avg.real)
+                            K.append(n_avg.imag)
+
+                except ValueError:
+                    pass
+
+        W = 1000 * self.wavelengths
+        N = np.array(N)
+        K = np.array(K)
+        R = ((N - 1) ** 2 + K ** 2) / ((N + 1) ** 2 + K ** 2)
+
+        cols_names_n = ['n_{0}'.format(np.round(wl, 2)) for wl in W]
+        cols_names_k = ['k_{0}'.format(np.round(wl, 2)) for wl in W]
+        cols_names_r = ['R_{0}'.format(np.round(wl, 2)) for wl in W]
+
+        df_n = pd.DataFrame(N, columns=cols_names_n)
+        df_k = pd.DataFrame(K, columns=cols_names_k)
+        df_r = pd.DataFrame(R, columns=cols_names_r)
+
+        df = pd.concat([df_n, df_k, df_r], axis=1)
+        df['Composition'] = compos
+        df['Compound'] = names
+        df.set_index('Compound', inplace=True)
+
+        return df
+
+    def _get_optical_data_from_file(self, yaml_file):
+        """
+            From a yml file, returns the refractive index for a given wavelength
+
+            Args:
+                yaml_file: path to the yml file containing the data
+
+            Returns:
+                refractive index (complex number)
+        """
+
+        # Open the yml file
+        with open(yaml_file, 'r') as yml:
+            data = yaml.safe_load(yml)['DATA'][0]
+
+        data_format = data['type']
+
+        # We now treat different formats for the data
+        if data_format in ['tabulated nk', 'tabulated n']:
+            # We parse the data to get the wavelength, n and kappa
+            if data_format == 'tabulated nk':
+                arr = np.fromstring(data['data'].replace('\n', ' '), sep=' ').reshape((-1, 3))
+                K = arr[:, 2]
+            # kappa not available -> 0
+            elif data_format == 'tabulated n':
+                arr = np.fromstring(data['data'].replace('\n', ' '), sep=' ').reshape((-1, 2))
+                K = np.zeros(len(arr))
+
+            wl = arr[:, 0]
+            range_wl = np.array([np.min(wl), np.max(wl)])
+            N = arr[:, 1]
+
+            interpN = interp1d(wl, N)
+            interpK = interp1d(wl, K)
+
+            # Check that self.wavelengths are within the range
+            if np.any(self.min_wl < range_wl[0]) or np.any(self.max_wl > range_wl[1]):
+                raise ValueError(""""The values of lambda asked to be returned is outside the range 
+                of available data. This can lead to strong deviation as extrapolation might be bad. For information, the
+                range is [{0}, {1}] microns.""".format(range_wl[0], range_wl[1]))
+            else:
+                return np.array([x for x in np.nditer(interpN(self.wavelengths) + 1j * interpK(self.wavelengths))])
+
+        # If the data is not tabulated, it is given with a formula
+        elif 'formula' in data_format:
+            range_wl = np.fromstring(data['wavelength_range'], sep=' ')
+            # Check that lamb is within the range
+            if np.any(self.min_wl < range_wl[0]) or np.any(self.max_wl > range_wl[1]):
+                raise ValueError(""""The values of lambda asked to be returned is outside the range 
+                of available data. This can lead to strong deviation as extrapolation might be bad. For information, the
+                range is [{0}, {1}] microns.""".format(range_wl[0], range_wl[1]))
+            else:
+                coeff_file = np.fromstring(data['coefficients'], sep=' ')
+
+                N = np.zeros(self.n_wl) + 1j * np.zeros(self.n_wl)
+
+                if data_format == 'formula 1':
+                    coeffs = np.zeros(17)
+                    coeffs[0:len(coeff_file)] = coeff_file
+                    N += 1 + coeffs[0]
+                    for i in range(1, 17, 2):
+                        N += ((coeffs[i] * self.wavelengths ** 2) / (self.wavelengths ** 2 - coeffs[i + 1] ** 2))
+                    N = np.sqrt(N)
+
+                elif data_format == 'formula 2':
+                    coeffs = np.zeros(17)
+                    coeffs[0:len(coeff_file)] = coeff_file
+                    N += 1 + coeffs[0]
+                    for i in range(1, 17, 2):
+                        N += ((coeffs[i] * self.wavelengths ** 2) / (self.wavelengths ** 2 - coeffs[i + 1]))
+                    N = np.sqrt(N)
+
+                elif data_format == 'formula 3':
+                    coeffs = np.zeros(17)
+                    coeffs[0:len(coeff_file)] = coeff_file
+                    N += coeffs[0]
+                    for i in range(1, 17, 2):
+                        N += coeffs[i] * self.wavelengths ** coeffs[i + 1]
+                    N = np.sqrt(N)
+
+                elif data_format == 'formula 4':
+                    coeffs = np.zeros(17)
+                    coeffs[0:len(coeff_file)] = coeff_file
+                    N += coeffs[0]
+                    N += coeffs[1] * self.wavelengths ** coeffs[2] / (self.wavelengths ** 2 - coeffs[3] ** coeffs[4])
+                    N += coeffs[5] * self.wavelengths ** coeffs[6] / (self.wavelengths ** 2 - coeffs[7] ** coeffs[8])
+                    for i in range(9, 17, 2):
+                        N += coeffs[i] * self.wavelengths ** coeffs[i + 1]
+                    N = np.sqrt(N)
+
+                elif data_format == 'formula 5':
+                    coeffs = np.zeros(11)
+                    coeffs[0:len(coeff_file)] = coeff_file
+                    N += coeffs[0]
+                    for i in range(1, 11, 2):
+                        N += coeffs[i] * self.wavelengths ** coeffs[i + 1]
+
+                elif data_format == 'formula 6':
+                    coeffs = np.zeros(11)
+                    coeffs[0:len(coeff_file)] = coeff_file
+                    N += 1 + coeffs[0]
+                    for i in range(1, 11, 2):
+                        N += coeffs[i] * self.wavelengths ** 2 / (coeffs[i + 1] * self.wavelengths ** 2 - 1)
+
+                elif data_format == 'formula 7':
+                    coeffs = np.zeros(6)
+                    coeffs[0:len(coeff_file)] = coeff_file
+                    N += coeffs[0] + coeffs[1] / (self.wavelengths ** 2 - 0.028) + coeffs[2] / \
+                         (self.wavelengths ** 2 - 0.028) ** 2
+                    N += coeffs[3] * self.wavelengths ** 2 + coeffs[4] * self.wavelengths ** 4 + \
+                         coeffs[5] * self.wavelengths ** 6
+
+                elif data_format == 'formula 8':
+                    coeffs = np.zeros(4)
+                    coeffs[0:len(coeff_file)] = coeff_file
+                    N += coeffs[0] + coeffs[1] * self.wavelengths ** 2 / (self.wavelengths ** 2 - coeffs[2]) + \
+                         coeffs[3] * self.wavelengths ** 2
+                    N = np.sqrt((1 + 2 * N) / (1 - N))
+
+                elif data_format == 'formula 9':
+                    coeffs = np.zeros(6)
+                    coeffs[0:len(coeff_file)] = coeff_file
+                    N += coeffs[0] + coeffs[1] / (self.wavelengths ** 2 - coeffs[2]) + \
+                         coeffs[3] * (self.wavelengths - coeffs[4]) / ((self.wavelengths - coeffs[4]) ** 2 + coeffs[5])
+                    N = np.sqrt(N)
+
+                return N + 1j * np.zeros(len(N))
+
+        else:
+            raise ValueError("UnsupportedDataType: This data type is currently not supported !")
+
+    def _get_nk_avg(self, dirname):
+        """
+        Compute the average of n and ĸ for a compound of the database.
+
+        Args:
+            dirname: path to the compound of interest
+
+        Returns:
+            refractive index (complex number)
+        """
+
+        files = os.listdir(dirname)
+
+        navg = []
+        for f in files:
+            # Some files have only kappa : they raise a ValueError
+            try:
+                # We get the average of all curves in the region of interest.
+                # For some systems, the region of interest is not covered.
+                navg.append(self._get_optical_data_from_file(os.path.join(dirname, f)))
+            except ValueError:
+                pass
+
+        # We go further only if there is data
+        if navg:
+            navg = np.array(navg).mean(axis=0)
+            Navg = navg.real
+            Kavg = navg.imag
+            return Navg + 1j * Kavg
+        else:
+            raise ValueError("No correct data for" + dirname)
 
     def get_elemental_property(self, elem, property_name):
         estr = str(elem)

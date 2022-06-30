@@ -138,11 +138,11 @@ class TestOpticalData(TestCase):
 
     def test_get_data(self):
         au_r = self.data_source.get_elemental_property(elem='Au', property_name="R_400.0")
-        self.assertAlmostEqual(au_r, 0.25475940237500005)
+        self.assertAlmostEqual(au_r, 0.3809491517213336)
         ag_n = self.data_source.get_elemental_property(elem='Ag', property_name="n_600.0")
-        self.assertAlmostEqual(ag_n, 0.13636543137500007)
+        self.assertAlmostEqual(ag_n, 0.1035500754458002)
         c_k = self.data_source.get_elemental_property(elem='C', property_name='k_760.0')
-        self.assertAlmostEqual(c_k, 0.7196687757804877)
+        self.assertAlmostEqual(c_k, 0.005105642344429958)
 
 
 if __name__ == "__main__":

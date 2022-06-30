@@ -44,9 +44,10 @@ class ElementProperty(BaseFeaturizer):
             (these must be supported by data_source)
         stats (list of strings): a list of weighted statistics to compute to for each
             property (see PropertyStats for available stats)
+        optical_args: list of arguments for the optical data
     """
 
-    def __init__(self, data_source, features, stats):
+    def __init__(self, data_source, features, stats, **optical_args):
         if data_source == "pymatgen":
             self.data_source = PymatgenData()
         elif data_source == "magpie":
@@ -57,8 +58,8 @@ class ElementProperty(BaseFeaturizer):
             self.data_source = MatscholarElementData()
         elif data_source == "megnet_el":
             self.data_source = MEGNetElementData()
-        elif data_source == "refractiveindex.info":
-            self.data_source = OpticalData()
+        elif data_source == "refractive_index":
+            self.data_source = OpticalData(**optical_args)
         else:
             self.data_source = data_source
 
@@ -68,7 +69,7 @@ class ElementProperty(BaseFeaturizer):
         self.pstats = PropertyStats()
 
     @classmethod
-    def from_preset(cls, preset_name):
+    def from_preset(cls, preset_name, **optical_args):
         """
         Return ElementProperty from a preset string
         Args:
@@ -157,10 +158,10 @@ class ElementProperty(BaseFeaturizer):
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
             features = MEGNetElementData().prop_names
 
-        elif preset_name == "refractiveindex.info":
-            data_source = "refractiveindex.info"
+        elif preset_name == "refractive_index":
+            data_source = "refractive_index"
             stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
-            features = OpticalData().prop_names
+            features = OpticalData(**optical_args).prop_names
 
         else:
             raise ValueError("Invalid preset_name specified!")
@@ -335,3 +336,29 @@ class Meredig(BaseFeaturizer):
 
     def implementors(self):
         return ["Amalie Trewartha"]
+
+
+class RefractiveIndex(ElementProperty):
+    """
+    Class to calculate features based on optical properties,
+    taken from https://www.refractiveindex.info
+    """
+
+    @classmethod
+    def from_preset(cls, **optical_args):
+        data_source = OpticalData(**optical_args)
+        features = data_source.prop_names
+        stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
+        return cls(data_source, features, stats)
+
+    def citations(self):
+        citation = ["@misc{rii,"
+                    "author = {Mikhail N. Polyanskiy},"
+                    "title = {Refractive index database},"
+                    "howpublished = {https://refractiveindex.info},"
+                    "note = {Accessed on 2022-06-30}}"
+        ]
+        return citation
+
+    def implementors(self):
+        return ["Matgenix"]
