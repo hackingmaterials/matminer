@@ -615,7 +615,7 @@ class OpticalData(AbstractData):
         n_wl: number of wavelengths to include in the spectra
     """
 
-    def __init__(self, bins=10, props=None, method='combined',
+    def __init__(self, bins=10, props=None, method='pseudo_inverse',
                  min_wl=0.38, max_wl=0.78, n_wl=401):
 
         # Handle the selection of properties
@@ -1019,7 +1019,7 @@ class TransportData(AbstractData):
     leads to better results as far as we have checked.
 
     """
-    def __init__(self, props=None, method='combined'):
+    def __init__(self, props=None, method='pseudo_inverse'):
 
         # Handle the selection of properties
         possible_props = ['sigma_p', 'sigma_n', 'S_p', 'S_n', 'kappa_p', 'kappa_n', 'PF_p', 'PF_n', 'm_p', 'm_n']

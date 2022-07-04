@@ -14,6 +14,7 @@ from matminer.utils.data import (
     MixingEnthalpy,
     PymatgenData,
     OpticalData,
+    TransportData,
 )
 
 
@@ -138,11 +139,24 @@ class TestOpticalData(TestCase):
 
     def test_get_data(self):
         au_r = self.data_source.get_elemental_property(elem='Au', property_name="R_400.0")
-        self.assertAlmostEqual(au_r, 0.3809491517213336)
+        self.assertAlmostEqual(au_r, 0.254759402351607)
         ag_n = self.data_source.get_elemental_property(elem='Ag', property_name="n_600.0")
-        self.assertAlmostEqual(ag_n, 0.1035500754458002)
+        self.assertAlmostEqual(ag_n, 0.13636543138165633)
         c_k = self.data_source.get_elemental_property(elem='C', property_name='k_760.0')
-        self.assertAlmostEqual(c_k, 0.005105642344429958)
+        self.assertAlmostEqual(c_k, 0.7196687757931486)
+
+
+class TestTransportData(TestCase):
+    def setUp(self):
+        self.data_source = TransportData()
+
+    def test_get_data(self):
+        ca_mn = self.data_source.get_elemental_property(elem='Ca', property_name='m_n')
+        self.assertAlmostEqual(ca_mn, 0.000279554)
+        cr_sigmap = self.data_source.get_elemental_property(elem='Cr', property_name='sigma_p')
+        self.assertAlmostEqual(cr_sigmap, 205569.8984)
+        cu_kappan = self.data_source.get_elemental_property(elem='Cu', property_name='kappa_n')
+        self.assertAlmostEqual(cu_kappan, 1814544.757)
 
 
 if __name__ == "__main__":
