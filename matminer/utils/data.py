@@ -16,6 +16,8 @@ from pymatgen.core import Composition
 from numpy.linalg import pinv
 import yaml
 from scipy.interpolate import interp1d
+from scipy import stats
+from matminer.utils.io import get_elem_in_data
 
 __author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"
 
@@ -605,7 +607,6 @@ class OpticalData(AbstractData):
               of elemental features for each property.
         props: optical properties to include. Should be a list with
                'refractive' and/or 'extinction' and/or 'reflectivity.
-        pseudo_inverse: whether to use or not the pseudo-inversed values
         method: type of values, either 'exact', 'pseudo_inverse', or 'combined'
                 if 'combined', takes the exact values when available, and the pseudo-inversed
                 ones otherwise
@@ -659,55 +660,6 @@ class OpticalData(AbstractData):
         self.all_element_data = all_element_data
         self.prop_names = labels
 
-    def _get_elem_in_data(self, as_pure=False):
-        """
-        Look for all elements present in the compounds from the dataframe
-
-        Args:
-             as_pure: if True, consider only the pure compounds
-
-        Returns:
-            List of elements (str)
-        """
-        elements = ['H', 'He',
-                    'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
-                    'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar',
-                    'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co',
-                    'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr',
-                    'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh',
-                    'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe',
-                    'Cs', 'Ba', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt',
-                    'Au', 'Hg', 'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn',
-                    'Fr', 'Ra', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds',
-                    'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og',
-                    'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb',
-                    'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Ac', 'Th', 'Pa',
-                    'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr']
-
-        elems_in_df = []
-        elems_not_in_df = []
-
-        df = self.data.copy()
-
-        # Find the elements in the data, as pure or not
-        if not as_pure:
-            for elem in elements:
-                for compound in df.index.to_list():
-                    if elem in compound and elem not in elems_in_df:
-                        elems_in_df.append(elem)
-
-        else:
-            for elem in elements:
-                if elem in df.index:
-                    elems_in_df.append(elem)
-
-        # Find the elements not in the data
-        for elem in elements:
-            if elem not in elems_in_df:
-                elems_not_in_df.append(elem)
-
-        return elems_in_df, elems_not_in_df
-
     def _get_element_props(self):
         """
         Returns the properties of single elements from the data contained in the database.
@@ -727,7 +679,7 @@ class OpticalData(AbstractData):
 
         # Compute the exact values
         res = []
-        elem, elem_absent = self._get_elem_in_data(as_pure=True)
+        elem, elem_absent = get_elem_in_data(data, as_pure=True)
         for e in elem:
             res.append(data.loc[e].values)
         for e in elem_absent:
@@ -739,7 +691,7 @@ class OpticalData(AbstractData):
         # Compute the pseudo-inversed values
         # We have to create a matrix with n_elem_tot (all available element in the database) cols and len(df) rows,
         # containing the compositions of each material from the database
-        elems_in_df, elems_not_in_df = self._get_elem_in_data(as_pure=False)
+        elems_in_df, elems_not_in_df = get_elem_in_data(data, as_pure=False)
         n_elem_tot = len(elems_in_df)
 
         # Initialize the matrix
@@ -1041,6 +993,143 @@ class OpticalData(AbstractData):
             return Navg + 1j * Kavg
         else:
             raise ValueError("No correct data for" + dirname)
+
+    def get_elemental_property(self, elem, property_name):
+        estr = str(elem)
+        return self.all_element_data.loc[estr][property_name]
+
+
+class TransportData(AbstractData):
+    """
+    Class to use transport data from Ricci et al, see
+    An ab initio electronic transport database for inorganic materials.
+    Ricci, F., Chen, W., Aydemir, U., Snyder, G. J., Rignanese, G. M., Jain, A., & Hautier, G. (2017).
+    Scientific data, 4(1), 1-13.
+    https://doi.org/10.1038/sdata.2017.85
+
+    The initial database has been used to extract:
+    1) the properties of single elements when available.
+    2) the pseudo-inverse of the properties of single elements.
+    The outliers (z-score > 3) have been removed first.
+    For the effective mass, the pseudo-inverse has been obtained on 1/(1+m),
+    then m has been re-obtained for single elements. This was to avoid
+    huge errors coming from the huge spread in data (12 orders of magnitude).
+
+    Using the pseudo-inverses instead of the elemental properties
+    leads to better results as far as we have checked.
+
+    """
+    def __init__(self, props=None, method='combined'):
+
+        # Handle the selection of properties
+        possible_props = ['sigma_p', 'sigma_n', 'S_p', 'S_n', 'kappa_p', 'kappa_n', 'PF_p', 'PF_n', 'm_p', 'm_n']
+        if props is None:
+            props = possible_props
+        else:
+            if not all([prop in possible_props for prop in props]):
+                raise ValueError('This property is not available: choose from ' + ', '.join(possible_props))
+
+        self.props = props
+        self.method = method
+
+        # Read the database as a csv file
+        dfile = os.path.join(module_dir, "data_files/transport_ricci/", "transport_database.csv")
+        data = pd.read_csv(dfile).drop(columns=['mp_id'])
+        data.rename(columns={'pretty_formula': 'Composition'}, inplace=True)
+        data.set_index('Composition', inplace=True)
+
+        # Remove outliers
+        data = data[(np.abs(stats.zscore(data)) < 3).all(axis=1)]
+        self.data = data
+
+        self.all_element_data = self._get_element_props()
+
+        self.prop_names = [col for col in self.all_element_data.columns]
+
+    def _get_element_props(self):
+
+        #
+        # Compute the exact values
+        #
+        dfile = os.path.join(module_dir, "data_files/transport_ricci/", "transport_pure_elems.csv")
+        df_exact = pd.read_csv(dfile)
+        df_exact.set_index('Element', inplace=True)
+        df_exact.drop(columns=['mp_id'], inplace=True)
+
+        elem, elem_absent = get_elem_in_data(df_exact, as_pure=True)
+        res = []
+        for e in elem:
+            res.append(df_exact.loc[e][self.props].values)
+        for e in elem_absent:
+            res.append(np.nan * np.ones(len(self.props)))
+
+        res = np.array(res)
+        cols = self.props
+        df_exact = pd.DataFrame(res, columns=cols, index=elem + elem_absent)
+        df_exact = df_exact[self.props]
+
+        #
+        # Compute the pseudo-inversed values
+        #
+        # Good values have been obtained and already stored. If you need to change anything in the way
+        # the pseudo-inverse is computed (e.g. change alpha), feel free to modify the code below and
+        # switch use_file to False.
+        use_file = True
+        if use_file:
+            dfile = os.path.join(module_dir, "data_files/transport_ricci/", "transport_pi.csv")
+            df_pi = pd.read_csv(dfile)
+            df_pi.set_index('Element', inplace=True)
+            df_pi = df_pi[self.props]
+        else:
+            # The values of the effective masses span 12 orders of magnitude, which makes the pseudo-inverse biased
+            # To overcome this, we use 1 / (1 + m) for the pseudo-inversion
+            TP = self.data.copy()
+            alpha = 0
+            TP['1/m_p'] = 1 / (alpha + TP['m_p'].values)
+            TP['1/m_n'] = 1 / (alpha + TP['m_n'].values)
+
+            # We have to create a matrix with n_elem_tot (all available element in the database) cols and len(df) rows,
+            # containing the compositions of each material from the database
+            elems_in_df, elems_not_in_df = get_elem_in_data(TP, as_pure=False)
+            n_elem_tot = len(elems_in_df)
+
+            # Initialize the matrix
+            A = np.zeros([len(TP), n_elem_tot])
+
+            compos = TP.index
+            for i, comp in enumerate(compos):
+                comp = Composition(comp)
+                for j in range(n_elem_tot):
+                    if elems_in_df[j] in comp:
+                        A[i, j] = comp.get_atomic_fraction(elems_in_df[j])
+
+            pi_A = pinv(A)
+
+            TP_pi = pi_A @ TP.values
+            TP_pi = np.vstack([TP_pi, np.nan * np.ones([len(elems_not_in_df), len(TP.T)])])
+
+            df_pi = pd.DataFrame(TP_pi, columns=TP.columns, index=pd.Index(elems_in_df + elems_not_in_df))
+            df_pi['m_p'] = 1 / df_pi['1/m_p'].values - alpha
+            df_pi['m_n'] = 1 / df_pi['1/m_n'].values - alpha
+            df_pi.drop(columns=['1/m_p', '1/m_n'], inplace=True)
+
+        if self.method == 'exact':
+            return df_exact
+        elif self.method == 'pseudo_inverse':
+            return df_pi
+        elif self.method == 'combined':
+            res_combined = []
+            for i, e in df_exact.iterrows():
+                if e.isnull().sum() == 0:
+                    res_combined.append(e.values)
+                else:
+                    res_combined.append(df_pi.loc[i].values)
+            res_combined = np.array(res_combined)
+            df_combined = pd.DataFrame(res_combined, columns=df_exact.columns, index=df_exact.index)
+            return df_combined
+
+        else:
+            raise ValueError('The method should be either exact or pseudo_inverse.')
 
     def get_elemental_property(self, elem, property_name):
         estr = str(elem)

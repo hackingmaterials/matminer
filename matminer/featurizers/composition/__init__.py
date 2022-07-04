@@ -1,5 +1,5 @@
 from matminer.featurizers.composition.alloy import Miedema, WenAlloys, YangSolidSolution
-from matminer.featurizers.composition.composite import ElementProperty, Meredig, RefractiveIndex
+from matminer.featurizers.composition.composite import ElementProperty, Meredig, RefractiveIndex, RicciTransport
 from matminer.featurizers.composition.element import (
     BandCenter,
     ElementFraction,

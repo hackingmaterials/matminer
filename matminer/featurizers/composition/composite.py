@@ -12,7 +12,8 @@ from matminer.utils.data import (
     MatscholarElementData,
     MEGNetElementData,
     PymatgenData,
-    OpticalData
+    OpticalData,
+    TransportData
 )
 
 
@@ -47,7 +48,7 @@ class ElementProperty(BaseFeaturizer):
         optical_args: list of arguments for the optical data
     """
 
-    def __init__(self, data_source, features, stats, **optical_args):
+    def __init__(self, data_source, features, stats):
         if data_source == "pymatgen":
             self.data_source = PymatgenData()
         elif data_source == "magpie":
@@ -58,8 +59,6 @@ class ElementProperty(BaseFeaturizer):
             self.data_source = MatscholarElementData()
         elif data_source == "megnet_el":
             self.data_source = MEGNetElementData()
-        elif data_source == "refractive_index":
-            self.data_source = OpticalData(**optical_args)
         else:
             self.data_source = data_source
 
@@ -69,7 +68,7 @@ class ElementProperty(BaseFeaturizer):
         self.pstats = PropertyStats()
 
     @classmethod
-    def from_preset(cls, preset_name, **optical_args):
+    def from_preset(cls, preset_name):
         """
         Return ElementProperty from a preset string
         Args:
@@ -157,11 +156,6 @@ class ElementProperty(BaseFeaturizer):
             data_source = "megnet_el"
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
             features = MEGNetElementData().prop_names
-
-        elif preset_name == "refractive_index":
-            data_source = "refractive_index"
-            stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
-            features = OpticalData(**optical_args).prop_names
 
         else:
             raise ValueError("Invalid preset_name specified!")
@@ -357,6 +351,37 @@ class RefractiveIndex(ElementProperty):
                     "title = {Refractive index database},"
                     "howpublished = {https://refractiveindex.info},"
                     "note = {Accessed on 2022-06-30}}"
+        ]
+        return citation
+
+    def implementors(self):
+        return ["Matgenix"]
+
+
+class RicciTransport(ElementProperty):
+    """
+    Class to calculate features based on transport properties,
+    taken from Ricci et al. (Materials Project).
+    """
+
+    @classmethod
+    def from_preset(cls, **transport_args):
+        data_source = TransportData(**transport_args)
+        features = data_source.prop_names
+        stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
+        return cls(data_source, features, stats)
+
+    def citations(self):
+        citation = ["@article{ricci2017ab,"
+                    "title={An ab initio electronic transport database for inorganic materials},"
+                    "author={Ricci, Francesco and Chen, Wei and Aydemir, Umut and Snyder, G Jeffrey"
+                    "and Rignanese, Gian-Marco and Jain, Anubhav and Hautier, Geoffroy},"
+                    "journal={Scientific data},"
+                    "volume={4},"
+                    "number={1},"
+                    "pages={1--13},"
+                    "year={2017},"
+                    "publisher={Nature Publishing Group}}"
         ]
         return citation
 
