@@ -3,6 +3,7 @@ Site featurizers that fingerprint a site using local geometry.
 """
 import copy
 import os
+from typing import Literal
 
 import numpy as np
 import pymatgen.analysis.local_env
@@ -372,11 +373,12 @@ class CrystalNNFingerprint(BaseFeaturizer):
     """
 
     @staticmethod
-    def from_preset(preset, **kwargs):
+    def from_preset(preset: Literal["cn", "ops"], **kwargs):
         """
         Use preset parameters to get the fingerprint
         Args:
-            preset (str): name of preset ("cn" or "ops")
+            preset ('cn' | 'ops'): Initializes the featurizer to use coordination number ('cn') or structural
+                order parameters like octahedral, tetrahedral ('ops').
             **kwargs: other settings to be passed into CrystalNN class
         """
         if preset == "cn":
