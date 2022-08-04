@@ -45,7 +45,6 @@ class ElementProperty(BaseFeaturizer):
             (these must be supported by data_source)
         stats (list of strings): a list of weighted statistics to compute to for each
             property (see PropertyStats for available stats)
-        optical_args: list of arguments for the optical data
     """
 
     def __init__(self, data_source, features, stats):
@@ -336,14 +335,28 @@ class RefractiveIndex(ElementProperty):
     """
     Class to calculate features based on optical properties,
     taken from https://www.refractiveindex.info
+
+    Args:
+        bins: number of bins to split the spectra. This is also the number
+              of elemental features for each property.
+        props: optical properties to include. Should be a list with
+               'refractive' and/or 'extinction' and/or 'reflectivity.
+               If None selects all.
+        method: type of values, either 'exact', 'pseudo_inverse', or 'combined'
+                if 'combined', takes the exact values when available, and the pseudo-inversed
+                ones otherwise
+        min_wl: minimum wavelength to include in the spectra (µm) - before binning
+        max_wl : maximum wavelength to include in the spectra (µm)
+        n_wl: number of wavelengths to include in the spectra
     """
 
-    @classmethod
-    def from_preset(cls, **optical_args):
-        data_source = OpticalData(**optical_args)
+    def __init__(self, method='pseudo_inverse', props=None, bins=10,
+                 min_wl=0.38, max_wl=0.78, n_wl=401):
+        data_source = OpticalData(method=method, props=props, bins=bins, min_wl=min_wl,
+                                  max_wl=max_wl, n_wl=n_wl)
         features = data_source.prop_names
         stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
-        return cls(data_source, features, stats)
+        super().__init__(data_source, features, stats)
 
     def citations(self):
         citation = ["@misc{rii,"
@@ -360,16 +373,27 @@ class RefractiveIndex(ElementProperty):
 
 class RicciTransport(ElementProperty):
     """
-    Class to calculate features based on transport properties,
-    taken from Ricci et al. (Materials Project).
-    """
+    Class to calculate features based on transport properties, from
+    An ab initio electronic transport database for inorganic materials.
+    Ricci, F., Chen, W., Aydemir, U., Snyder, G. J., Rignanese, G. M., Jain, A., & Hautier, G. (2017).
+    Scientific data, 4(1), 1-13.
+    https://doi.org/10.1038/sdata.2017.85
 
-    @classmethod
-    def from_preset(cls, **transport_args):
-        data_source = TransportData(**transport_args)
+    Args:
+        method: type of values, either 'exact', 'pseudo_inverse', or 'combined'
+                if 'combined', takes the exact values when available, and the pseudo-inversed
+                ones otherwise
+        props: transport properties to include. Should be a (sub)list of
+               ['sigma_p', 'sigma_n', 'S_p', 'S_n', 'kappa_p', 'kappa_n', 'PF_p', 'PF_n', 'm_p', 'm_n']
+               for the hole and electron (_p and _n) conductivity, Seebeck, thermal conductivity, power factor,
+               and effective masses.
+               If None selects all.
+    """
+    def __init__(self, method='pseudo_inverse', props=None):
+        data_source = TransportData(method=method, props=props)
         features = data_source.prop_names
         stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
-        return cls(data_source, features, stats)
+        super().__init__(data_source, features, stats)
 
     def citations(self):
         citation = ["@article{ricci2017ab,"
