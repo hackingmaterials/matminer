@@ -72,7 +72,7 @@ def _validate_dataset(data_path, url=None, file_hash=None, download_if_missing=T
         if not download_if_missing:
             raise OSError("Data not found and download_if_missing set to False")
         elif url is None:
-            raise ValueError("To download an external dataset, the url " "metadata must be provided")
+            raise ValueError("To download an external dataset, the url metadata must be provided")
 
         # Ensure storage location exists
         data_home = os.path.dirname(data_path)
