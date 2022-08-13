@@ -1,8 +1,6 @@
 """
 Structure featurizers based on aggregating site features.
 """
-
-import itertools
 import numpy as np
 from pymatgen.analysis.local_env import VoronoiNN
 from pymatgen.core.periodic_table import Element, Specie
