@@ -262,7 +262,7 @@ class OPSiteFingerprint(BaseFeaturizer):
                         site_list.append(n)
                         this_av_inv_drel += 1.0 / (neigh_dist[j][1])
                 this_av_inv_drel = this_av_inv_drel / float(this_cn)
-                d_fac = this_av_inv_drel ** self.dist_exp
+                d_fac = this_av_inv_drel**self.dist_exp
                 for cn in range(max(2, prev_cn + 1), min(this_cn + 1, 13)):
                     # Set all OPs of non-CN-complying neighbor environments
                     # to zero if applicable.

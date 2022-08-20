@@ -173,7 +173,7 @@ class PropertyStats:
             u2 = np.dot(weights, np.power(diff, 2)) / total_weight
             if np.isclose(u3, 0):
                 return 0
-            return u3 / u2 ** 1.5
+            return u3 / u2**1.5
 
     @staticmethod
     def kurtosis(data_lst, weights=None):
@@ -203,7 +203,7 @@ class PropertyStats:
             u2 = np.dot(weights, diff_sq)
             if np.isclose(u4, 0):
                 return 0
-            return u4 / u2 ** 2 * total_weight
+            return u4 / u2**2 * total_weight
 
     @staticmethod
     def geom_std_dev(data_lst, weights=None):
