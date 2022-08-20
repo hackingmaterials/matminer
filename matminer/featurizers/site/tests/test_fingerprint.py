@@ -68,9 +68,9 @@ class FingerprintTests(SiteFeaturizerTest):
         self.assertArrayAlmostEqual(-1 * site1[8:], site2[8:])
 
         # Make sure the site-ones are as expected.
-        right_dist = 4.209 * np.sqrt(0.45**2 + 2 * 0.5**2)
+        right_dist = 4.209 * np.sqrt(0.45 ** 2 + 2 * 0.5 ** 2)
         right_xdist = 4.209 * 0.45
-        left_dist = 4.209 * np.sqrt(0.55**2 + 2 * 0.5**2)
+        left_dist = 4.209 * np.sqrt(0.55 ** 2 + 2 * 0.5 ** 2)
         left_xdist = 4.209 * 0.55
         self.assertAlmostEqual(
             4

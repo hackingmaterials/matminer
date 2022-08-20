@@ -45,13 +45,7 @@ def _get_data_home(data_home=None):
     return data_home
 
 
-def _validate_dataset(
-        data_path,
-        url=None,
-        file_hash=None,
-        download_if_missing=True,
-        n_retries_allowed=3
-):
+def _validate_dataset(data_path, url=None, file_hash=None, download_if_missing=True, n_retries_allowed=3):
     """
     Checks to see if a dataset is on the local machine,
     if not tries to download if download_if_missing is set to true,
@@ -76,7 +70,7 @@ def _validate_dataset(
 
     Returns (None)
     """
-    DOWNLOAD_RETRY_WAIT = 60
+    download_retry_wait = 60
 
     if n_retries_allowed < 0:
         raise ValueError("Number of retries for download cannot be less than 0.")
@@ -100,8 +94,9 @@ def _validate_dataset(
 
         do_download = True
 
-    hash_mismatch_msg = "Error, hash of downloaded file does not match that " \
-                        "included in metadata, the data may be corrupt or altered"
+    hash_mismatch_msg = (
+        "Error, hash of downloaded file does not match that " "included in metadata, the data may be corrupt or altered"
+    )
     if do_download:
         n_retries = 0
         while n_retries <= n_retries_allowed:
@@ -116,8 +111,8 @@ def _validate_dataset(
             except UserWarning:
                 warnings.warn(hash_mismatch_msg)
                 if n_retries < n_retries_allowed:
-                    warnings.warn(f"Waiting {DOWNLOAD_RETRY_WAIT}s and trying again...")
-                    time.sleep(DOWNLOAD_RETRY_WAIT)
+                    warnings.warn(f"Waiting {download_retry_wait}s and trying again...")
+                    time.sleep(download_retry_wait)
                 else:
                     raise UserWarning(
                         f"File could not be downloaded to {data_path} after {n_retries_allowed} retries"

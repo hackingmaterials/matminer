@@ -421,7 +421,7 @@ class BondFractions(BaseFeaturizer):
                     d0 = u_mends[0] - l_mends[0]
                     d1 = u_mends[1] - l_mends[1]
 
-                    d = (d0**2.0 + d1**2.0) ** 0.5
+                    d = (d0 ** 2.0 + d1 ** 2.0) ** 0.5
                     if not d_min:
                         d_min = d
                         nearest = [abss]

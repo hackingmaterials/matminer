@@ -62,7 +62,7 @@ class DensityFeatures(BaseFeaturizer):
                 raise ValueError("Disordered structure support not built yet.")
             total_rad = 0
             for site in s:
-                total_rad += site.specie.atomic_radius**3
+                total_rad += site.specie.atomic_radius ** 3
             output.append(4 * math.pi * total_rad / (3 * s.volume))
 
         return output
