@@ -1,6 +1,6 @@
 numpy==1.22.3
 requests==2.27.1
-pandas==1.4.2
+pandas==1.4.4
 tqdm==4.64.0
 pymongo==4.1.1
 future==0.18.2
