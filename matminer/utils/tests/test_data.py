@@ -139,11 +139,11 @@ class TestOpticalData(TestCase):
 
     def test_get_data(self):
         au_r = self.data_source.get_elemental_property(elem='Au', property_name="R_400.0")
-        self.assertAlmostEqual(au_r, 0.254759402351607)
+        self.assertAlmostEqual(au_r, 0.25489326484782054)
         ag_n = self.data_source.get_elemental_property(elem='Ag', property_name="n_600.0")
-        self.assertAlmostEqual(ag_n, 0.13636543138165633)
+        self.assertAlmostEqual(ag_n, 0.13644859985917585)
         c_k = self.data_source.get_elemental_property(elem='C', property_name='k_760.0')
-        self.assertAlmostEqual(c_k, 0.7196687757931486)
+        self.assertAlmostEqual(c_k, 0.7462931865379264)
 
 
 class TestTransportData(TestCase):
@@ -154,9 +154,9 @@ class TestTransportData(TestCase):
         ca_mn = self.data_source.get_elemental_property(elem='Ca', property_name='m_n')
         self.assertAlmostEqual(ca_mn, 0.000279554)
         cr_sigmap = self.data_source.get_elemental_property(elem='Cr', property_name='sigma_p')
-        self.assertAlmostEqual(cr_sigmap, 205569.8984)
+        self.assertAlmostEqual(cr_sigmap, 205569.89838499163)
         cu_kappan = self.data_source.get_elemental_property(elem='Cu', property_name='kappa_n')
-        self.assertAlmostEqual(cu_kappan, 1814544.757)
+        self.assertAlmostEqual(cu_kappan, 1814544.756632491)
 
 
 if __name__ == "__main__":

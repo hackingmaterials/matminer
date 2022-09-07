@@ -1,6 +1,10 @@
 import warnings
 
 import pandas as pd
+import numpy as np
+from numpy.linalg import pinv
+from pymatgen.core import Element
+from pymatgen.core import Composition
 
 
 def homogenize_multiindex(df, default_key, coerce=False):
@@ -38,3 +42,78 @@ def homogenize_multiindex(df, default_key, coerce=False):
             "multiindexed Matminer featurization without coercion "
             "to 2 levels."
         )
+
+
+def get_elem_in_data(df, as_pure=False):
+    """
+    Look for all elements present in the compounds forming the index of a dataframe
+
+    Args:
+         as_pure: if True, consider only the pure compounds
+
+    Returns:
+        List of elements (str)
+    """
+    elems_in_df = []
+    elems_not_in_df = []
+
+    # Find the elements in the data, as pure or not
+    if as_pure:
+        for elem in Element:
+            if elem.name in df.index:
+                elems_in_df.append(elem.name)
+    else:
+        for elem in Element:
+            for compound in df.index.to_list():
+                if elem.name in compound and elem.name not in elems_in_df:
+                    elems_in_df.append(elem.name)
+
+    # Find the elements not in the data
+    for elem in Element:
+        if elem.name not in elems_in_df:
+            elems_not_in_df.append(elem.name)
+
+    return elems_in_df, elems_not_in_df
+
+
+def get_pseudo_inverse(df_init, cols=None):
+    """
+    Compute the pseudoinverse matrix of a dataframe containing properties for multiple compositions
+
+    Args:
+        DataFrame with a Composition column containing compositions, and other columns containing properties
+        cols: list of columns of the dataframe giving the wanted features
+
+    Returns:
+        DataFrame with the pseudo-inverse coefficients for all elements present in the initial compositions and all
+        properties.
+    """
+    df = df_init.copy()
+
+    if cols is None:
+        cols = list(df.columns)
+        if 'Composition' in cols:
+            cols.remove('Composition')
+    data = df[cols]
+
+    elems_in_df, elems_not_in_df = get_elem_in_data(data, as_pure=False)
+    n_elem_tot = len(elems_in_df)
+
+    # Initialize the matrix
+    A = np.zeros([len(data), n_elem_tot])
+
+    compos = df['Composition']
+    for i, comp in enumerate(compos):
+        comp = Composition(comp)
+        for j in range(n_elem_tot):
+            if elems_in_df[j] in comp:
+                A[i, j] = comp.get_atomic_fraction(elems_in_df[j])
+
+    pi_A = pinv(A)
+
+    res_pi = pi_A @ data.values
+    res_pi = np.vstack([res_pi, np.nan * np.ones([len(elems_not_in_df), len(df.T)-1])])
+
+    df_pi = pd.DataFrame(res_pi, columns=cols, index=pd.Index(elems_in_df + elems_not_in_df))
+
+    return df_pi

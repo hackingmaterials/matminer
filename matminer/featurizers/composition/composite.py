@@ -58,6 +58,10 @@ class ElementProperty(BaseFeaturizer):
             self.data_source = MatscholarElementData()
         elif data_source == "megnet_el":
             self.data_source = MEGNetElementData()
+        elif data_source == "optical":
+            self.data_source = OpticalData()
+        elif data_source == "mp_transport":
+            self.data_source = TransportData()
         else:
             self.data_source = data_source
 
@@ -156,6 +160,16 @@ class ElementProperty(BaseFeaturizer):
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
             features = MEGNetElementData().prop_names
 
+        elif preset_name == "optical":
+            data_source = "optical"
+            stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
+            features = OpticalData().prop_names
+
+        elif preset_name == "mp_transport":
+            data_source = "mp_transport"
+            stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
+            features = TransportData().prop_names
+
         else:
             raise ValueError("Invalid preset_name specified!")
 
@@ -237,6 +251,27 @@ class ElementProperty(BaseFeaturizer):
                 "primaryClass = {cond-mat.mtrl-sci},"
                 r"adsurl = {https://ui.adsabs.harvard.edu/\#abs/2018arXiv181205055C},"
                 "adsnote = {Provided by the SAO/NASA Astrophysics Data System}}"
+            ]
+        elif self.data_source.__class__.__name__ == "OpticalData":
+            citation = [
+                "@misc{rii,"
+                "author = {Mikhail N. Polyanskiy},"
+                "title = {Refractive index database},"
+                "howpublished = {https://refractiveindex.info},"
+                "note = {Accessed on 2022-06-30}}"
+            ]
+        elif self.data_source.__class__.__name__ == "TransportData":
+            citation = [
+                "@article{ricci2017ab,"
+                "title={An ab initio electronic transport database for inorganic materials},"
+                "author={Ricci, Francesco and Chen, Wei and Aydemir, Umut and Snyder, G Jeffrey"
+                "and Rignanese, Gian-Marco and Jain, Anubhav and Hautier, Geoffroy},"
+                "journal={Scientific data},"
+                "volume={4},"
+                "number={1},"
+                "pages={1--13},"
+                "year={2017},"
+                "publisher={Nature Publishing Group}}"
             ]
         else:
             citation = []
@@ -329,85 +364,3 @@ class Meredig(BaseFeaturizer):
 
     def implementors(self):
         return ["Amalie Trewartha"]
-
-
-class RefractiveIndex(ElementProperty):
-    """
-    Class to calculate features based on optical properties,
-    taken from https://www.refractiveindex.info
-
-    Args:
-        bins: number of bins to split the spectra. This is also the number
-              of elemental features for each property.
-        props: optical properties to include. Should be a list with
-               'refractive' and/or 'extinction' and/or 'reflectivity.
-               If None selects all.
-        method: type of values, either 'exact', 'pseudo_inverse', or 'combined'
-                if 'combined', takes the exact values when available, and the pseudo-inversed
-                ones otherwise
-        min_wl: minimum wavelength to include in the spectra (µm) - before binning
-        max_wl : maximum wavelength to include in the spectra (µm)
-        n_wl: number of wavelengths to include in the spectra
-    """
-
-    def __init__(self, method='pseudo_inverse', props=None, bins=10,
-                 min_wl=0.38, max_wl=0.78, n_wl=401):
-        data_source = OpticalData(method=method, props=props, bins=bins, min_wl=min_wl,
-                                  max_wl=max_wl, n_wl=n_wl)
-        features = data_source.prop_names
-        stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
-        super().__init__(data_source, features, stats)
-
-    def citations(self):
-        citation = ["@misc{rii,"
-                    "author = {Mikhail N. Polyanskiy},"
-                    "title = {Refractive index database},"
-                    "howpublished = {https://refractiveindex.info},"
-                    "note = {Accessed on 2022-06-30}}"
-        ]
-        return citation
-
-    def implementors(self):
-        return ["Matgenix"]
-
-
-class RicciTransport(ElementProperty):
-    """
-    Class to calculate features based on transport properties, from
-    An ab initio electronic transport database for inorganic materials.
-    Ricci, F., Chen, W., Aydemir, U., Snyder, G. J., Rignanese, G. M., Jain, A., & Hautier, G. (2017).
-    Scientific data, 4(1), 1-13.
-    https://doi.org/10.1038/sdata.2017.85
-
-    Args:
-        method: type of values, either 'exact', 'pseudo_inverse', or 'combined'
-                if 'combined', takes the exact values when available, and the pseudo-inversed
-                ones otherwise
-        props: transport properties to include. Should be a (sub)list of
-               ['sigma_p', 'sigma_n', 'S_p', 'S_n', 'kappa_p', 'kappa_n', 'PF_p', 'PF_n', 'm_p', 'm_n']
-               for the hole and electron (_p and _n) conductivity, Seebeck, thermal conductivity, power factor,
-               and effective masses.
-               If None selects all.
-    """
-    def __init__(self, method='pseudo_inverse', props=None):
-        data_source = TransportData(method=method, props=props)
-        features = data_source.prop_names
-        stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
-        super().__init__(data_source, features, stats)
-
-    def citations(self):
-        citation = ["@article{ricci2017ab,"
-                    "title={An ab initio electronic transport database for inorganic materials},"
-                    "author={Ricci, Francesco and Chen, Wei and Aydemir, Umut and Snyder, G Jeffrey"
-                    "and Rignanese, Gian-Marco and Jain, Anubhav and Hautier, Geoffroy},"
-                    "journal={Scientific data},"
-                    "volume={4},"
-                    "number={1},"
-                    "pages={1--13},"
-                    "year={2017},"
-                    "publisher={Nature Publishing Group}}"
-        ]
-        return citation
-
-    def implementors(self):
-        return ["Matgenix"]

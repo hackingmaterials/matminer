@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from matminer.featurizers.composition.composite import ElementProperty, Meredig, RefractiveIndex, RicciTransport
+from matminer.featurizers.composition.composite import ElementProperty, Meredig
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 
@@ -89,16 +89,16 @@ class CompositeFeaturesTest(CompositionFeaturesTest):
         self.assertAlmostEqual(df_fere_corr["DemlData std_dev FERE correction"][0], 0.270209766)
 
     def test_elem_optical(self):
-        df_elem = RefractiveIndex().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_elem["OpticalData mean n_400.0"].iloc[0], 1.98536829500815)
-        self.assertAlmostEqual(df_elem["OpticalData range k_760.0"].iloc[1], 4.89860718541275)
-        self.assertAlmostEqual(df_elem["OpticalData maximum R_720.0"].iloc[0], 0.622343006819905)
+        df_elem = ElementProperty.from_preset('optical').featurize_dataframe(self.df, col_id="composition")
+        self.assertAlmostEqual(df_elem["OpticalData mean n_400.0"].iloc[0], 1.98229162203492)
+        self.assertAlmostEqual(df_elem["OpticalData range k_760.0"].iloc[1], 4.88738594404032)
+        self.assertAlmostEqual(df_elem["OpticalData maximum R_720.0"].iloc[0], 0.621705031591809)
 
     def test_elem_transport(self):
-        df_elem = RicciTransport().featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_elem["TransportData mean sigma_p"].iloc[0], 14933.748124)
-        self.assertAlmostEqual(df_elem["TransportData std_dev S_n"].iloc[1], 489.973884027279)
-        self.assertAlmostEqual(df_elem["TransportData mean m_p"].iloc[0], -0.000195435)
+        df_elem = ElementProperty.from_preset('mp_transport').featurize_dataframe(self.df, col_id="composition")
+        self.assertAlmostEqual(df_elem["TransportData mean sigma_p"].iloc[0], 14933.7481377614)
+        self.assertAlmostEqual(df_elem["TransportData std_dev S_n"].iloc[1], 489.973884028426)
+        self.assertAlmostEqual(df_elem["TransportData mean m_p"].iloc[0], -0.00019543531213698)
 
 
 if __name__ == "__main__":
