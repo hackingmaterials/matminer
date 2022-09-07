@@ -7,18 +7,18 @@ including ``pymatgen`` and ``Magpie``.
 import abc
 import json
 import os
+import warnings
 from glob import glob
 
 import numpy as np
 import pandas as pd
-from pymatgen.core.periodic_table import Element, _pt_data
-from pymatgen.core import Composition
-from numpy.linalg import pinv
 import yaml
-from scipy.interpolate import interp1d
+from pymatgen.core import Composition
+from pymatgen.core.periodic_table import Element, _pt_data
 from scipy import stats
+from scipy.interpolate import interp1d
+
 from matminer.utils.utils import get_elem_in_data, get_pseudo_inverse
-import warnings
 
 __author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"
 
@@ -41,7 +41,6 @@ class AbstractData(metaclass=abc.ABCMeta):
         Returns:
             float, property of that element
         """
-        pass
 
     def get_elemental_properties(self, elems, property_name):
         """Get elemental properties for a list of elements
@@ -68,7 +67,6 @@ class OxidationStatesMixin(metaclass=abc.ABCMeta):
         Returns:
             [int] - oxidation states
         """
-        pass
 
 
 class OxidationStateDependentData(AbstractData):
@@ -85,7 +83,6 @@ class OxidationStateDependentData(AbstractData):
         Return:
             (float) - Value of property
         """
-        pass
 
     def get_charge_dependent_property_from_specie(self, specie, property_name):
         """Retrieve a oxidation-state dependent elemental property
@@ -579,7 +576,7 @@ class IUCrBondValenceData:
             & (bv_data["Atom1_valence"] == cat_val)
             & (bv_data["Atom2"] == str(anion))
             & (bv_data["Atom2_valence"] == an_val)
-            ]
+        ]
         return bond_val_list.iloc[0]  # If multiple values exist, take first one
         # as recommended for reliability.
 
@@ -606,9 +603,9 @@ class OpticalData(AbstractData):
        from the compositions to the properties. This can allow to better take into account
        data from different compounds for a given element.
 
-    Using the pseudo-inverses (method='pseudo_inverse') instead of
-    the elemental properties (method='exact') leads to better results as far as we have checked.
-    Another possibility is to use method='combined', where the exact values are taken
+    Using the pseudo-inverses (method="pseudo_inverse") instead of
+    the elemental properties (method="exact") leads to better results as far as we have checked.
+    Another possibility is to use method="combined", where the exact values are taken
     for compounds present as pure compounds in the database, and the pseudo-inverse
     is taken if the element is not present purely in the database.
 
@@ -619,22 +616,21 @@ class OpticalData(AbstractData):
 
     Args:
         props: optical properties to include. Should be a list with
-               'refractive' and/or 'extinction' and/or 'reflectivity.
-        method: type of values, either 'exact', 'pseudo_inverse', or 'combined'.
+               "refractive" and/or "extinction" and/or "reflectivity".
+        method: type of values, either "exact", "pseudo_inverse", or "combined".
         min_wl: minimum wavelength to include in the spectra (µm).
         max_wl : maximum wavelength to include in the spectra (µm).
         n_wl: number of wavelengths to include in the spectra.
         bins: number of bins to split the spectra.
     """
 
-    def __init__(self, props=None, method='pseudo_inverse',
-                 min_wl=0.38, max_wl=0.78, n_wl=401, bins=10):
+    def __init__(self, props=None, method="pseudo_inverse", min_wl=0.38, max_wl=0.78, n_wl=401, bins=10):
 
         # Handle the selection of properties
         if props is None:
-            props = ['refractive', 'extinction', 'reflectivity']
-        elif not all([prop in ['refractive', 'extinction', 'reflectivity'] for prop in props]):
-            raise ValueError('This property is not available: choose from refractive, extinction, or reflectivity')
+            props = ["refractive", "extinction", "reflectivity"]
+        elif not all([prop in ["refractive", "extinction", "reflectivity"] for prop in props]):
+            raise ValueError("This property is not available: choose from refractive, extinction, or reflectivity")
 
         self.props = props
         self.method = method
@@ -644,17 +640,25 @@ class OpticalData(AbstractData):
         self.wavelengths = np.linspace(min_wl, max_wl, n_wl)
 
         # The data might have already been treated : it is faster to read the data from file
-        dbfile = os.path.join(module_dir, "data_files/optical_polyanskiy/optical_polyanskiy_" + str(self.min_wl) +
-                                          "_" + str(self.max_wl) + "_" + str(self.n_wl) + ".csv")
-        print(dbfile)
+        dbfile = os.path.join(
+            module_dir,
+            "data_files/optical_polyanskiy/optical_polyanskiy_",
+            str(self.min_wl),
+            str(self.max_wl),
+            str(self.n_wl),
+            ".csv",
+        )
+
         if os.path.isfile(dbfile):
             data = pd.read_csv(dbfile)
-            data.set_index('Compound', inplace=True)
+            data.set_index("Compound", inplace=True)
             self.data = data
         else:
             # Recompute the data file from the database
-            warnings.warn("""Datafile not existing for these wavelengths: recollecting the data from the database. 
-                             This can take a few seconds...""")
+            warnings.warn(
+                """Datafile not existing for these wavelengths: recollecting the data from the database.
+                             This can take a few seconds..."""
+            )
             self.data = self._get_optical_data_from_database()
             self.data.to_csv(dbfile)
             warnings.warn("The data has been collected and stored.")
@@ -669,8 +673,11 @@ class OpticalData(AbstractData):
         cols = self.elem_data.columns[slices[:-1] + counts // 2]
         labels = [col for col in cols]
 
-        all_element_data = pd.DataFrame(np.add.reduceat(self.elem_data.values, slices[:-1], axis=1) / counts,
-                                        columns=cols, index=self.elem_data.index)
+        all_element_data = pd.DataFrame(
+            np.add.reduceat(self.elem_data.values, slices[:-1], axis=1) / counts,
+            columns=cols,
+            index=self.elem_data.index,
+        )
 
         self.all_element_data = all_element_data
         self.prop_names = labels
@@ -683,12 +690,12 @@ class OpticalData(AbstractData):
         data = self.data.copy()
 
         cols = []
-        if 'refractive' in self.props:
-            cols += [name for name in data.columns if 'n_' in name]
-        if 'extinction' in self.props:
-            cols += [name for name in data.columns if 'k_' in name]
-        if 'reflectivity' in self.props:
-            cols += [name for name in data.columns if 'R_' in name]
+        if "refractive" in self.props:
+            cols += [name for name in data.columns if "n_" in name]
+        if "extinction" in self.props:
+            cols += [name for name in data.columns if "k_" in name]
+        if "reflectivity" in self.props:
+            cols += [name for name in data.columns if "R_" in name]
 
         data = data[cols]
 
@@ -703,15 +710,15 @@ class OpticalData(AbstractData):
         res = np.array(res)
         df_exact = pd.DataFrame(res, columns=cols, index=pd.Index(elem + elem_absent))
 
-        if self.method == 'exact':
+        if self.method == "exact":
             return df_exact
         else:
             # Compute the pseudo-inversed values
             df_pi = get_pseudo_inverse(self.data, cols)
 
-            if self.method == 'pseudo_inverse':
+            if self.method == "pseudo_inverse":
                 return df_pi
-            elif self.method == 'combined':
+            elif self.method == "combined":
                 res_combined = []
                 for i, e in df_exact.iterrows():
                     if e.isnull().sum() == 0:
@@ -723,7 +730,7 @@ class OpticalData(AbstractData):
                 return df_combined
 
             else:
-                raise ValueError('The method should be either exact, pseudo_inverse or combined.')
+                raise ValueError("The method should be either exact, pseudo_inverse or combined.")
 
     def _get_optical_data_from_database(self):
         """
@@ -735,13 +742,17 @@ class OpticalData(AbstractData):
             DataFrame with the data
         """
 
-
         db_dir = os.path.join(module_dir, "data_files/optical_polyanskiy/database/")
         # The database has been compressed, it needs to be untarred if it is not already the case.
         if not os.path.isdir(db_dir):
             os.system("mkdir " + db_dir)
-            os.system("tar -Jxf " + os.path.join(module_dir, "data_files/optical_polyanskiy/database.tar.xz") +
-                      " -C " + db_dir + " --strip-components=1")
+            os.system(
+                "tar -Jxf "
+                + os.path.join(module_dir, "data_files/optical_polyanskiy/database.tar.xz")
+                + " -C "
+                + db_dir
+                + " --strip-components=1"
+            )
 
         names = []
         compos = []
@@ -763,49 +774,49 @@ class OpticalData(AbstractData):
         W = 1000 * self.wavelengths
         N = np.array(N)
         K = np.array(K)
-        R = ((N - 1) ** 2 + K ** 2) / ((N + 1) ** 2 + K ** 2)
+        R = ((N - 1) ** 2 + K**2) / ((N + 1) ** 2 + K**2)
 
-        cols_names_n = ['n_{0}'.format(np.round(wl, 2)) for wl in W]
-        cols_names_k = ['k_{0}'.format(np.round(wl, 2)) for wl in W]
-        cols_names_r = ['R_{0}'.format(np.round(wl, 2)) for wl in W]
+        cols_names_n = [f"n_{np.round(wl, 2)}" for wl in W]
+        cols_names_k = [f"k_{np.round(wl, 2)}" for wl in W]
+        cols_names_r = [f"R_{np.round(wl, 2)}" for wl in W]
 
         df_n = pd.DataFrame(N, columns=cols_names_n)
         df_k = pd.DataFrame(K, columns=cols_names_k)
         df_r = pd.DataFrame(R, columns=cols_names_r)
 
         df = pd.concat([df_n, df_k, df_r], axis=1)
-        df['Composition'] = compos
-        df['Compound'] = names
-        df.set_index('Compound', inplace=True)
+        df["Composition"] = compos
+        df["Compound"] = names
+        df.set_index("Compound", inplace=True)
 
         return df
 
     def _get_optical_data_from_file(self, yaml_file):
         """
-            From a yml file, returns the refractive index for a given wavelength
+        From a yml file, returns the refractive index for a given wavelength
 
-            Args:
-                yaml_file: path to the yml file containing the data
+        Args:
+            yaml_file: path to the yml file containing the data
 
-            Returns:
-                refractive index (complex number)
+        Returns:
+            refractive index (complex number)
         """
 
         # Open the yml file
-        with open(yaml_file, 'r') as yml:
-            data = yaml.safe_load(yml)['DATA'][0]
+        with open(yaml_file) as yml:
+            data = yaml.safe_load(yml)["DATA"][0]
 
-        data_format = data['type']
+        data_format = data["type"]
 
         # We now treat different formats for the data
-        if data_format in ['tabulated nk', 'tabulated n']:
+        if data_format in ["tabulated nk", "tabulated n"]:
             # We parse the data to get the wavelength, n and kappa
-            if data_format == 'tabulated nk':
-                arr = np.fromstring(data['data'].replace('\n', ' '), sep=' ').reshape((-1, 3))
+            if data_format == "tabulated nk":
+                arr = np.fromstring(data["data"].replace("\n", " "), sep=" ").reshape((-1, 3))
                 K = arr[:, 2]
             # kappa not available -> 0
-            elif data_format == 'tabulated n':
-                arr = np.fromstring(data['data'].replace('\n', ' '), sep=' ').reshape((-1, 2))
+            elif data_format == "tabulated n":
+                arr = np.fromstring(data["data"].replace("\n", " "), sep=" ").reshape((-1, 2))
                 K = np.zeros(len(arr))
 
             wl = arr[:, 0]
@@ -817,93 +828,113 @@ class OpticalData(AbstractData):
 
             # Check that self.wavelengths are within the range
             if np.any(self.min_wl < range_wl[0]) or np.any(self.max_wl > range_wl[1]):
-                raise ValueError(""""The values of lambda asked to be returned is outside the range 
+                raise ValueError(
+                    """"The values of lambda asked to be returned is outside the range
                 of available data. This can lead to strong deviation as extrapolation might be bad. For information, the
-                range is [{0}, {1}] microns.""".format(range_wl[0], range_wl[1]))
+                range is [{}, {}] microns.""".format(
+                        range_wl[0], range_wl[1]
+                    )
+                )
             else:
                 return np.array([x for x in np.nditer(interpN(self.wavelengths) + 1j * interpK(self.wavelengths))])
 
         # If the data is not tabulated, it is given with a formula
-        elif 'formula' in data_format:
-            range_wl = np.fromstring(data['wavelength_range'], sep=' ')
+        elif "formula" in data_format:
+            range_wl = np.fromstring(data["wavelength_range"], sep=" ")
             # Check that lamb is within the range
             if np.any(self.min_wl < range_wl[0]) or np.any(self.max_wl > range_wl[1]):
-                raise ValueError(""""The values of lambda asked to be returned is outside the range 
+                raise ValueError(
+                    """"The values of lambda asked to be returned is outside the range
                 of available data. This can lead to strong deviation as extrapolation might be bad. For information, the
-                range is [{0}, {1}] microns.""".format(range_wl[0], range_wl[1]))
+                range is [{}, {}] microns.""".format(
+                        range_wl[0], range_wl[1]
+                    )
+                )
             else:
-                coeff_file = np.fromstring(data['coefficients'], sep=' ')
+                coeff_file = np.fromstring(data["coefficients"], sep=" ")
 
                 N = np.zeros(self.n_wl) + 1j * np.zeros(self.n_wl)
 
-                if data_format == 'formula 1':
+                if data_format == "formula 1":
                     coeffs = np.zeros(17)
-                    coeffs[0:len(coeff_file)] = coeff_file
+                    coeffs[0 : len(coeff_file)] = coeff_file
                     N += 1 + coeffs[0]
                     for i in range(1, 17, 2):
-                        N += ((coeffs[i] * self.wavelengths ** 2) / (self.wavelengths ** 2 - coeffs[i + 1] ** 2))
+                        N += (coeffs[i] * self.wavelengths**2) / (self.wavelengths**2 - coeffs[i + 1] ** 2)
                     N = np.sqrt(N)
 
-                elif data_format == 'formula 2':
+                elif data_format == "formula 2":
                     coeffs = np.zeros(17)
-                    coeffs[0:len(coeff_file)] = coeff_file
+                    coeffs[0 : len(coeff_file)] = coeff_file
                     N += 1 + coeffs[0]
                     for i in range(1, 17, 2):
-                        N += ((coeffs[i] * self.wavelengths ** 2) / (self.wavelengths ** 2 - coeffs[i + 1]))
+                        N += (coeffs[i] * self.wavelengths**2) / (self.wavelengths**2 - coeffs[i + 1])
                     N = np.sqrt(N)
 
-                elif data_format == 'formula 3':
+                elif data_format == "formula 3":
                     coeffs = np.zeros(17)
-                    coeffs[0:len(coeff_file)] = coeff_file
+                    coeffs[0 : len(coeff_file)] = coeff_file
                     N += coeffs[0]
                     for i in range(1, 17, 2):
                         N += coeffs[i] * self.wavelengths ** coeffs[i + 1]
                     N = np.sqrt(N)
 
-                elif data_format == 'formula 4':
+                elif data_format == "formula 4":
                     coeffs = np.zeros(17)
-                    coeffs[0:len(coeff_file)] = coeff_file
+                    coeffs[0 : len(coeff_file)] = coeff_file
                     N += coeffs[0]
-                    N += coeffs[1] * self.wavelengths ** coeffs[2] / (self.wavelengths ** 2 - coeffs[3] ** coeffs[4])
-                    N += coeffs[5] * self.wavelengths ** coeffs[6] / (self.wavelengths ** 2 - coeffs[7] ** coeffs[8])
+                    N += coeffs[1] * self.wavelengths ** coeffs[2] / (self.wavelengths**2 - coeffs[3] ** coeffs[4])
+                    N += coeffs[5] * self.wavelengths ** coeffs[6] / (self.wavelengths**2 - coeffs[7] ** coeffs[8])
                     for i in range(9, 17, 2):
                         N += coeffs[i] * self.wavelengths ** coeffs[i + 1]
                     N = np.sqrt(N)
 
-                elif data_format == 'formula 5':
+                elif data_format == "formula 5":
                     coeffs = np.zeros(11)
-                    coeffs[0:len(coeff_file)] = coeff_file
+                    coeffs[0 : len(coeff_file)] = coeff_file
                     N += coeffs[0]
                     for i in range(1, 11, 2):
                         N += coeffs[i] * self.wavelengths ** coeffs[i + 1]
 
-                elif data_format == 'formula 6':
+                elif data_format == "formula 6":
                     coeffs = np.zeros(11)
-                    coeffs[0:len(coeff_file)] = coeff_file
+                    coeffs[0 : len(coeff_file)] = coeff_file
                     N += 1 + coeffs[0]
                     for i in range(1, 11, 2):
-                        N += coeffs[i] * self.wavelengths ** 2 / (coeffs[i + 1] * self.wavelengths ** 2 - 1)
+                        N += coeffs[i] * self.wavelengths**2 / (coeffs[i + 1] * self.wavelengths**2 - 1)
 
-                elif data_format == 'formula 7':
+                elif data_format == "formula 7":
                     coeffs = np.zeros(6)
-                    coeffs[0:len(coeff_file)] = coeff_file
-                    N += coeffs[0] + coeffs[1] / (self.wavelengths ** 2 - 0.028) + coeffs[2] / \
-                         (self.wavelengths ** 2 - 0.028) ** 2
-                    N += coeffs[3] * self.wavelengths ** 2 + coeffs[4] * self.wavelengths ** 4 + \
-                         coeffs[5] * self.wavelengths ** 6
+                    coeffs[0 : len(coeff_file)] = coeff_file
+                    N += (
+                        coeffs[0]
+                        + coeffs[1] / (self.wavelengths**2 - 0.028)
+                        + coeffs[2] / (self.wavelengths**2 - 0.028) ** 2
+                    )
+                    N += (
+                        coeffs[3] * self.wavelengths**2
+                        + coeffs[4] * self.wavelengths**4
+                        + coeffs[5] * self.wavelengths**6
+                    )
 
-                elif data_format == 'formula 8':
+                elif data_format == "formula 8":
                     coeffs = np.zeros(4)
-                    coeffs[0:len(coeff_file)] = coeff_file
-                    N += coeffs[0] + coeffs[1] * self.wavelengths ** 2 / (self.wavelengths ** 2 - coeffs[2]) + \
-                         coeffs[3] * self.wavelengths ** 2
+                    coeffs[0 : len(coeff_file)] = coeff_file
+                    N += (
+                        coeffs[0]
+                        + coeffs[1] * self.wavelengths**2 / (self.wavelengths**2 - coeffs[2])
+                        + coeffs[3] * self.wavelengths**2
+                    )
                     N = np.sqrt((1 + 2 * N) / (1 - N))
 
-                elif data_format == 'formula 9':
+                elif data_format == "formula 9":
                     coeffs = np.zeros(6)
-                    coeffs[0:len(coeff_file)] = coeff_file
-                    N += coeffs[0] + coeffs[1] / (self.wavelengths ** 2 - coeffs[2]) + \
-                         coeffs[3] * (self.wavelengths - coeffs[4]) / ((self.wavelengths - coeffs[4]) ** 2 + coeffs[5])
+                    coeffs[0 : len(coeff_file)] = coeff_file
+                    N += (
+                        coeffs[0]
+                        + coeffs[1] / (self.wavelengths**2 - coeffs[2])
+                        + coeffs[3] * (self.wavelengths - coeffs[4]) / ((self.wavelengths - coeffs[4]) ** 2 + coeffs[5])
+                    )
                     N = np.sqrt(N)
 
                 return N + 1j * np.zeros(len(N))
@@ -964,9 +995,9 @@ class TransportData(AbstractData):
        from the compositions to the properties. This can allow to better take into account
        data from different compounds for a given element.
 
-    Using the pseudo-inverses (method='pseudo_inverse') instead of
-    the elemental properties (method='exact') leads to better results as far as we have checked.
-    Another possibility is to use method='combined', where the exact values are taken
+    Using the pseudo-inverses (method="pseudo_inverse") instead of
+    the elemental properties (method="exact") leads to better results as far as we have checked.
+    Another possibility is to use method="combined", where the exact values are taken
     for compounds present as pure compounds in the database, and the pseudo-inverse
     is taken if the element is not present purely in the database.
 
@@ -976,28 +1007,29 @@ class TransportData(AbstractData):
 
     Args:
         props: optical properties to include. Should be a (sub)list of
-               ['sigma_p', 'sigma_n', 'S_p', 'S_n', 'kappa_p', 'kappa_n', 'PF_p', 'PF_n', 'm_p', 'm_n']
+               ["sigma_p", "sigma_n", "S_p", "S_n", "kappa_p", "kappa_n", "PF_p", "PF_n", "m_p", "m_n"]
                for the hole (_p) and electron (_n) conductivity (sigma), Seebeck coefficient (S),
                thermal conductivity (kappa), power factor (PF) and effective mass (m).
-        method: type of values, either 'exact', 'pseudo_inverse', or 'combined'.
+        method: type of values, either "exact", "pseudo_inverse", or "combined".
     """
-    def __init__(self, props=None, method='pseudo_inverse', alpha=0):
+
+    def __init__(self, props=None, method="pseudo_inverse", alpha=0):
 
         # Handle the selection of properties
-        possible_props = ['sigma_p', 'sigma_n', 'S_p', 'S_n', 'kappa_p', 'kappa_n', 'PF_p', 'PF_n', 'm_p', 'm_n']
+        possible_props = ["sigma_p", "sigma_n", "S_p", "S_n", "kappa_p", "kappa_n", "PF_p", "PF_n", "m_p", "m_n"]
         if props is None:
             props = possible_props
         elif not all([prop in possible_props for prop in props]):
-            raise ValueError('This property is not available: choose from ' + ', '.join(possible_props))
+            raise ValueError("This property is not available: choose from " + ", ".join(possible_props))
 
         self.props = props
         self.method = method
 
         # Read the database as a csv file
         dfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_database.csv")
-        data = pd.read_csv(dfile).drop(columns=['mp_id'])
-        data.rename(columns={'pretty_formula': 'Compound'}, inplace=True)
-        data.set_index('Compound', inplace=True)
+        data = pd.read_csv(dfile).drop(columns=["mp_id"])
+        data.rename(columns={"pretty_formula": "Compound"}, inplace=True)
+        data.set_index("Compound", inplace=True)
 
         # Remove outliers
         data = data[(np.abs(stats.zscore(data)) < 3).all(axis=1)]
@@ -1006,7 +1038,7 @@ class TransportData(AbstractData):
         compos = []
         for c in data.index:
             compos.append(Composition(c))
-        data['Composition'] = compos
+        data["Composition"] = compos
 
         self.data = data
 
@@ -1020,8 +1052,8 @@ class TransportData(AbstractData):
         #
         dfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_pure_elems.csv")
         df_exact = pd.read_csv(dfile)
-        df_exact.set_index('Element', inplace=True)
-        df_exact.drop(columns=['mp_id'], inplace=True)
+        df_exact.set_index("Element", inplace=True)
+        df_exact.drop(columns=["mp_id"], inplace=True)
 
         elem, elem_absent = get_elem_in_data(df_exact, as_pure=True)
         res = []
@@ -1035,7 +1067,7 @@ class TransportData(AbstractData):
         df_exact = pd.DataFrame(res, columns=cols, index=elem + elem_absent)
         df_exact = df_exact[self.props]
 
-        if self.method == 'exact':
+        if self.method == "exact":
             return df_exact
         else:
             #
@@ -1044,31 +1076,33 @@ class TransportData(AbstractData):
             # To overcome this, we use 1 / (alpha + m) for the pseudo-inversion.
             # The value of alpha can be tested. A file for each of them is created, so that it is not computed each time.
             #
-            dbfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_pi_" + str(alpha) + ".csv")
+            dbfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_pi_", str(alpha), ".csv")
             if os.path.isfile(dbfile):
                 df_pi = pd.read_csv(dbfile)
-                df_pi.set_index('Element', inplace=True)
+                df_pi.set_index("Element", inplace=True)
                 df_pi = df_pi[self.props]
             else:
-                warnings.warn("""Pseudo-inverse values not found for this value of alpha. Recomputing them... 
-                                 This can take a few seconds...""")
+                warnings.warn(
+                    """Pseudo-inverse values not found for this value of alpha. Recomputing them...
+                                 This can take a few seconds..."""
+                )
                 TP = self.data.copy()
-                TP['1/m_p'] = 1 / (alpha + TP['m_p'].values)
-                TP['1/m_n'] = 1 / (alpha + TP['m_n'].values)
+                TP["1/m_p"] = 1 / (alpha + TP["m_p"].values)
+                TP["1/m_n"] = 1 / (alpha + TP["m_n"].values)
 
                 df_pi = get_pseudo_inverse(TP)
 
-                df_pi['m_p'] = 1 / df_pi['1/m_p'].values - alpha
-                df_pi['m_n'] = 1 / df_pi['1/m_n'].values - alpha
-                df_pi.drop(columns=['1/m_p', '1/m_n'], inplace=True)
-                df_pi.index.name = 'Element'
+                df_pi["m_p"] = 1 / df_pi["1/m_p"].values - alpha
+                df_pi["m_n"] = 1 / df_pi["1/m_n"].values - alpha
+                df_pi.drop(columns=["1/m_p", "1/m_n"], inplace=True)
+                df_pi.index.name = "Element"
 
                 df_pi.to_csv(dbfile)
                 warnings.warn("The pseudo-inverse coefficients have been collected and stored.")
 
-            if self.method == 'pseudo_inverse':
+            if self.method == "pseudo_inverse":
                 return df_pi
-            elif self.method == 'combined':
+            elif self.method == "combined":
                 res_combined = []
                 for i, e in df_exact.iterrows():
                     if e.isnull().sum() == 0:
@@ -1079,7 +1113,7 @@ class TransportData(AbstractData):
                 df_combined = pd.DataFrame(res_combined, columns=df_exact.columns, index=df_exact.index)
                 return df_combined
             else:
-                raise ValueError('The method should be either exact or pseudo_inverse.')
+                raise ValueError("The method should be either exact or pseudo_inverse.")
 
     def get_elemental_property(self, elem, property_name):
         estr = str(elem)

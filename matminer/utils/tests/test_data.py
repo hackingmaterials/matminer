@@ -12,8 +12,8 @@ from matminer.utils.data import (
     MatscholarElementData,
     MEGNetElementData,
     MixingEnthalpy,
-    PymatgenData,
     OpticalData,
+    PymatgenData,
     TransportData,
 )
 
@@ -138,11 +138,11 @@ class TestOpticalData(TestCase):
         self.data_source = OpticalData()
 
     def test_get_data(self):
-        au_r = self.data_source.get_elemental_property(elem='Au', property_name="R_400.0")
+        au_r = self.data_source.get_elemental_property(elem="Au", property_name="R_400.0")
         self.assertAlmostEqual(au_r, 0.25489326484782054)
-        ag_n = self.data_source.get_elemental_property(elem='Ag', property_name="n_600.0")
+        ag_n = self.data_source.get_elemental_property(elem="Ag", property_name="n_600.0")
         self.assertAlmostEqual(ag_n, 0.13644859985917585)
-        c_k = self.data_source.get_elemental_property(elem='C', property_name='k_760.0')
+        c_k = self.data_source.get_elemental_property(elem="C", property_name="k_760.0")
         self.assertAlmostEqual(c_k, 0.7462931865379264)
 
 
@@ -151,11 +151,11 @@ class TestTransportData(TestCase):
         self.data_source = TransportData()
 
     def test_get_data(self):
-        ca_mn = self.data_source.get_elemental_property(elem='Ca', property_name='m_n')
+        ca_mn = self.data_source.get_elemental_property(elem="Ca", property_name="m_n")
         self.assertAlmostEqual(ca_mn, 0.000279554)
-        cr_sigmap = self.data_source.get_elemental_property(elem='Cr', property_name='sigma_p')
+        cr_sigmap = self.data_source.get_elemental_property(elem="Cr", property_name="sigma_p")
         self.assertAlmostEqual(cr_sigmap, 205569.89838499163)
-        cu_kappan = self.data_source.get_elemental_property(elem='Cu', property_name='kappa_n')
+        cu_kappan = self.data_source.get_elemental_property(elem="Cu", property_name="kappa_n")
         self.assertAlmostEqual(cu_kappan, 1814544.756632491)
 
 

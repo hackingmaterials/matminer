@@ -1,10 +1,9 @@
 import warnings
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from numpy.linalg import pinv
-from pymatgen.core import Element
-from pymatgen.core import Composition
+from pymatgen.core import Composition, Element
 
 
 def homogenize_multiindex(df, default_key, coerce=False):
@@ -46,7 +45,7 @@ def homogenize_multiindex(df, default_key, coerce=False):
 
 def get_elem_in_data(df, as_pure=False):
     """
-    Look for all elements present in the compounds forming the index of a dataframe
+    Looks for all elements present in the compounds forming the index of a dataframe.
 
     Args:
          as_pure: if True, consider only the pure compounds
@@ -78,7 +77,7 @@ def get_elem_in_data(df, as_pure=False):
 
 def get_pseudo_inverse(df_init, cols=None):
     """
-    Compute the pseudoinverse matrix of a dataframe containing properties for multiple compositions
+    Computes the pseudo-inverse matrix of a dataframe containing properties for multiple compositions.
 
     Args:
         DataFrame with a Composition column containing compositions, and other columns containing properties
@@ -92,8 +91,8 @@ def get_pseudo_inverse(df_init, cols=None):
 
     if cols is None:
         cols = list(df.columns)
-        if 'Composition' in cols:
-            cols.remove('Composition')
+        if "Composition" in cols:
+            cols.remove("Composition")
     data = df[cols]
 
     elems_in_df, elems_not_in_df = get_elem_in_data(data, as_pure=False)
@@ -102,7 +101,7 @@ def get_pseudo_inverse(df_init, cols=None):
     # Initialize the matrix
     A = np.zeros([len(data), n_elem_tot])
 
-    compos = df['Composition']
+    compos = df["Composition"]
     for i, comp in enumerate(compos):
         comp = Composition(comp)
         for j in range(n_elem_tot):
@@ -112,7 +111,7 @@ def get_pseudo_inverse(df_init, cols=None):
     pi_A = pinv(A)
 
     res_pi = pi_A @ data.values
-    res_pi = np.vstack([res_pi, np.nan * np.ones([len(elems_not_in_df), len(df.T)-1])])
+    res_pi = np.vstack([res_pi, np.nan * np.ones([len(elems_not_in_df), len(df.T) - 1])])
 
     df_pi = pd.DataFrame(res_pi, columns=cols, index=pd.Index(elems_in_df + elems_not_in_df))
 

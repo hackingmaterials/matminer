@@ -11,9 +11,9 @@ from matminer.utils.data import (
     MagpieData,
     MatscholarElementData,
     MEGNetElementData,
-    PymatgenData,
     OpticalData,
-    TransportData
+    PymatgenData,
+    TransportData,
 )
 
 
