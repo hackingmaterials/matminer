@@ -60,8 +60,16 @@ class UtilsTest(DatasetTest):
             _validate_dataset(self._path, url=None, file_hash=self._hash, download_if_missing=True)
 
         with self.assertRaises(UserWarning):
-            _validate_dataset(self._path, self._url, file_hash="!@#$%^&*", download_if_missing=True)
-        os.remove(self._path)
+            _validate_dataset(
+                self._path, self._url, file_hash="!@#$%^&*", download_if_missing=True, n_retries_allowed=0
+            )
+        if os.path.exists(self._path):
+            os.remove(self._path)
+
+        with self.assertRaises(ValueError):
+            _validate_dataset(
+                self._path, self._url, file_hash=self._hash, download_if_missing=True, n_retries_allowed=-1
+            )
 
         _validate_dataset(self._path, self._url, self._hash, download_if_missing=True)
         self.assertTrue(os.path.exists(self._path))
