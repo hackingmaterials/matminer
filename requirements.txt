@@ -7,5 +7,5 @@ future==0.18.2
 scikit_learn==1.1.0
 sympy==1.10.1
 monty==2022.4.26
-pymatgen==2022.5.17
+pymatgen==2022.9.8
 jsonschema==4.5.1
