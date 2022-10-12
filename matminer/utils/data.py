@@ -12,9 +12,9 @@ from glob import glob
 
 import numpy as np
 import pandas as pd
-import yaml
 from pymatgen.core import Composition
 from pymatgen.core.periodic_table import Element, _pt_data
+from ruamel import yaml
 from scipy import stats
 from scipy.interpolate import interp1d
 
@@ -642,11 +642,11 @@ class OpticalData(AbstractData):
         # The data might have already been treated : it is faster to read the data from file
         dbfile = os.path.join(
             module_dir,
-            "data_files/optical_polyanskiy/optical_polyanskiy_",
-            str(self.min_wl),
-            str(self.max_wl),
-            str(self.n_wl),
-            ".csv",
+            "data_files/optical_polyanskiy/optical_polyanskiy_"
+            + str(self.min_wl)
+            + str(self.max_wl)
+            + str(self.n_wl)
+            + ".csv",
         )
 
         if os.path.isfile(dbfile):
@@ -671,7 +671,7 @@ class OpticalData(AbstractData):
         counts = np.diff(slices)
 
         cols = self.elem_data.columns[slices[:-1] + counts // 2]
-        labels = [col for col in cols]
+        labels = list(cols)  # [col for col in cols]
 
         all_element_data = pd.DataFrame(
             np.add.reduceat(self.elem_data.values, slices[:-1], axis=1) / counts,
@@ -829,11 +829,9 @@ class OpticalData(AbstractData):
             # Check that self.wavelengths are within the range
             if np.any(self.min_wl < range_wl[0]) or np.any(self.max_wl > range_wl[1]):
                 raise ValueError(
-                    """"The values of lambda asked to be returned is outside the range
+                    f"""The values of lambda asked to be returned is outside the range
                 of available data. This can lead to strong deviation as extrapolation might be bad. For information, the
-                range is [{}, {}] microns.""".format(
-                        range_wl[0], range_wl[1]
-                    )
+                range is [{range_wl[0]}, {range_wl[1]}] microns."""
                 )
             else:
                 return np.array([x for x in np.nditer(interpN(self.wavelengths) + 1j * interpK(self.wavelengths))])
@@ -1044,7 +1042,7 @@ class TransportData(AbstractData):
 
         self.all_element_data = self._get_element_props(alpha=alpha)
 
-        self.prop_names = [col for col in self.all_element_data.columns]
+        self.prop_names = list(self.all_element_data.columns)
 
     def _get_element_props(self, alpha=0):
         #
@@ -1074,9 +1072,10 @@ class TransportData(AbstractData):
             # Retrieve or compute the pseudo-inversed values.
             # The values of the effective masses span 12 orders of magnitude, which makes the pseudo-inverse biased
             # To overcome this, we use 1 / (alpha + m) for the pseudo-inversion.
-            # The value of alpha can be tested. A file for each of them is created, so that it is not computed each time.
+            # The value of alpha can be tested. A file for each of them is created,
+            # so that it is not computed each time.
             #
-            dbfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_pi_", str(alpha), ".csv")
+            dbfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_pi_" + str(alpha) + ".csv")
             if os.path.isfile(dbfile):
                 df_pi = pd.read_csv(dbfile)
                 df_pi.set_index("Element", inplace=True)

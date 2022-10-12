@@ -48,7 +48,8 @@ def get_elem_in_data(df, as_pure=False):
     Looks for all elements present in the compounds forming the index of a dataframe.
 
     Args:
-         as_pure: if True, consider only the pure compounds
+        df: DataFrame containing the compounds formula (as strings) as index
+        as_pure: if True, consider only the pure compounds
 
     Returns:
         List of elements (str)
@@ -78,10 +79,27 @@ def get_elem_in_data(df, as_pure=False):
 def get_pseudo_inverse(df_init, cols=None):
     """
     Computes the pseudo-inverse matrix of a dataframe containing properties for multiple compositions.
+    From a compositions matrix (containing the elemental fractions of each element present in the data),
+    and a property column (or multiple properties gathered in a matrix), the pseudo-inverse column
+    (or matrix if multiple properties are present) is defined by
+
+    compositions * pseudo-inverse = property
+
+    The pseudo-inverse coefficients are therefore average contributions of each element present in the data to the
+    property of the compounds containing this element (in a least-square fit manner).
+    This allows to take many compounds-property into consideration.
+
+    Note that the pseudo-inverse coefficients do not represent the property of single elements in their pure form:
+    negative values may appear for single elements and for physically-positive properties, but this only reflects
+    the fact that the presence of the element in compounds generally decreases the value of the property.
+
+    For elements that are not present in compounds of the data, nan are returned.
 
     Args:
-        DataFrame with a Composition column containing compositions, and other columns containing properties
-        cols: list of columns of the dataframe giving the wanted features
+        df_init: DataFrame with a column named "Composition" containing compositions
+                 (anything that can be turned into a Pymatgen Composition object),
+                 and other columns containing properties to be inversed.
+        cols: list of columns of the dataframe giving the features to be pseudo-inversed.
 
     Returns:
         DataFrame with the pseudo-inverse coefficients for all elements present in the initial compositions and all
@@ -89,10 +107,13 @@ def get_pseudo_inverse(df_init, cols=None):
     """
     df = df_init.copy()
 
+    if "Composition" not in df.columns:
+        raise LookupError("The DataFrame should contain a column named Composition")
+
     if cols is None:
         cols = list(df.columns)
-        if "Composition" in cols:
-            cols.remove("Composition")
+        cols.remove("Composition")
+
     data = df[cols]
 
     elems_in_df, elems_not_in_df = get_elem_in_data(data, as_pure=False)
