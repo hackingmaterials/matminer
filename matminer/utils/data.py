@@ -623,8 +623,8 @@ class OpticalData(AbstractData):
         max_wl : maximum wavelength to include in the spectra (µm).
         n_wl: number of wavelengths to include in the spectra.
         bins: number of bins to split the spectra.
-        saving_folder: folder to save the data and csv file used for the featurization. Saving them helps fasten the
-                       featurization.
+        saving_dir: folder to save the data and csv file used for the featurization. Saving them helps fasten the
+                    featurization.
     """
 
     def __init__(
@@ -1020,6 +1020,14 @@ class TransportData(AbstractData):
                for the hole (_p) and electron (_n) conductivity (sigma), Seebeck coefficient (S),
                thermal conductivity (kappa), power factor (PF) and effective mass (m).
         method: type of values, either "exact", "pseudo_inverse", or "combined".
+        alpha: Value used to featurize the effective mass.
+               The values of the effective masses span 12 orders of magnitude, which makes the pseudo-inverse biased
+               To overcome this, we use 1 / (alpha + m) for the pseudo-inversion.
+               The value of alpha can be tested. A file for each of them is created,
+               so that it is not computed each time.
+               Defaults to 0, and used only if method != "exact".
+        saving_dir: folder to save the data and csv file used for the featurization. Saving them helps fasten the
+                    featurization.
     """
 
     def __init__(self, props=None, method="pseudo_inverse", alpha=0, saving_dir="~/.matminer/transport_props/"):
@@ -1040,6 +1048,7 @@ class TransportData(AbstractData):
 
         self.props = props
         self.method = method
+        self.alpha = alpha
 
         # Read the database as a csv file
         dfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_database.csv")
@@ -1058,11 +1067,11 @@ class TransportData(AbstractData):
 
         self.data = data
 
-        self.all_element_data = self._get_element_props(alpha=alpha)
+        self.all_element_data = self._get_element_props()
 
         self.prop_names = list(self.all_element_data.columns)
 
-    def _get_element_props(self, alpha=0):
+    def _get_element_props(self):
         #
         # Compute the exact values
         #
@@ -1088,12 +1097,8 @@ class TransportData(AbstractData):
         else:
             #
             # Retrieve or compute the pseudo-inversed values.
-            # The values of the effective masses span 12 orders of magnitude, which makes the pseudo-inverse biased
-            # To overcome this, we use 1 / (alpha + m) for the pseudo-inversion.
-            # The value of alpha can be tested. A file for each of them is created,
-            # so that it is not computed each time.
             #
-            dbfile = os.path.join(self.saving_dir, "transport_pi_" + str(alpha) + ".csv")
+            dbfile = os.path.join(self.saving_dir, "transport_pi_" + str(self.alpha) + ".csv")
             if os.path.isfile(dbfile):
                 df_pi = pd.read_csv(dbfile)
                 df_pi.set_index("Element", inplace=True)
@@ -1104,13 +1109,13 @@ class TransportData(AbstractData):
                        This can take a few seconds..."""
                 )
                 TP = self.data.copy()
-                TP["1/m_p"] = 1 / (alpha + TP["m_p"].values)
-                TP["1/m_n"] = 1 / (alpha + TP["m_n"].values)
+                TP["1/m_p"] = 1 / (self.alpha + TP["m_p"].values)
+                TP["1/m_n"] = 1 / (self.alpha + TP["m_n"].values)
 
                 df_pi = get_pseudo_inverse(TP)
 
-                df_pi["m_p"] = 1 / df_pi["1/m_p"].values - alpha
-                df_pi["m_n"] = 1 / df_pi["1/m_n"].values - alpha
+                df_pi["m_p"] = 1 / df_pi["1/m_p"].values - self.alpha
+                df_pi["m_n"] = 1 / df_pi["1/m_n"].values - self.alpha
                 df_pi.drop(columns=["1/m_p", "1/m_n"], inplace=True)
                 df_pi.index.name = "Element"
 
