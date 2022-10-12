@@ -639,10 +639,8 @@ class OpticalData(AbstractData):
     ):
 
         # Handles the saving folder
-        if saving_dir[0] == "~":
-            saving_dir = os.path.expanduser(saving_dir)
-        if not os.path.isdir(saving_dir):
-            os.makedirs(os.path.join(saving_dir, "database"), exist_ok=True)
+        saving_dir = os.path.expanduser(saving_dir)
+        os.makedirs(os.path.join(saving_dir, "database"), exist_ok=True)
         self.saving_dir = saving_dir
 
         # Handle the selection of properties
@@ -659,10 +657,7 @@ class OpticalData(AbstractData):
         self.wavelengths = np.linspace(min_wl, max_wl, n_wl)
 
         # The data might have already been treated : it is faster to read the data from file
-        dbfile = os.path.join(
-            self.saving_dir,
-            "optical_polyanskiy_" + str(self.min_wl) + str(self.max_wl) + str(self.n_wl) + ".csv",
-        )
+        dbfile = os.path.join(self.saving_dir, f"optical_polyanskiy_{self.min_wl}_{self.max_wl}_{self.n_wl}.csv")
 
         if os.path.isfile(dbfile):
             data = pd.read_csv(dbfile)
@@ -853,11 +848,9 @@ class OpticalData(AbstractData):
             # Check that lamb is within the range
             if np.any(self.min_wl < range_wl[0]) or np.any(self.max_wl > range_wl[1]):
                 raise ValueError(
-                    """"The values of lambda asked to be returned is outside the range
+                    f""""The values of lambda asked to be returned is outside the range
                 of available data. This can lead to strong deviation as extrapolation might be bad. For information, the
-                range is [{}, {}] microns.""".format(
-                        range_wl[0], range_wl[1]
-                    )
+                range is [{range_wl[0]}, {range_wl[1]}] microns."""
                 )
             else:
                 coeff_file = np.fromstring(data["coefficients"], sep=" ")
@@ -981,7 +974,7 @@ class OpticalData(AbstractData):
             Kavg = navg.imag
             return Navg + 1j * Kavg
         else:
-            raise ValueError("No correct data for" + dirname)
+            raise ValueError(f"No correct data for {dirname}")
 
     def get_elemental_property(self, elem, property_name):
         estr = str(elem)
@@ -1033,10 +1026,8 @@ class TransportData(AbstractData):
     def __init__(self, props=None, method="pseudo_inverse", alpha=0, saving_dir="~/.matminer/transport_props/"):
 
         # Handles the saving folder
-        if saving_dir[0] == "~":
-            saving_dir = os.path.expanduser(saving_dir)
-        if not os.path.isdir(saving_dir):
-            os.makedirs(saving_dir, exist_ok=True)
+        saving_dir = os.path.expanduser(saving_dir)
+        os.makedirs(saving_dir, exist_ok=True)
         self.saving_dir = saving_dir
 
         # Handle the selection of properties
@@ -1098,7 +1089,7 @@ class TransportData(AbstractData):
             #
             # Retrieve or compute the pseudo-inversed values.
             #
-            dbfile = os.path.join(self.saving_dir, "transport_pi_" + str(self.alpha) + ".csv")
+            dbfile = os.path.join(self.saving_dir, f"transport_pi_{self.alpha}.csv")
             if os.path.isfile(dbfile):
                 df_pi = pd.read_csv(dbfile)
                 df_pi.set_index("Element", inplace=True)
