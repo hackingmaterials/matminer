@@ -623,9 +623,27 @@ class OpticalData(AbstractData):
         max_wl : maximum wavelength to include in the spectra (µm).
         n_wl: number of wavelengths to include in the spectra.
         bins: number of bins to split the spectra.
+        saving_folder: folder to save the data and csv file used for the featurization. Saving them helps fasten the
+                       featurization.
     """
 
-    def __init__(self, props=None, method="pseudo_inverse", min_wl=0.38, max_wl=0.78, n_wl=401, bins=10):
+    def __init__(
+        self,
+        props=None,
+        method="pseudo_inverse",
+        min_wl=0.38,
+        max_wl=0.78,
+        n_wl=401,
+        bins=10,
+        saving_dir="~/.matminer/optical_props/",
+    ):
+
+        # Handles the saving folder
+        if saving_dir[0] == "~":
+            saving_dir = os.path.expanduser(saving_dir)
+        if not os.path.isdir(saving_dir):
+            os.makedirs(os.path.join(saving_dir, "database"), exist_ok=True)
+        self.saving_dir = saving_dir
 
         # Handle the selection of properties
         if props is None:
@@ -642,12 +660,8 @@ class OpticalData(AbstractData):
 
         # The data might have already been treated : it is faster to read the data from file
         dbfile = os.path.join(
-            module_dir,
-            "data_files/optical_polyanskiy/optical_polyanskiy_"
-            + str(self.min_wl)
-            + str(self.max_wl)
-            + str(self.n_wl)
-            + ".csv",
+            self.saving_dir,
+            "optical_polyanskiy_" + str(self.min_wl) + str(self.max_wl) + str(self.n_wl) + ".csv",
         )
 
         if os.path.isfile(dbfile):
@@ -658,7 +672,7 @@ class OpticalData(AbstractData):
             # Recompute the data file from the database
             warnings.warn(
                 """Datafile not existing for these wavelengths: recollecting the data from the database.
-                             This can take a few seconds..."""
+                   This can take a few seconds..."""
             )
             self.data = self._get_optical_data_from_database()
             self.data.to_csv(dbfile)
@@ -744,11 +758,12 @@ class OpticalData(AbstractData):
         """
 
         db_dir = os.path.join(module_dir, "data_files/optical_polyanskiy/database/")
+        db_dir = os.path.join(self.saving_dir, "database")
         # The database has been compressed, it needs to be untarred if it is not already the case.
         if not os.listdir(db_dir):
             db_file = os.path.join(module_dir, "data_files/optical_polyanskiy/database.tar.xz")
             with tarfile.open(db_file, mode="r:xz") as tar:
-                tar.extractall(os.path.join(module_dir, "data_files/optical_polyanskiy/"))
+                tar.extractall(self.saving_dir)
 
         names = []
         compos = []
@@ -1007,7 +1022,14 @@ class TransportData(AbstractData):
         method: type of values, either "exact", "pseudo_inverse", or "combined".
     """
 
-    def __init__(self, props=None, method="pseudo_inverse", alpha=0):
+    def __init__(self, props=None, method="pseudo_inverse", alpha=0, saving_dir="~/.matminer/transport_props/"):
+
+        # Handles the saving folder
+        if saving_dir[0] == "~":
+            saving_dir = os.path.expanduser(saving_dir)
+        if not os.path.isdir(saving_dir):
+            os.makedirs(saving_dir, exist_ok=True)
+        self.saving_dir = saving_dir
 
         # Handle the selection of properties
         possible_props = ["sigma_p", "sigma_n", "S_p", "S_n", "kappa_p", "kappa_n", "PF_p", "PF_n", "m_p", "m_n"]
@@ -1071,7 +1093,7 @@ class TransportData(AbstractData):
             # The value of alpha can be tested. A file for each of them is created,
             # so that it is not computed each time.
             #
-            dbfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_pi_" + str(alpha) + ".csv")
+            dbfile = os.path.join(self.saving_dir, "transport_pi_" + str(alpha) + ".csv")
             if os.path.isfile(dbfile):
                 df_pi = pd.read_csv(dbfile)
                 df_pi.set_index("Element", inplace=True)
@@ -1079,7 +1101,7 @@ class TransportData(AbstractData):
             else:
                 warnings.warn(
                     """Pseudo-inverse values not found for this value of alpha. Recomputing them...
-                                 This can take a few seconds..."""
+                       This can take a few seconds..."""
                 )
                 TP = self.data.copy()
                 TP["1/m_p"] = 1 / (alpha + TP["m_p"].values)
