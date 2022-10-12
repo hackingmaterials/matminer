@@ -7,6 +7,7 @@ including ``pymatgen`` and ``Magpie``.
 import abc
 import json
 import os
+import tarfile
 import warnings
 from glob import glob
 
@@ -744,15 +745,10 @@ class OpticalData(AbstractData):
 
         db_dir = os.path.join(module_dir, "data_files/optical_polyanskiy/database/")
         # The database has been compressed, it needs to be untarred if it is not already the case.
-        if not os.path.isdir(db_dir):
-            os.system("mkdir " + db_dir)
-            os.system(
-                "tar -Jxf "
-                + os.path.join(module_dir, "data_files/optical_polyanskiy/database.tar.xz")
-                + " -C "
-                + db_dir
-                + " --strip-components=1"
-            )
+        if not os.listdir(db_dir):
+            db_file = os.path.join(module_dir, "data_files/optical_polyanskiy/database.tar.xz")
+            with tarfile.open(db_file, mode="r:xz") as tar:
+                tar.extractall(os.path.join(module_dir, "data_files/optical_polyanskiy/"))
 
         names = []
         compos = []
