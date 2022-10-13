@@ -254,6 +254,11 @@ class ElementProperty(BaseFeaturizer):
             ]
         elif self.data_source.__class__.__name__ == "OpticalData":
             citation = [
+                "@misc{mtgx,"
+                "author = {Guillaume Brunin, Guido Petretto, David Waroquiers (Matgenix)},"
+                "year = {2022}"
+            ]
+            citation += [
                 "@misc{rii,"
                 "author = {Mikhail N. Polyanskiy},"
                 "title = {Refractive index database},"
@@ -262,6 +267,11 @@ class ElementProperty(BaseFeaturizer):
             ]
         elif self.data_source.__class__.__name__ == "TransportData":
             citation = [
+                "@misc{mtgx,"
+                "author = {Guillaume Brunin, Guido Petretto, David Waroquiers (Matgenix)},"
+                "year = {2022}"
+            ]
+            citation += [
                 "@article{ricci2017ab,"
                 "title={An ab initio electronic transport database for inorganic materials},"
                 "author={Ricci, Francesco and Chen, Wei and Aydemir, Umut and Snyder, G Jeffrey"
@@ -278,7 +288,7 @@ class ElementProperty(BaseFeaturizer):
         return citation
 
     def implementors(self):
-        return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn"]
+        return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn", "Guillaume Brunin (Matgenix)"]
 
 
 class Meredig(BaseFeaturizer):
