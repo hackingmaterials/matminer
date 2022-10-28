@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 extras_require = {
-    "mpds": ["ujson", "jmespath", "httplib2", "ase"],
+    "mpds": ["ujson", "jmespath", "httplib2", "ase", "jsonschema"],
     "dscribe": ["dscribe"],
     "mdfforge": ["mdf-forge"],
     "aflow": ["aflow"],
@@ -44,7 +44,6 @@ if __name__ == "__main__":
             "sympy",
             "monty",
             "pymatgen",
-            "jsonschema"
         ],
         extras_require=extras_require,
         classifiers=[
