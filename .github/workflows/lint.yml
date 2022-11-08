@@ -4,24 +4,23 @@ on: [push, pull_request]
 
 jobs:
   build:
-    # prevent this action from running on forks
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 1
       matrix:
-        python-version: [3.9]
+        python-version: ["3.9"]
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: pip
-          cache-dependency-path: requirements-extras.txt
+          cache: 'pip'
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-extras.txt --quiet
+          python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools
+          python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}_extras.txt
+
 #      - name: mypy
 #        run: |
 #          mypy --version
