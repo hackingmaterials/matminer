@@ -16,6 +16,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
+          cache-dependency-path: '**/setup.py'
       - name: Install dependencies
         run: |
           python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools
