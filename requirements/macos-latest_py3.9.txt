@@ -74,7 +74,7 @@ pybtex==0.24.0
     #   pymatgen
 pydantic==1.10.2
     # via emmet-core
-pymatgen==2022.10.22
+pymatgen==2022.11.7
     # via
     #   emmet-core
     #   matminer (setup.py)
