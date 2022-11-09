@@ -39,7 +39,6 @@ jobs:
         mongodb-version: ${{ matrix.mongodb-version }}
 
     - name: Install Python dependencies
-      shell: bash -l {0}
       run: |
         python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools
         python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}_extras.txt
@@ -50,5 +49,7 @@ jobs:
       run: |
         # Sleeping to allow mongo a bit more time to boot, avoiding connect errors
         sleep 10
+        echo "start mongo ..."
         mongo localhost/admin --eval 'db.createUser({user: "admin",pwd: "password",roles: [ { role: "root", db: "admin" } ]})'
+        echo "run tests ..."
         python${{ matrix.python-version }} -m pytest --cov=matminer matminer
