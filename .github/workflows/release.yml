@@ -43,6 +43,8 @@ jobs:
           rm -r html
           rm -r doctrees
           touch .nojekyll
+          git config --local user.email "feedback@materialsproject.org"
+          git config --local user.name "materialsproject"
           git add .
           git commit -a -m "update docs"
           git push
