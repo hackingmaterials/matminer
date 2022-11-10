@@ -1,4 +1,4 @@
-"""library for data mining the properties of materials"""
+"""library for data mining materials properties"""
 
 from pkg_resources import DistributionNotFound, get_distribution
 
