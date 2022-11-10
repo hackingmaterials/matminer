@@ -7,10 +7,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - matminer/**
 
   pull_request:
     branches:
       - main
+    paths:
+      - matminer/**
 
   workflow_dispatch:
     inputs:
