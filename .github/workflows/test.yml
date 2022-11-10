@@ -81,11 +81,11 @@ jobs:
         python${{ matrix.python-version }} -m pytest --cov=matminer matminer
 
     - name: Build package
-      if: matrix.python-version == "3.9"
+      if: matrix.python-version == 3.9
       run: python${{ matrix.python-version }} -m build
 
     - name: Publish distribution 📦s to Test PyPI
-      if: matrix.python-version == "3.9"
+      if: matrix.python-version == 3.9
       uses: pypa/gh-action-pypi-publish@release/v1.5
       with:
         skip_existing: true
