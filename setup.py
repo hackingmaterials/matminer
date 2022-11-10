@@ -20,7 +20,7 @@ extras_require = {
     "citrine": ["citrination-client"],
     "dev": [
         "pytest", "pytest-cov", "coverage", "coveralls",
-        "flake8", "black", "pylint"
+        "flake8", "black", "pylint", "sphinx"
     ]
 }
 tests_require = [r for v in extras_require.values() for r in v]
