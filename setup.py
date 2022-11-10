@@ -22,7 +22,8 @@ tests_require = [r for v in extras_require.values() for r in v]
 if __name__ == "__main__":
     setup(
         name='matminer',
-        version='0.7.8',
+        use_scm_version=True,
+        setup_requires=["setuptools_scm"],
         description='matminer is a library that contains tools for data '
                     'mining in Materials Science',
         long_description=open(os.path.join(module_dir, 'README.md')).read(),
