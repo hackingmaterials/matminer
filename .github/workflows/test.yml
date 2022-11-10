@@ -51,42 +51,44 @@ jobs:
         cache: "pip"
         cache-dependency-path: '**/setup.py'
 
-    - name: Install Python dependencies
-      run: |
-        python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools build setuptools setuptools_scm wheel
-        python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}_extras.txt
-        # Using non-editable install for testing building of MANIFEST files
-        python${{ matrix.python-version }} -m pip install --no-deps .
+    #- name: Install Python dependencies
+    #  run: |
+    #    python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools setuptools setuptools_scm
+    #    python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}_extras.txt
+    #    # Using non-editable install for testing building of MANIFEST files
+    #    python${{ matrix.python-version }} -m pip install --no-deps .
 
-    - name: linting
-      run: |
-        black --version
-        black --check --diff --color matminer
-        flake8 --version
-        flake8 --count --show-source --statistics matminer
-        # exit-zero treats all errors as warnings.
-        flake8 --count --exit-zero --max-complexity=20 --statistics matminer
-        # mypy --version
-        # rm -rf .mypy_cache
-        # mypy matminer
-        # pydocstyle --count matminer
-        # pylint matminer
+    #- name: linting
+    #  run: |
+    #    black --version
+    #    black --check --diff --color matminer
+    #    flake8 --version
+    #    flake8 --count --show-source --statistics matminer
+    #    # exit-zero treats all errors as warnings.
+    #    flake8 --count --exit-zero --max-complexity=20 --statistics matminer
+    #    # mypy --version
+    #    # rm -rf .mypy_cache
+    #    # mypy matminer
+    #    # pydocstyle --count matminer
+    #    # pylint matminer
 
-    - name: Start MongoDB
-      uses: supercharge/mongodb-github-action@1.6.0
-      with:
-        mongodb-version: ${{ matrix.mongodb-version }}
+    #- name: Start MongoDB
+    #  uses: supercharge/mongodb-github-action@1.6.0
+    #  with:
+    #    mongodb-version: ${{ matrix.mongodb-version }}
 
-    - name: Run tests
-      run: |
-        # Sleeping to allow mongo a bit more time to boot, avoiding connect errors
-        sleep 10
-        mongo localhost/admin --eval 'db.createUser({user: "admin",pwd: "password",roles: [ { role: "root", db: "admin" } ]})'
-        python${{ matrix.python-version }} -m pytest --cov=matminer matminer
+    #- name: Run tests
+    #  run: |
+    #    # Sleeping to allow mongo a bit more time to boot, avoiding connect errors
+    #    sleep 10
+    #    mongo localhost/admin --eval 'db.createUser({user: "admin",pwd: "password",roles: [ { role: "root", db: "admin" } ]})'
+    #    python${{ matrix.python-version }} -m pytest --cov=matminer matminer
 
     - name: Build package
       if: matrix.python-version == 3.9
-      run: python${{ matrix.python-version }} -m build
+      run: |
+        python${{ matrix.python-version }} -m pip install --upgrade pip build setuptools setuptools_scm wheel
+        python${{ matrix.python-version }} -m build
 
     - name: Publish distribution 📦s to Test PyPI
       if: matrix.python-version == 3.9
