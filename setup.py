@@ -4,6 +4,12 @@ import os
 
 from setuptools import find_packages, setup
 
+
+def local_version(version):
+    # https://github.com/pypa/setuptools_scm/issues/342
+    return ""
+
+
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 extras_require = {
@@ -22,7 +28,11 @@ tests_require = [r for v in extras_require.values() for r in v]
 if __name__ == "__main__":
     setup(
         name='matminer',
-        use_scm_version=True,
+        use_scm_version={
+            "root": ".",
+            "relative_to": __file__,
+            "local_scheme": local_version,
+        },
         setup_requires=["setuptools_scm"],
         description='matminer is a library that contains tools for data '
                     'mining in Materials Science',
