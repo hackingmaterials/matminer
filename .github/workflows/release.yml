@@ -4,14 +4,6 @@ on:
   release:
     types: [published]
 
-  workflow_dispatch:
-    inputs:
-      publishPackage:
-        description: "publish Package"
-        required: true
-        default: true
-        type: boolean
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -43,7 +35,6 @@ jobs:
           git config --local user.name "materialsproject"
           git fetch --all --prune
           git checkout main
-          git pull
           python${{ matrix.python-version }} -m build
           cd docs_rst
           python${{ matrix.python-version }} featurizer_summary.py > featurizer_summary.rst
@@ -61,7 +52,6 @@ jobs:
           git push
 
       - name: Publish package
-        if: ${{ inputs.publishPackage }}
         uses: pypa/gh-action-pypi-publish@release/v1.5
         with:
           user: __token__
