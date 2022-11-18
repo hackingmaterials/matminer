@@ -114,14 +114,14 @@ class MatminerDatasetsTest(DataSetsTest):
         ]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
+            self.assertIsInstance(df["structure"][0], Structure)
             tensor_headers = [
                 "compliance_tensor",
                 "elastic_tensor",
                 "elastic_tensor_original",
             ]
             for c in tensor_headers:
-                self.assertEqual(type(df[c][0]), np.ndarray)
+                self.assertIsInstance(df[c][0], np.ndarray)
 
         self.universal_dataset_check(
             "elastic_tensor_2015",
@@ -146,8 +146,8 @@ class MatminerDatasetsTest(DataSetsTest):
         numeric_headers = ["nsites", "space_group", "volume", "eij_max"]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
-            self.assertEqual(type(df["piezoelectric_tensor"][0]), np.ndarray)
+            self.assertIsInstance(df["structure"][0], Structure)
+            self.assertIsInstance(df["piezoelectric_tensor"][0], np.ndarray)
 
         self.universal_dataset_check(
             "piezoelectric_tensor",
@@ -181,7 +181,7 @@ class MatminerDatasetsTest(DataSetsTest):
         bool_headers = ["pot_ferroelectric"]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
+            self.assertIsInstance(df["structure"][0], Structure)
 
         self.universal_dataset_check(
             "dielectric_constant",
@@ -202,7 +202,7 @@ class MatminerDatasetsTest(DataSetsTest):
         ]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
+            self.assertIsInstance(df["structure"][0], Structure)
 
         self.universal_dataset_check("flla", object_headers, numeric_headers, test_func=_unique_tests)
 
@@ -222,7 +222,7 @@ class MatminerDatasetsTest(DataSetsTest):
         bool_headers = ["gap is direct"]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
+            self.assertIsInstance(df["structure"][0], Structure)
 
         self.universal_dataset_check(
             "castelli_perovskites",
@@ -238,7 +238,7 @@ class MatminerDatasetsTest(DataSetsTest):
         numeric_headers = ["pf_n", "pf_p", "s_n", "s_p", "m_n", "m_p"]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
+            self.assertIsInstance(df["structure"][0], Structure)
 
         self.universal_dataset_check("boltztrap_mp", object_headers, numeric_headers, test_func=_unique_tests)
 
@@ -248,7 +248,7 @@ class MatminerDatasetsTest(DataSetsTest):
         numeric_headers = ["eps_electronic", "eps_total", "last phdos peak"]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
+            self.assertIsInstance(df["structure"][0], Structure)
 
         self.universal_dataset_check(
             "phonon_dielectric_mp",
@@ -304,7 +304,7 @@ class MatminerDatasetsTest(DataSetsTest):
         ]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
+            self.assertIsInstance(df["structure"][0], Structure)
 
         self.universal_dataset_check("mp_all_20181018", object_headers, numeric_headers, test_func=_unique_tests)
 
@@ -429,8 +429,8 @@ class MatminerDatasetsTest(DataSetsTest):
         ]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
-            self.assertEqual(type(df["composition"][0]), Composition)
+            self.assertIsInstance(df["structure"][0], Structure)
+            self.assertIsInstance(df["composition"][0], Composition)
 
         self.universal_dataset_check(
             "jarvis_ml_dft_training",
@@ -463,8 +463,8 @@ class MatminerDatasetsTest(DataSetsTest):
         ]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
-            self.assertEqual(type(df["composition"][0]), Composition)
+            self.assertIsInstance(df["structure"][0], Structure)
+            self.assertIsInstance(df["composition"][0], Composition)
 
         self.universal_dataset_check("jarvis_dft_3d", object_headers, numeric_headers, test_func=_unique_tests)
 
@@ -491,8 +491,8 @@ class MatminerDatasetsTest(DataSetsTest):
         ]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
-            self.assertEqual(type(df["composition"][0]), Composition)
+            self.assertIsInstance(df["structure"][0], Structure)
+            self.assertIsInstance(df["composition"][0], Composition)
 
         self.universal_dataset_check("jarvis_dft_2d", object_headers, numeric_headers, test_func=_unique_tests)
 
@@ -558,8 +558,8 @@ class MatminerDatasetsTest(DataSetsTest):
         bool_headers = ["suspect_value"]
 
         def _unique_tests(df):
-            self.assertEqual(type(df["structure"][0]), Structure)
-            self.assertEqual(type(df["composition"][0]), Composition)
+            self.assertIsInstance(df["structure"][0], Structure)
+            self.assertIsInstance(df["composition"][0], Composition)
             self.assertTrue(isinstance(df["brgoch_feats"][0], dict))
 
         self.universal_dataset_check(

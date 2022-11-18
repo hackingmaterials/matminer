@@ -55,7 +55,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         """
 
         self.site_featurizer = site_featurizer
-        self.stats = tuple([stats]) if type(stats) == str else stats
+        self.stats = tuple([stats]) if isinstance(stats, str) else stats
         if self.stats and "_mode" in "".join(self.stats):
             nmodes = 0
             for stat in self.stats:
