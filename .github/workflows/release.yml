@@ -1,0 +1,58 @@
+name: release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: '**/setup.py'
+
+      - name: Install dependencies
+        run: |
+          python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools build setuptools setuptools_scm wheel
+          python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}_extras.txt
+          # Using non-editable install for testing building of MANIFEST files
+          python${{ matrix.python-version }} -m pip install --no-deps .
+
+      - name: Build package and docs
+        run: |
+          git config --local user.email "feedback@materialsproject.org"
+          git config --local user.name "materialsproject"
+          git fetch --all --prune
+          git checkout main
+          python${{ matrix.python-version }} -m build
+          cd docs_rst
+          python${{ matrix.python-version }} featurizer_summary.py > featurizer_summary.rst
+          python${{ matrix.python-version }} dataset_summary.py > dataset_summary.rst
+          sphinx-apidoc -o . -f ../matminer
+          make html
+          cp _static/* ../docs/html/_static
+          cd ../docs
+          cp -r html/* .
+          rm -r html
+          rm -r doctrees
+          touch .nojekyll
+          git add .
+          git commit -a -m "update docs"
+          git push
+
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1.5
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
