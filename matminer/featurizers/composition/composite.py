@@ -11,7 +11,9 @@ from matminer.utils.data import (
     MagpieData,
     MatscholarElementData,
     MEGNetElementData,
+    OpticalData,
     PymatgenData,
+    TransportData,
 )
 
 
@@ -56,6 +58,10 @@ class ElementProperty(BaseFeaturizer):
             self.data_source = MatscholarElementData()
         elif data_source == "megnet_el":
             self.data_source = MEGNetElementData()
+        elif data_source == "optical":
+            self.data_source = OpticalData()
+        elif data_source == "mp_transport":
+            self.data_source = TransportData()
         else:
             self.data_source = data_source
 
@@ -154,6 +160,16 @@ class ElementProperty(BaseFeaturizer):
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
             features = MEGNetElementData().prop_names
 
+        elif preset_name == "optical":
+            data_source = "optical"
+            stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
+            features = OpticalData().prop_names
+
+        elif preset_name == "mp_transport":
+            data_source = "mp_transport"
+            stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
+            features = TransportData().prop_names
+
         else:
             raise ValueError("Invalid preset_name specified!")
 
@@ -236,12 +252,43 @@ class ElementProperty(BaseFeaturizer):
                 r"adsurl = {https://ui.adsabs.harvard.edu/\#abs/2018arXiv181205055C},"
                 "adsnote = {Provided by the SAO/NASA Astrophysics Data System}}"
             ]
+        elif self.data_source.__class__.__name__ == "OpticalData":
+            citation = [
+                "@misc{mtgx,"
+                "author = {Guillaume Brunin, Guido Petretto, David Waroquiers (Matgenix)},"
+                "year = {2022}"
+            ]
+            citation += [
+                "@misc{rii,"
+                "author = {Mikhail N. Polyanskiy},"
+                "title = {Refractive index database},"
+                "howpublished = {https://refractiveindex.info},"
+                "note = {Accessed on 2022-06-30}}"
+            ]
+        elif self.data_source.__class__.__name__ == "TransportData":
+            citation = [
+                "@misc{mtgx,"
+                "author = {Guillaume Brunin, Guido Petretto, David Waroquiers (Matgenix)},"
+                "year = {2022}"
+            ]
+            citation += [
+                "@article{ricci2017ab,"
+                "title={An ab initio electronic transport database for inorganic materials},"
+                "author={Ricci, Francesco and Chen, Wei and Aydemir, Umut and Snyder, G Jeffrey"
+                "and Rignanese, Gian-Marco and Jain, Anubhav and Hautier, Geoffroy},"
+                "journal={Scientific data},"
+                "volume={4},"
+                "number={1},"
+                "pages={1--13},"
+                "year={2017},"
+                "publisher={Nature Publishing Group}}"
+            ]
         else:
             citation = []
         return citation
 
     def implementors(self):
-        return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn"]
+        return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn", "Guillaume Brunin (Matgenix)"]
 
 
 class Meredig(BaseFeaturizer):
