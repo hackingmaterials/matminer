@@ -1,0 +1,90 @@
+# https://www.oddbird.net/2022/06/01/dependabot-single-pull-request/
+name: upgrade dependencies
+
+on:
+  workflow_dispatch: # Allow running on-demand
+  schedule:
+    # Runs every Monday at 8:00 UTC (4:00 Eastern)
+    - cron: '0 8 * * 1'
+
+jobs:
+  upgrade:
+    name: ${{ matrix.os }}/py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest']
+        python-version: ["3.8", "3.9", "3.10"]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: '**/setup.py'
+      - name: Upgrade Python dependencies
+        shell: bash
+        run: |
+          python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools
+          python${{ matrix.python-version }} -m piptools compile -q --upgrade -o requirements/${{ matrix.os }}_py${{ matrix.python-version }}.txt
+          python${{ matrix.python-version }} -m piptools compile -q --upgrade --all-extras -o requirements/${{ matrix.os }}_py${{ matrix.python-version }}_extras.txt
+      - name: Detect changes
+        id: changes
+        shell: bash
+        run: |
+          echo "count=$(git diff-index HEAD | wc -l | xargs)" >> $GITHUB_OUTPUT
+          echo "files=$(git ls-files --exclude-standard --others | wc -l | xargs)" >> $GITHUB_OUTPUT
+      - name: commit & push changes
+        if: steps.changes.outputs.count > 0 || steps.changes.outputs.files > 0
+        shell: bash
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add requirements
+          git commit -m "update dependencies for ${{ matrix.os }}/py${{ matrix.python-version }}"
+          git push -f origin ${{ github.ref_name }}:auto-dependency-upgrades-${{ matrix.os }}-py${{ matrix.python-version }}
+
+  pull_request:
+    name: Merge all branches and open PR
+    runs-on: ubuntu-latest
+    needs: upgrade
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: detect auto-upgrade-dependency branches
+        id: changes
+        run: echo "count=$(git branch -r | grep auto-dependency-upgrades- | wc -l | xargs)" >> $GITHUB_OUTPUT
+      - name: merge all auto-dependency-upgrades branches
+        if: steps.changes.outputs.count > 0
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git checkout -b auto-dependency-upgrades
+          git branch -r | grep auto-dependency-upgrades- | xargs -I {} git merge {}
+          git rebase ${GITHUB_REF##*/}
+          git push -f origin auto-dependency-upgrades
+          git branch -r | grep auto-dependency-upgrades- | cut -d/ -f2 | xargs -I {} git push origin :{}
+      - name: Open pull request if needed
+        if: steps.changes.outputs.count > 0
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        # Only open a PR if the branch is not attached to an existing one
+        run: |
+          PR=$(gh pr list --head auto-dependency-upgrades --json number -q '.[0].number')
+          if [ -z $PR ]; then
+            gh pr create \
+            --head auto-dependency-upgrades \
+            --title "Automated dependency upgrades" \
+            --body "Full log: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          else
+            echo "Pull request already exists, won't create a new one."
+          fi
