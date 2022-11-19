@@ -138,8 +138,14 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
     to reproduce the feature, just to get an idea what it is.
     """
 
-    def set_n_jobs(self, n_jobs):
-        """Set the number of threads for this."""
+    def set_n_jobs(self, n_jobs: int) -> None:
+        """Set the number of concurrent jobs to spawn during featurization.
+
+        Args:
+            n_jobs (int): Number of threads in multiprocessing pool.
+
+        Note: It seems multiprocessing can be the cause of out-of-memory (OOM) errors, especially when trying to featurize large structures on HPC nodes with strict memory limits. Using featurizer.set_n_jobs(1) has been known to help as a workaround.
+        """
         self._n_jobs = n_jobs
 
     @property
