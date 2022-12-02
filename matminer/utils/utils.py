@@ -1,3 +1,4 @@
+""" Utility module """
 import warnings
 
 import numpy as np
@@ -115,6 +116,7 @@ def get_pseudo_inverse(df_init, cols=None):
         cols.remove("Composition")
 
     data = df[cols]
+    data.index = df["Composition"].map(lambda s: str(s))
 
     elems_in_df, elems_not_in_df = get_elem_in_data(data, as_pure=False)
     n_elem_tot = len(elems_in_df)
