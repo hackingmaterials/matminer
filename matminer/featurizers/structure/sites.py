@@ -25,7 +25,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
     This featurizer first uses a site featurizer class (see site.py for
     options) to compute features of each site in a structure, and then computes
     features of the entire structure by measuring statistics of each attribute.
-    Can optionally compute the the statistics of only sites with certain ranges
+    Can optionally compute the statistics of only sites with certain ranges
     of oxidation states (e.g., only anions).
 
     Features:
@@ -55,7 +55,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         """
 
         self.site_featurizer = site_featurizer
-        self.stats = tuple([stats]) if type(stats) == str else stats
+        self.stats = tuple([stats]) if isinstance(stats, str) else stats
         if self.stats and "_mode" in "".join(self.stats):
             nmodes = 0
             for stat in self.stats:

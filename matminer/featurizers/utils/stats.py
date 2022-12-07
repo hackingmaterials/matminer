@@ -19,7 +19,7 @@ class PropertyStats:
         PropertyStats.calc_stat(x, 'mean', weights=[0, 0, 1]) # Result is 3
 
     Some of the statistics functions take options (e.g., Holder means). You can
-    pass them to the the statistics functions by adding them after the name and
+    pass them to the statistics functions by adding them after the name and
     two colons. For example, the 0th Holder mean would be::
 
         PropertyStats.calc_stat(x, 'holder_mean::0')
