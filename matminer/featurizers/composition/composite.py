@@ -28,7 +28,7 @@ class ElementProperty(BaseFeaturizer):
 
     For example:
 
-    "PymetgenData range X"  # Range of electronegativity from Pymatgen data
+    "PymatgenData range X"  # Range of electronegativity from Pymatgen data
 
     For a list of all statistics, see the PropertyStats documentation; for a
     list of all attributes available for a given data_source, see the

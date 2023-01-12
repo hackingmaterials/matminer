@@ -34,7 +34,6 @@ class AbstractData(metaclass=abc.ABCMeta):
         Returns:
             float, property of that element
         """
-        pass
 
     def get_elemental_properties(self, elems, property_name):
         """Get elemental properties for a list of elements
@@ -61,7 +60,6 @@ class OxidationStatesMixin(metaclass=abc.ABCMeta):
         Returns:
             [int] - oxidation states
         """
-        pass
 
 
 class OxidationStateDependentData(AbstractData):
@@ -78,7 +76,6 @@ class OxidationStateDependentData(AbstractData):
         Return:
             (float) - Value of property
         """
-        pass
 
     def get_charge_dependent_property_from_specie(self, specie, property_name):
         """Retrieve a oxidation-state dependent elemental property

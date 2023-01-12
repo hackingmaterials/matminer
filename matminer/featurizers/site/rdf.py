@@ -253,7 +253,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
 
         Args:
             X - [list of tuples], training data
-                tuple values should be (struc, idx)
+                tuple values should be (struct, idx)
         Returns:
             self
         """

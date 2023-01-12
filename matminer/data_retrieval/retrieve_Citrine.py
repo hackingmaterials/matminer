@@ -62,7 +62,7 @@ class CitrineDataRetrieval(BaseDataRetrieval):
             raise AttributeError(
                 """Citrine API key not found.
 
-            You need to get an API key from Citrination, and either supply it as an argument to 
+            You need to get an API key from Citrination, and either supply it as an argument to
             this class or set it as the value of the CITRINATION_API_KEY environment variable
 
             See https://citrineinformatics.github.io/api-documentation/quickstart/index.html
