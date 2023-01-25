@@ -34,6 +34,7 @@ if __name__ == "__main__":
         description="matminer is a library that contains tools for data mining in Materials Science",
         long_description=open(os.path.join(module_dir, "README.md")).read(),
         url="https://github.com/hackingmaterials/matminer",
+        long_description_content_type="text/markdown",
         author="Anubhav Jain",
         author_email="anubhavster@gmail.com",
         license="modified BSD",
