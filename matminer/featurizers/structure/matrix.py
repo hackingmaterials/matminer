@@ -335,7 +335,7 @@ class OrbitalFieldMatrix(BaseFeaturizer):
             ohd[l][curr_shell[2]] = 1
             nume += curr_shell[2]
             shell_num += 1
-        my_ohv = np.zeros(self.size, np.int)
+        my_ohv = np.zeros(self.size, int)
         k = 0
         for j in range(4):
             for i in range(2 * (2 * j + 1)):
