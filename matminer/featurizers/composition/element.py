@@ -207,6 +207,9 @@ class BandCenter(BaseFeaturizer):
         - Band center
     """
 
+    magpie_data = MagpieData()
+    deml_data = DemlData()
+
     def featurize(self, comp):
         """
         (Rough) estimation of absolution position of band center using
@@ -222,8 +225,8 @@ class BandCenter(BaseFeaturizer):
         gmean = 1.0
         sumamt = sum(comp.get_el_amt_dict().values())
         for el, amt in comp.get_el_amt_dict().items():
-            first_ioniz = DemlData().get_elemental_property(Element(el), "first_ioniz") / 1000
-            elec_aff = MagpieData().get_elemental_property(Element(el), "ElectronAffinity")
+            first_ioniz = self.deml_data.get_elemental_property(Element(el), "first_ioniz") / 1000
+            elec_aff = self.magpie_data.get_elemental_property(Element(el), "ElectronAffinity")
             gmean *= (0.5 * (first_ioniz + elec_aff) / 96.48) ** (amt / sumamt)
         return [gmean]
 
