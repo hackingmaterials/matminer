@@ -35,7 +35,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
     a featurizer that returns the partial radial distribution function
     may need to know which elements are present in a dataset.
 
-    You can can also use the `precheck` and `precheck_dataframe` methods to
+    You can also use the `precheck` and `precheck_dataframe` methods to
     ensure a featurizer is in scope for a given sample (or dataset) before
     featurizing.
 
@@ -138,8 +138,14 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
     to reproduce the feature, just to get an idea what it is.
     """
 
-    def set_n_jobs(self, n_jobs):
-        """Set the number of threads for this."""
+    def set_n_jobs(self, n_jobs: int) -> None:
+        """Set the number of concurrent jobs to spawn during featurization.
+
+        Args:
+            n_jobs (int): Number of threads in multiprocessing pool.
+
+        Note: It seems multiprocessing can be the cause of out-of-memory (OOM) errors, especially when trying to featurize large structures on HPC nodes with strict memory limits. Using featurizer.set_n_jobs(1) has been known to help as a workaround.
+        """
         self._n_jobs = n_jobs
 
     @property
@@ -438,7 +444,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         # Add a progress bar
         if pbar:
             # list() required, tqdm has issues with memory if generator given
-            entries = tqdm(list(entries), desc=self.__class__.__name__)
+            entries = tqdm(list(entries), desc=self.__class__.__name__, **(pbar if isinstance(pbar, dict) else {}))
 
         # Run the actual featurization
         if self.n_jobs == 1:

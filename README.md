@@ -3,9 +3,9 @@
 matminer is a library for performing data mining in the field of materials science.
 
 - **[Website (including documentation)](https://hackingmaterials.github.io/matminer/)**
-- **[Examples Repository](https://github.com/hackingmaterials/matminer_examples)** 
-- **[Help/Support Forum](https://matsci.org/c/matminer/16)** 
-- **[Source Repository](https://github.com/hackingmaterials/matminer)** 
+- **[Examples Repository](https://github.com/hackingmaterials/matminer_examples)**
+- **[Help/Support Forum](https://matsci.org/c/matminer/16)**
+- **[Source Repository](https://github.com/hackingmaterials/matminer)**
 
 matminer supports Python 3.8+.
 
@@ -30,4 +30,4 @@ Matminer helps users apply methods and data sets developed by the community. Ple
 
 - If you use one or more **datasets** accessed through matminer, check the dataset metadata info for relevant citations on the original datasets.
 - If you use one or more **data retrieval methods**, check ``citations()`` method of the data retrieval class. This method will provide a list of BibTeX-formatted citations for that featurizer, making it easy to keep track of and cite the original publications.
-- If you use one or more **featurizers**, please take advantage of the ```citations()``` function present for every featurizer in matminer. 
+- If you use one or more **featurizers**, please take advantage of the ```citations()``` function present for every featurizer in matminer.

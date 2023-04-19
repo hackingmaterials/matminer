@@ -29,6 +29,7 @@ class DensityFeatures(BaseFeaturizer):
             desired_features: [str] - choose from "density", "vpa",
                 "packing fraction"
         """
+        self.desired_features = desired_features
         self.features = ["density", "vpa", "packing fraction"] if not desired_features else desired_features
 
     def precheck(self, s: Structure) -> bool:

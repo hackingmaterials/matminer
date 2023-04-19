@@ -209,10 +209,10 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
         features output from this mode will be vectors with length n_bins.
 
     2. pairwise GRDF: (advanced users) - n_bins x n_sites matrix
-        In this mode, GRDFs are are still computed around a central site, but
+        In this mode, GRDFs are still computed around a central site, but
         only one other site (and their translational equivalents) are used to
         compute a GRDF (e.g. site 1 with site 2 and the translational
-        equivalents of site 2). This results in a a n_sites x n_bins matrix of
+        equivalents of site 2). This results in a n_sites x n_bins matrix of
         features. Requires `fit` for determining the max number of sites for
 
     The GRDF is a generalization of the partial radial distribution function
@@ -253,7 +253,7 @@ class GeneralizedRadialDistributionFunction(BaseFeaturizer):
 
         Args:
             X - [list of tuples], training data
-                tuple values should be (struc, idx)
+                tuple values should be (struct, idx)
         Returns:
             self
         """

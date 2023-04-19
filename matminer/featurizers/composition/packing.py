@@ -221,7 +221,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         elements = list(set(elements))
         return self._create_cluster_lookup_tool(tuple(sorted(elements)))
 
-    @lru_cache()
+    @lru_cache
     def _create_cluster_lookup_tool(self, elements):
         """
         Cached version of `create_cluster_lookup_tool`. Assumes that the

@@ -421,7 +421,7 @@ class CrystalNNFingerprint(BaseFeaturizer):
             self.chem_info = None
         cn_motif_op_params = load_cn_motif_op_params()
 
-        self.ops = {}  # load order parameter objects & paramaters
+        self.ops = {}  # load order parameter objects & parameters
         for cn, t_list in self.op_types.items():
             self.ops[cn] = []
             for t in t_list:

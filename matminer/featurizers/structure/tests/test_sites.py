@@ -4,8 +4,8 @@ import numpy as np
 
 from matminer.featurizers.site import SiteElementalProperty
 from matminer.featurizers.structure.sites import (
-    SiteStatsFingerprint,
     PartialsSiteStatsFingerprint,
+    SiteStatsFingerprint,
 )
 from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
