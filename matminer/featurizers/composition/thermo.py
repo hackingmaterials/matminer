@@ -41,10 +41,21 @@ class CohesiveEnergy(BaseFeaturizer):
 
         if not formation_energy_per_atom:
             # Get formation energy of most stable structure from MP
-            struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
+            # Now it can habdel legacy API and new API from matertials project depending on the API key length provided.
+            try:
+                struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
+            except:
+                struct_lst = []
+                struct_lst_obj = MPRester(self.mapi_key).summary.search(formula=comp.reduced_formula, fields=["formation_energy_per_atom"])
+                for i in struct_lst_obj:
+                    struct_lst.append(i)
             if len(struct_lst) > 0:
-                most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
-                formation_energy_per_atom = most_stable_entry["formation_energy_per_atom"]
+                try:
+                    most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
+                    formation_energy_per_atom = most_stable_entry["formation_energy_per_atom"]
+                except:
+                    most_stable_entry = sorted(struct_lst, key=lambda e: e.formation_energy_per_atom)[0]
+                    formation_energy_per_atom = most_stable_entry.formation_energy_per_atom
             else:
                 raise ValueError(f"No structure found in MP for {comp}")
 
