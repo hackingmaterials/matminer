@@ -42,6 +42,12 @@ jobs:
       MPLBACKEND: "Agg"
       MATMINER_DATASET_FULL_TEST: ${{ inputs.fullTest }}
 
+    services:
+      mongo:
+        image: mongo:4
+        ports:
+          - 27017:27017
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -74,16 +80,8 @@ jobs:
         # pydocstyle --count matminer
         # pylint matminer
 
-    - name: Start MongoDB
-      uses: supercharge/mongodb-github-action@1.6.0
-      with:
-        mongodb-version: ${{ matrix.mongodb-version }}
-
     - name: Run tests
       run: |
-        # Sleeping to allow mongo a bit more time to boot, avoiding connect errors
-        sleep 10
-        mongo localhost/admin --eval 'db.createUser({user: "admin",pwd: "password",roles: [ { role: "root", db: "admin" } ]})'
         python${{ matrix.python-version }} -m pytest --cov=matminer matminer
 
     - name: Build package
