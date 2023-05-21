@@ -41,7 +41,11 @@ class CohesiveEnergy(BaseFeaturizer):
 
         if not formation_energy_per_atom:
             # Get formation energy of most stable structure from MP
-            struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
+            if self.mapi_key:
+                struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
+            else:
+                struct_lst = MPRester().get_data(comp.reduced_formula)
+
             if len(struct_lst) > 0:
                 most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
                 formation_energy_per_atom = most_stable_entry["formation_energy_per_atom"]
@@ -96,7 +100,7 @@ class CohesiveEnergyMP(BaseFeaturizer):
         """
 
         # Get formation energy of most stable structure from MP
-        with MPRester(self.mapi_key) as mpr:
+        with MPRester(self.mapi_key) if self.mapi_key else MPRester() as mpr:
             struct_lst = mpr.get_data(comp.reduced_formula)
             if len(struct_lst) > 0:
                 most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]

@@ -31,7 +31,10 @@ class MPDataRetrieval(BaseDataRetrieval):
             api_key: (str) Your Materials Project API key, or None if you've
                 set up your pymatgen config.
         """
-        self.mprester = MPRester(api_key=api_key)
+        if api_key:
+            self.mprester = MPRester(api_key=api_key)
+        else:
+            self.mprester = MPRester()
 
     def api_link(self):
         return "https://materialsproject.org/wiki/index.php/The_Materials_API"
