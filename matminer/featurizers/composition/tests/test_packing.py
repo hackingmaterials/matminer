@@ -14,6 +14,7 @@ class PackingFeaturesTest(CompositionFeaturesTest):
         f = AtomicPackingEfficiency()
         ef = ElementFraction()
         ef.set_n_jobs(1)
+        f.set_n_jobs(1)
 
         # Test the APE calculation routines
         self.assertAlmostEqual(1.11632, f.get_ideal_radius_ratio(15))
