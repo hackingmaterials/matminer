@@ -233,6 +233,8 @@ pytest==7.2.0
     #   pytest-cov
 pytest-cov==4.0.0
     # via matminer (setup.py)
+pytest-timeout==2.1.0
+    # via matminer (setup.py)
 python-dateutil==2.8.2
     # via
     #   matplotlib
