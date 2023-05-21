@@ -1,18 +1,21 @@
 import unittest
+import os
 
 import numpy as np
 from pymatgen.core.structure import Structure
 
 from matminer.data_retrieval.retrieve_AFLOW import AFLOWDataRetrieval
+from matminer.data_retrieval.tests.base import on_ci
 
 
+@unittest.skipIf(on_ci.upper() == "TRUE", "Bad AFLOW-GHActions pipeline")
 class AFLOWDataRetrievalTest(unittest.TestCase):
     def setUp(self):
         self.aflowdr = AFLOWDataRetrieval()
 
     def test_get_data(self):
         df = self.aflowdr.get_dataframe(
-            criteria={"auid": "aflow:a17a2da2f3d3953a"},
+            criteria={"auid": {"$in": ["aflow:a17a2da2f3d3953a"]}},
             properties=["density", "enthalpy_formation_atom", "positions_fractional"],
             files=["structure"],
         )
