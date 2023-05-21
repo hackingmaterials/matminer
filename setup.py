@@ -18,7 +18,7 @@ extras_require = {
     "mdfforge": ["mdf-forge"],
     "aflow": ["aflow"],
     "citrine": ["citrination-client"],
-    "dev": ["pytest", "pytest-cov", "coverage", "coveralls", "flake8", "black", "pylint", "sphinx"],
+    "dev": ["pytest", "pytest-cov", "pytest-timeout", "coverage", "coveralls", "flake8", "black", "pylint", "sphinx",],
 }
 tests_require = [r for v in extras_require.values() for r in v]
 
