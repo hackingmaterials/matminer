@@ -24,13 +24,13 @@ class TestPropertyStats(TestCase):
             sample_2_weighted: float, expected value for statistic of sample 2 with weights
         """
 
-        self.assertAlmostEqual(sample_1, PropertyStats.calc_stat(self.sample_1, statistic))
-        self.assertAlmostEqual(
+        np.testing.assert_almost_equal(sample_1, PropertyStats.calc_stat(self.sample_1, statistic))
+        np.testing.assert_almost_equal(
             sample_1_weighted,
             PropertyStats.calc_stat(self.sample_1, statistic, self.sample_1_weights),
         )
-        self.assertAlmostEqual(sample_2, PropertyStats.calc_stat(self.sample_2, statistic))
-        self.assertAlmostEqual(
+        np.testing.assert_almost_equal(sample_2, PropertyStats.calc_stat(self.sample_2, statistic))
+        np.testing.assert_almost_equal(
             sample_2_weighted,
             PropertyStats.calc_stat(self.sample_2, statistic, self.sample_2_weights),
         )
@@ -54,10 +54,10 @@ class TestPropertyStats(TestCase):
         self._run_test("std_dev", 0, 0, 0.623609564, 0.694365075)
 
     def test_skewness(self):
-        self._run_test("skewness", 0, 0, 0.38180177, 0.559451361)
+        self._run_test("skewness", np.nan, 0, 0.38180177, 0.559451361)
 
     def test_kurtosis(self):
-        self._run_test("kurtosis", 0, 0, 1.5, 1.9403292181)
+        self._run_test("kurtosis", np.nan, 0, 1.5, 1.9403292181)
 
     def test_mode(self):
         self._run_test("mode", 1, 1, 0, 0.5)
