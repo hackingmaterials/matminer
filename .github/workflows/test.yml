@@ -9,12 +9,14 @@ on:
       - main
     paths:
       - matminer/**
+      - requirements/**
 
   pull_request:
     branches:
       - main
     paths:
       - matminer/**
+      - requirements/**
 
   workflow_dispatch:
     inputs:
