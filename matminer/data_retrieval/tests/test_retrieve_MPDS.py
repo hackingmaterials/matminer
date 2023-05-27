@@ -36,7 +36,6 @@ class MPDSDataRetrievalTest(unittest.TestCase):
     @unittest.skipIf(on_ci.upper() == "TRUE", "Bad Datasource-GHActions pipeline")
     @unittest.skipIf("MPDS_KEY" not in os.environ, "MPDS_KEY env var not set")
     def test_valid_answer(self):
-
         client = MPDSDataRetrieval()
         answer = client.get_data(self.test_request, fields={})
 

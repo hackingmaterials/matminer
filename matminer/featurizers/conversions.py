@@ -643,7 +643,6 @@ class PymatgenFunctionApplicator(ConversionFeaturizer):
     """
 
     def __init__(self, func, func_args=None, func_kwargs=None, target_col_id=None, overwrite_data=False):
-
         if not callable(func):
             raise TypeError(f"Function {func} is not callable!")
 

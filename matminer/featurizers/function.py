@@ -84,7 +84,6 @@ class FunctionFeaturizer(BaseFeaturizer):
         combo_function=None,
         latexify_labels=False,
     ):
-
         self.expressions = expressions or default_exps
         self.multi_feature_depth = multi_feature_depth
         self.combo_function = combo_function or np.prod
