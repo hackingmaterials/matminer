@@ -28,7 +28,6 @@ class DOSFeaturesTest(PymatgenTest):
         self.nb3sn_df = pd.DataFrame({"dos": [nb3sn_dos]})
 
     def test_SiteDOS(self):
-
         dos = self.df["dos"][0]
 
         # ensure that both sites give same scores (expected behavior for si)

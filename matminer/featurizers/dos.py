@@ -597,7 +597,6 @@ def get_site_dos_scores(dos, idx, decay_length, sampling_resolution, gaussian_sm
     orbital_scores = {}
     proj = dos.get_site_spd_dos(site)
     for orb in proj:
-
         # smear dos for spin up and down
         smear_dos = proj[orb].get_smeared_densities(gaussian_smear)
         dos_up = smear_dos[Spin.up]

@@ -51,7 +51,6 @@ class JarvisCFID(BaseFeaturizer):
         use_ddf=True,
         use_nn=True,
     ):
-
         self.use_cell = use_cell
         self.use_chem = use_chem
         self.use_chg = use_chg

@@ -52,7 +52,6 @@ class IOTest(PymatgenTest):
         self.df = pd.DataFrame(data={"structure": [self.diamond]})
 
     def test_store_dataframe_as_json(self):
-
         # check write produces correct file
         temp_file = os.path.join(self.temp_folder, "test_dataframe.json")
         test_file = os.path.join(test_dir, "dataframe.json")
@@ -121,7 +120,6 @@ class IOTest(PymatgenTest):
         self.assertDictsAlmostEqual(temp_data, test_data)
 
     def test_load_dataframe_from_json(self):
-
         df = load_dataframe_from_json(os.path.join(test_dir, "dataframe.json"))
         self.assertTrue(self.diamond == df["structure"][0], "Dataframe contents do not match")
 

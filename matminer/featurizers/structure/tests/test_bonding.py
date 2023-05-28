@@ -19,7 +19,6 @@ from matminer.featurizers.structure.tests.base import StructureFeaturesTest
 
 class BondingStructureTest(StructureFeaturesTest):
     def test_bondfractions(self):
-
         # Test individual structures with featurize
         bf_md = BondFractions.from_preset("MinimumDistanceNN")
         bf_md.no_oxi = True
@@ -62,7 +61,6 @@ class BondingStructureTest(StructureFeaturesTest):
         self.assertArrayEqual(df["Ni - Ni bond frac."].to_numpy(), [0.0, 0.5])
 
     def test_bob(self):
-
         # Test a single fit and featurization
         scm = SineCoulombMatrix(flatten=False)
         bob = BagofBonds(coulomb_matrix=scm, token=" - ")

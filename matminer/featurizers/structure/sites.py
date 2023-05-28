@@ -330,7 +330,6 @@ class PartialsSiteStatsFingerprint(SiteStatsFingerprint):
         return np.hstack(output)
 
     def compute_pssf(self, s, e):
-
         # This code is extremely similar to super().featurize(). The key
         # difference is that only one specific element is analyzed.
 

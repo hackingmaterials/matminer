@@ -37,7 +37,6 @@ class MiscStructureFeaturesTest(StructureFeaturesTest):
         self.assertEqual(comp.implementors(), f.implementors())
 
     def test_xrd_powderPattern(self):
-
         # default settings test
         xpp = XRDPowderPattern()
         pattern = xpp.featurize(self.diamond)

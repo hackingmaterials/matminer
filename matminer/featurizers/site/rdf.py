@@ -97,7 +97,6 @@ class GaussianSymmFunc(BaseFeaturizer):
 
         # Loop over each neighbor j
         for j, neigh_j in enumerate(neigh_coords):
-
             # Compute the distance of each neighbor (k) to r
             r_ij = neigh_dist[j]
             d_jk = neigh_coords[(j + 1) :] - neigh_coords[j]

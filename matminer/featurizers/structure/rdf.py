@@ -340,7 +340,7 @@ class ElectronicRadialDistributionFunction(BaseFeaturizer):
         # Add oxidation states.
         struct = ValenceIonicRadiusEvaluator(struct).structure
 
-        distribution = np.zeros(self.nbins, dtype=np.float)
+        distribution = np.zeros(self.nbins, dtype=np.float64)
 
         for site in struct.sites:
             this_charge = float(site.specie.oxi_state)

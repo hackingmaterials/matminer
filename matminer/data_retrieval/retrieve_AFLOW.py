@@ -218,13 +218,11 @@ class RetrievalQuery(Query):
         """
 
         for str_property, value in pymongo_query.items():
-
             # converts str representation of property to aflow.Keyword
             keyword = getattr(K, str_property)
 
             if isinstance(value, dict):  # handles special operators
                 for inner_key, inner_value in value.items():
-
                     if inner_key == "$in":
                         self.filter(
                             reduce(

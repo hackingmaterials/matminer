@@ -50,7 +50,7 @@ class TestFunctionFeaturizer(unittest.TestCase):
 
         # Test complex functionality
         expressions = ["sqrt(x)"]
-        ff = FunctionFeaturizer(expressions=expressions, postprocess=np.complex)
+        ff = FunctionFeaturizer(expressions=expressions, postprocess=np.complex128)
         new_df = ff.fit_featurize_dataframe(self.test_df, "a", inplace=False)
         self.assertEqual(new_df["sqrt(a)"][0], 1j)
 

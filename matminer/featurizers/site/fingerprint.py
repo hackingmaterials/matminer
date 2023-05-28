@@ -167,7 +167,6 @@ class OPSiteFingerprint(BaseFeaturizer):
         dist_exp=2,
         zero_ops=True,
     ):
-
         cn_target_motif_op = load_cn_target_motif_op()
         cn_motif_op_params = load_cn_motif_op_params()
 

@@ -148,9 +148,9 @@ class SOAP(BaseFeaturizer):
         self.atomic_numbers = elements
         self.soap = SOAP_dscribe(
             species=self.atomic_numbers,
-            rcut=self.rcut,
-            nmax=self.nmax,
-            lmax=self.lmax,
+            r_cut=self.rcut,
+            n_max=self.nmax,
+            l_max=self.lmax,
             sigma=self.sigma,
             rbf=self.rbf,
             periodic=self.periodic,
@@ -165,7 +165,7 @@ class SOAP(BaseFeaturizer):
     def featurize(self, struct, idx):
         self._check_fitted()
         s_ase = self.adaptor.get_atoms(struct)
-        return self.soap.create(s_ase, positions=[idx], n_jobs=self.n_jobs).tolist()[0]
+        return self.soap.create(s_ase, centers=[idx], n_jobs=self.n_jobs).tolist()[0]
 
     def feature_labels(self):
         self._check_fitted()

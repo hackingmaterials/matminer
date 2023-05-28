@@ -449,7 +449,6 @@ class TestBaseClass(PymatgenTest):
         # multiindex or not, and interaction over entries/featurizers
 
         for mi, re, n, iter_entries in product([True, False], [True, False], [1, 2], [True, False]):
-
             mf = MultipleFeaturizer([self.multi, self.single], iterate_over_entries=iter_entries)
             # Make some test data that will cause errors
             data = pd.DataFrame({"x": ["a", 2, 3]})

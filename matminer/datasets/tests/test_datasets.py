@@ -21,7 +21,6 @@ class DataSetsTest(DatasetTest):
         bool_headers=None,
         test_func=None,
     ):
-
         # "Hard" integrity checks that take a long time.
         # These tests only run if the MATMINER_DATASET_FULL_TEST
         # environment variable is set to True
@@ -577,7 +576,6 @@ class MatminerDatasetsTest(DataSetsTest):
         self.universal_dataset_check("expt_gap_kingsbury", object_headers, numeric_headers)
 
     def test_expt_formation_enthalpy_kingsbury(self):
-
         object_headers = ["formula", "likely_mpid", "phaseinfo", "reference"]
 
         numeric_headers = ["expt_form_e", "uncertainty"]
