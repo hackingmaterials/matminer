@@ -58,7 +58,7 @@ docopt==0.6.2
     # via coveralls
 docutils==0.19
     # via sphinx
-dscribe==1.2.2
+dscribe==2.0.0
     # via matminer (setup.py)
 emmet-core==0.38.9
     # via mp-api
