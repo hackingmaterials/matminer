@@ -99,6 +99,11 @@ class ChemicalSRO(BaseFeaturizer):
         Returns:
             self
         """
+        if isinstance(X, (list, tuple)):
+            # Required for numpy 1.24 due to changes in the way numpy casts
+            # object arrays.
+            X = np.array(X, dtype=object)
+
         structs = np.atleast_2d(X)[:, 0]
         if not all([isinstance(struct, Structure) for struct in structs]):
             raise TypeError("This fit requires an array-like input of Pymatgen " "Structures and sites!")
