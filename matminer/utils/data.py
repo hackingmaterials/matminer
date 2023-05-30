@@ -557,7 +557,7 @@ class IUCrBondValenceData:
                     }
                     data.append(entry)
         new_data = pd.DataFrame(data)
-        new_params = self.params.append(new_data, sort=True, ignore_index=True)
+        new_params = pd.concat([self.params, new_data], sort=True, ignore_index=True)
         return new_params
 
     def get_bv_params(self, cation, anion, cat_val, an_val):

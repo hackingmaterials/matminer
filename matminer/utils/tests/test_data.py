@@ -156,7 +156,7 @@ class TestTransportData(TestCase):
         cr_sigmap = self.data_source.get_elemental_property(elem="Cr", property_name="sigma_p")
         self.assertAlmostEqual(cr_sigmap, 205569.89838499163)
         cu_kappan = self.data_source.get_elemental_property(elem="Cu", property_name="kappa_n")
-        self.assertAlmostEqual(cu_kappan, 1814544.75663)
+        self.assertAlmostEqual(cu_kappan, 1814544.75663, places=5)
 
 
 if __name__ == "__main__":

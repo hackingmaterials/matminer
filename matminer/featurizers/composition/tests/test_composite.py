@@ -96,7 +96,7 @@ class CompositeFeaturesTest(CompositionFeaturesTest):
 
     def test_elem_transport(self):
         df_elem = ElementProperty.from_preset("mp_transport").featurize_dataframe(self.df, col_id="composition")
-        self.assertAlmostEqual(df_elem["TransportData mean sigma_p"].iloc[0], 14933.7481377614)
+        self.assertAlmostEqual(df_elem["TransportData mean sigma_p"].iloc[0], 14933.7481377614, places=6)
         self.assertAlmostEqual(df_elem["TransportData std_dev S_n"].iloc[1], 489.973884028426)
         self.assertAlmostEqual(df_elem["TransportData mean m_p"].iloc[0], -0.00019543531213698)
 

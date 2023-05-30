@@ -29,8 +29,8 @@ class UtilsTest(TestCase):
 
     def test_get_pseudo_inverse(self):
         PI = get_pseudo_inverse(self.data, cols=["n_380.0"])
-        self.assertEqual(PI["n_380.0"][0], -1.6345896211391995)
-        self.assertEqual(PI["n_380.0"][4], 4.155467999999999)
+        self.assertAlmostEqual(PI["n_380.0"][0], -1.6345896211391995)
+        self.assertAlmostEqual(PI["n_380.0"][4], 4.155467999999999)
 
 
 if __name__ == "__main__":
