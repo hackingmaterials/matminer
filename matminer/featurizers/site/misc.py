@@ -59,6 +59,7 @@ class IntersticeDistribution(BaseFeaturizer):
             raise ValueError("interstice_types only support sub-list of " "['dist', 'area', 'vol']")
         self.stats = ["mean", "std_dev", "minimum", "maximum"] if stats is None else stats
         self.radius_type = radius_type
+        self.data_source = MagpieData()
 
     def featurize(self, struct, idx):
         """
@@ -78,9 +79,9 @@ class IntersticeDistribution(BaseFeaturizer):
         nn_coords = np.array([nn["site"].coords for nn in n_w])
 
         # Get center atom's radius and its nearest neighbors' radii
-        center_r = MagpieData().get_elemental_properties([struct[idx].specie], self.radius_type)[0] / 100
+        center_r = self.data_source.get_elemental_properties([struct[idx].specie], self.radius_type)[0] / 100
         nn_els = [nn["site"].specie for nn in n_w]
-        nn_rs = np.array(MagpieData().get_elemental_properties(nn_els, self.radius_type)) / 100
+        nn_rs = np.array(self.data_source.get_elemental_properties(nn_els, self.radius_type)) / 100
 
         # Get indices of atoms forming the simplices of convex hull
         convex_hull_simplices = ConvexHull(nn_coords).simplices

@@ -14,13 +14,25 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 
 extras_require = {
     "mpds": ["ujson", "jmespath", "httplib2", "ase", "jsonschema"],
-    "dscribe": ["dscribe"],
+    "dscribe": ["dscribe~=2.0"],
     "mdfforge": ["mdf-forge"],
     "aflow": ["aflow"],
     "citrine": ["citrination-client"],
-    "dev": ["pytest", "pytest-cov", "coverage", "coveralls", "flake8", "black", "pylint", "sphinx"],
+    "dev": [
+        "pytest",
+        "pytest-cov",
+        "pytest-timeout",
+        "coverage",
+        "coveralls",
+        "flake8",
+        "black",
+        "pylint",
+        "sphinx",
+    ],
 }
 tests_require = [r for v in extras_require.values() for r in v]
+
+extras_require["tests"] = tests_require
 
 if __name__ == "__main__":
     setup(
@@ -44,7 +56,7 @@ if __name__ == "__main__":
         install_requires=[
             "numpy>=1.20.1",
             "requests",
-            "pandas",
+            "pandas~=1.5",
             "tqdm",
             "pymongo",
             "future",

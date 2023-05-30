@@ -63,7 +63,7 @@ class FunctionFeaturizer(BaseFeaturizer):
             include pairwise combined features
         postprocess (function or type): type to cast functional outputs
             to, if, for example, you want to include the possibility of
-            complex numbers in your outputs, use postprocess=np.complex,
+            complex numbers in your outputs, use postprocess=np.complex128,
             defaults to float
         combo_function (function): function to combine multi-features,
             defaults to np.prod (i.e. cumulative product of expressions),
@@ -84,7 +84,6 @@ class FunctionFeaturizer(BaseFeaturizer):
         combo_function=None,
         latexify_labels=False,
     ):
-
         self.expressions = expressions or default_exps
         self.multi_feature_depth = multi_feature_depth
         self.combo_function = combo_function or np.prod

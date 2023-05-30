@@ -27,7 +27,7 @@ class MongoDataRetrievalTest(PymatgenTest):
 
     @unittest.skipIf(not on_ci, "MongoDataRetrievalTest configured only to run on CI by default")
     def test_get_dataframe(self):
-        db = MongoClient("localhost", 27017, username="admin", password="password").test_db
+        db = MongoClient("localhost", 27017).test_db
         c = db.test_collection
         docs = [
             {

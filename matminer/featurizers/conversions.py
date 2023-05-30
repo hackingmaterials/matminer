@@ -567,7 +567,10 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
 
     def __init__(self, target_col_id="structure", overwrite_data=False, mapi_key=None):
         super().__init__(target_col_id, overwrite_data)
-        self.mpr = MPRester(mapi_key)
+        if mapi_key:
+            self.mpr = MPRester(mapi_key)
+        else:
+            self.mpr = MPRester()
         self.set_n_jobs(1)
 
     def featurize(self, comp):
@@ -640,7 +643,6 @@ class PymatgenFunctionApplicator(ConversionFeaturizer):
     """
 
     def __init__(self, func, func_args=None, func_kwargs=None, target_col_id=None, overwrite_data=False):
-
         if not callable(func):
             raise TypeError(f"Function {func} is not callable!")
 

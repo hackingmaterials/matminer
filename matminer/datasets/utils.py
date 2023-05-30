@@ -78,7 +78,6 @@ def _validate_dataset(data_path, url=None, file_hash=None, download_if_missing=T
     do_download = False
     # If the file doesn't exist, download it
     if not os.path.exists(data_path):
-
         # Ensure proper arguments for download
         if not download_if_missing:
             raise OSError("Data not found and download_if_missing set to False")

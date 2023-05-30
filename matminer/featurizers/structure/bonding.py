@@ -407,7 +407,6 @@ class BondFractions(BaseFeaturizer):
                 nearest = []
                 d_min = None
                 for abss in abonds_species.keys():
-
                     # The distance between bonds is euclidean. To get a good
                     # measure of the coordinate between mendeleev numbers for
                     # each specie, we use the minimum difference. ie, for
@@ -715,7 +714,6 @@ class GlobalInstabilityIndex(BaseFeaturizer):
     """
 
     def __init__(self, r_cut=4.0, disordered_pymatgen=False):
-
         bv = IUCrBondValenceData()
         self.bv_values = bv.params
         self.r_cut = r_cut
