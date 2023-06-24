@@ -12,7 +12,6 @@ import json
 from monty.json import MontyDecoder
 from pymatgen.core.composition import Composition
 from pymatgen.core.structure import IStructure
-from pymatgen.ext.matproj import MPRester
 from pymatgen.io.ase import AseAtomsAdaptor
 
 from matminer.featurizers.base import BaseFeaturizer
@@ -566,6 +565,9 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
     """
 
     def __init__(self, target_col_id="structure", overwrite_data=False, mapi_key=None):
+
+        from pymatgen.ext.matproj import MPRester
+
         super().__init__(target_col_id, overwrite_data)
         if mapi_key:
             self.mpr = MPRester(mapi_key)
