@@ -565,7 +565,6 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
     """
 
     def __init__(self, target_col_id="structure", overwrite_data=False, mapi_key=None):
-
         from pymatgen.ext.matproj import MPRester
 
         super().__init__(target_col_id, overwrite_data)
