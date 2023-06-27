@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>matminer.featurizers package &#8212; matminer 0.8.0 documentation</title>
+    <title>matminer.featurizers package &#8212; matminer 0.9.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.8.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers package</a></li> 
       </ul>
     </div>  
@@ -133,9 +133,11 @@
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.composition.html#module-matminer.featurizers.composition.element">matminer.featurizers.composition.element module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter"><code class="docutils literal notranslate"><span class="pre">BandCenter</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter.citations"><code class="docutils literal notranslate"><span class="pre">BandCenter.citations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter.deml_data"><code class="docutils literal notranslate"><span class="pre">BandCenter.deml_data</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter.feature_labels"><code class="docutils literal notranslate"><span class="pre">BandCenter.feature_labels()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter.featurize"><code class="docutils literal notranslate"><span class="pre">BandCenter.featurize()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter.implementors"><code class="docutils literal notranslate"><span class="pre">BandCenter.implementors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter.magpie_data"><code class="docutils literal notranslate"><span class="pre">BandCenter.magpie_data</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.ElementFraction"><code class="docutils literal notranslate"><span class="pre">ElementFraction</span></code></a><ul>
@@ -1193,7 +1195,7 @@ featurization methods can function. Generally, you pass the dataset to
 fit to determine which features a featurizer should compute. For example,
 a featurizer that returns the partial radial distribution function
 may need to know which elements are present in a dataset.</p>
-<p>You can can also use the <cite>precheck</cite> and <cite>precheck_dataframe</cite> methods to
+<p>You can also use the <cite>precheck</cite> and <cite>precheck_dataframe</cite> methods to
 ensure a featurizer is in scope for a given sample (or dataset) before
 featurizing.</p>
 <p>You can also employ the featurizer as part of a ScikitLearn Pipeline object.
@@ -1554,8 +1556,13 @@ an extra boolean column added for the precheck.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.base.BaseFeaturizer.set_n_jobs">
-<span class="sig-name descname"><span class="pre">set_n_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.set_n_jobs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the number of threads for this.</p>
+<span class="sig-name descname"><span class="pre">set_n_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#matminer.featurizers.base.BaseFeaturizer.set_n_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the number of concurrent jobs to spawn during featurization.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>n_jobs (int): Number of threads in multiprocessing pool.</p>
+</dd>
+</dl>
+<p>Note: It seems multiprocessing can be the cause of out-of-memory (OOM) errors, especially when trying to featurize large structures on HPC nodes with strict memory limits. Using featurizer.set_n_jobs(1) has been known to help as a workaround.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1706,7 +1713,12 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.base.MultipleFeaturizer.set_n_jobs">
 <span class="sig-name descname"><span class="pre">set_n_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.base.MultipleFeaturizer.set_n_jobs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the number of threads for this.</p>
+<dd><p>Set the number of concurrent jobs to spawn during featurization.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>n_jobs (int): Number of threads in multiprocessing pool.</p>
+</dd>
+</dl>
+<p>Note: It seems multiprocessing can be the cause of out-of-memory (OOM) errors, especially when trying to featurize large structures on HPC nodes with strict memory limits. Using featurizer.set_n_jobs(1) has been known to help as a workaround.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3193,7 +3205,7 @@ underscores. For example:</p>
 include pairwise combined features</p>
 </dd>
 <dt>postprocess (function or type): type to cast functional outputs</dt><dd><p>to, if, for example, you want to include the possibility of
-complex numbers in your outputs, use postprocess=np.complex,
+complex numbers in your outputs, use postprocess=np.complex128,
 defaults to float</p>
 </dd>
 <dt>combo_function (function): function to combine multi-features,</dt><dd><p>defaults to np.prod (i.e. cumulative product of expressions),
@@ -3600,7 +3612,7 @@ i. e. the cumulative product of the expressions</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.8.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers package</a></li> 
       </ul>
     </div>
