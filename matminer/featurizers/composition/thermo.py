@@ -2,7 +2,6 @@
 Composition featurizers for thermodynamic properties.
 """
 
-from pymatgen.ext.matproj import MPRester
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.utils.data import CohesiveEnergyData
@@ -40,6 +39,8 @@ class CohesiveEnergy(BaseFeaturizer):
         formation_energy_per_atom = formation_energy_per_atom or None
 
         if not formation_energy_per_atom:
+            from pymatgen.ext.matproj import MPRester
+
             # Get formation energy of most stable structure from MP
             if self.mapi_key:
                 struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
@@ -98,6 +99,7 @@ class CohesiveEnergyMP(BaseFeaturizer):
         Args:
             comp: (str) compound composition, eg: "NaCl"
         """
+        from pymatgen.ext.matproj import MPRester
 
         # Get formation energy of most stable structure from MP
         with MPRester(self.mapi_key) if self.mapi_key else MPRester() as mpr:

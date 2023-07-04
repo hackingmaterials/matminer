@@ -170,7 +170,7 @@ This version was skipped due to an upload issue
 
 * Progressbar for featurizers (A. Dunn)
 * Add BOOP features (L. Ward)
-* Add Seko features, including more lookup tables for MagpieData and elemental property site features + covariance, skew, kurtosis (L. Ward)
+* Add Seko features, including more lookuip tables for MagpieData and elemental property site features + covariance, skew, kurtosis (L. Ward)
 * New scheme for GRDF/AFS bin functions (L. Ward)
 * misc fixes (A. Dunn., L. Ward)
 
