@@ -74,7 +74,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         self._n_elems = len(self._el_frac.featurize(Composition("H")))
 
         # Tool for looking up radii
-        self._data_source = MagpieData()
+        self._data_source = MagpieData(impute_nan=True)
 
         # Lookup table of ideal radius ratios
         self.ideal_ratio = dict(
