@@ -56,6 +56,9 @@ class Miedema(BaseFeaturizer):
             'valence_electrons', 'a_const', 'R_const', 'H_trans'
             'compressibility', 'shear_modulus', 'melting_point'
             'structural_stability'. Please see the references for details.
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     Returns:
         (list of floats) Miedema formation enthalpies (eV/atom) for input
             struct_types:
@@ -65,7 +68,7 @@ class Miedema(BaseFeaturizer):
             -Miedema_deltaH_amor: for amorphous phase
     """
 
-    def __init__(self, struct_types="all", ss_types="min", data_source="Miedema"):
+    def __init__(self, struct_types="all", ss_types="min", data_source="Miedema", impute_nan=True):
         if isinstance(struct_types, list):
             self.struct_types = struct_types
         else:
@@ -87,6 +90,22 @@ class Miedema(BaseFeaturizer):
             self.df_dataset = pd.read_csv(os.path.join(data_dir, "Miedema.csv"), index_col="element")
         else:
             raise NotImplementedError(f"data_source {data_source} not implemented yet")
+
+        self.impute_nan = impute_nan
+        if self.impute_nan:
+            elem_list = [Element(estr) for estr in self.df_dataset.index]
+            missing_elements = [e for e in Element if e not in elem_list]
+            missing_element_names = [e.symbol for e in missing_elements]
+            element_ids = [e.Z for e in missing_elements]
+            indices = list(range(len(elem_list), len(elem_list) + len(missing_elements)))
+            df_missing = pd.DataFrame(data=[indices, missing_element_names, element_ids]).T
+            df_missing.columns = ["Unnamed: 0", "element", "element_id"]
+            df_missing.set_index("element", inplace=True)
+            for col in self.df_dataset:
+                if col not in df_missing:
+                    df_missing[col] = np.mean(self.df_dataset[col])
+            self.df_dataset = pd.concat([self.df_dataset, df_missing])
+            self.df_dataset.fillna(self.df_dataset.mean(), inplace=True)
 
         self.element_list = [Element(estr) for estr in self.df_dataset.index]
 
@@ -195,7 +214,9 @@ class Miedema(BaseFeaturizer):
                 alp[1] * (elec[1] - elec[0]) / n_ws[1],
             ]
         )
-        alp_a = np.multiply(1.5, np.power(v_a, 2 / 3)) / reduce(lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3))
+        alp_a = np.multiply(1.5, np.power(np.abs(v_a), 2 / 3)) / reduce(
+            lambda x, y: 1 / x + 1 / y, np.power(n_ws, 1 / 3)
+        )
 
         # effective volume in alloy
         vab_a = v_molar[0] + np.array(
@@ -212,13 +233,17 @@ class Miedema(BaseFeaturizer):
         )
 
         # H_elast A in B
-        hab_elast = (2 * compr[0] * shear_mod[1] * np.power((vab_a[0] - vba_a[0]), 2)) / (
-            4 * shear_mod[1] * vab_a[0] + 3 * compr[0] * vba_a[0]
-        )
-        # H_elast B in A
-        hba_elast = (2 * compr[1] * shear_mod[0] * np.power((vba_a[1] - vab_a[1]), 2)) / (
-            4 * shear_mod[0] * vba_a[1] + 3 * compr[1] * vab_a[1]
-        )
+        if all(compr == 0) and all(shear_mod == 0):  # This is the case for H-N
+            hab_elast = 0
+            hba_elast = 0
+        else:
+            hab_elast = (2 * compr[0] * shear_mod[1] * np.power((vab_a[0] - vba_a[0]), 2)) / (
+                4 * shear_mod[1] * vab_a[0] + 3 * compr[0] * vba_a[0]
+            )
+            # H_elast B in A
+            hba_elast = (2 * compr[1] * shear_mod[0] * np.power((vba_a[1] - vab_a[1]), 2)) / (
+                4 * shear_mod[0] * vba_a[1] + 3 * compr[1] * vab_a[1]
+            )
 
         deltaH_elast = np.multiply.reduce(fracs, 0) * (fracs[1] * hab_elast + fracs[0] * hba_elast)
         return deltaH_elast
@@ -457,17 +482,23 @@ class YangSolidSolution(BaseFeaturizer):
         Yang omega - Mixing thermochemistry feature, Omega
         Yang delta - Atomic size mismatch term
 
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
+
     References:
         .. Yang and Zhang (2012) `https://linkinghub.elsevier.com/retrieve/pii/S0254058411009357`.
     """
 
-    def __init__(self):
+    def __init__(self, impute_nan=True):
+        self.impute_nan = impute_nan
         # Load in the mixing enthalpy data
         #  Creates a lookup table of the liquid mixing enthalpies
-        self.dhf_mix = MixingEnthalpy()
+        self.dhf_mix = MixingEnthalpy(impute_nan=self.impute_nan)
 
         # Load in a table of elemental properties
-        self.elem_data = MagpieData()
+        self.elem_data = MagpieData(impute_nan=self.impute_nan)
 
     def precheck(self, c: Composition) -> bool:
         """
@@ -553,6 +584,9 @@ class YangSolidSolution(BaseFeaturizer):
 
         elements, fractions = zip(*comp.element_composition.items())
 
+        if len(fractions) == 1:
+            return 0.0
+
         # Get the radii of elements
         radii = self.elem_data.get_elemental_properties(elements, "MiracleRadius")
         mean_r = PropertyStats.mean(radii, fractions)
@@ -612,15 +646,21 @@ class WenAlloys(BaseFeaturizer):
         Shear modulus strength model
 
     Copyright 2020 Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
+    def __init__(self, impute_nan=True):
         # Use of Miedema to retrieve the shear modulus
-        self.data_source_miedema = Miedema(data_source="Miedema")
-        self.data_source_magpie = MagpieData().all_elemental_props
-        self.data_source_cohesive_energy = CohesiveEnergyData()
-        self.data_source_enthalpy = MixingEnthalpy()
-        self.yss = YangSolidSolution()
+        self.impute_nan = impute_nan
+        self.data_source_miedema = Miedema(data_source="Miedema", impute_nan=self.impute_nan)
+        self.data_source_magpie = MagpieData(impute_nan=self.impute_nan).all_elemental_props
+        self.data_source_cohesive_energy = CohesiveEnergyData(impute_nan=self.impute_nan)
+        self.data_source_enthalpy = MixingEnthalpy(impute_nan=self.impute_nan)
+        self.yss = YangSolidSolution(impute_nan=self.impute_nan)
 
     def precheck(self, comp):
         return self.yss.precheck(comp)
@@ -746,11 +786,14 @@ class WenAlloys(BaseFeaturizer):
         element :math:`i`, and :math:`\\bar{v}` is the fraction-weighted
         average of the variable.
         Args:
-            variable (list): List of properties to asses
-            fractions (list): List of fractions to asses
+            variable (list): List of properties to assess
+            fractions (list): List of fractions to assess
         Returns:
             (float) delta
         """
+        if len(fractions) == 1:
+            return 0.0
+
         mean_variable = PropertyStats.mean(variable, fractions)
         dev_variable = np.power(1.0 - np.divide(variable, mean_variable), 2)
         return np.sqrt(PropertyStats.mean(dev_variable, fractions))
@@ -864,6 +907,9 @@ class WenAlloys(BaseFeaturizer):
 
         array_shear = np.array(shear_modulus)
         array_fractions = np.array(fractions)
+        if len(fractions) == 1:
+            return 0.0
+
         modulus_combination = (
             2 * array_fractions * (array_shear - mean_shear_modulus) / (array_shear + mean_shear_modulus)
         )

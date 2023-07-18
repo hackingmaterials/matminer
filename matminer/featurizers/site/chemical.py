@@ -310,7 +310,7 @@ class LocalPropertyDifference(BaseFeaturizer):
 
     def __init__(
         self,
-        data_source=MagpieData(),
+        data_source=MagpieData(impute_nan=True),
         weight="area",
         properties=("Electronegativity",),
         signed=False,
@@ -342,7 +342,7 @@ class LocalPropertyDifference(BaseFeaturizer):
 
         if preset == "ward-prb-2017":
             return LocalPropertyDifference(
-                data_source=MagpieData(),
+                data_source=MagpieData(impute_nan=True),
                 properties=[
                     "Number",
                     "MendeleevNumber",
@@ -448,7 +448,7 @@ class SiteElementalProperty(BaseFeaturizer):
             data_source (AbstractData): Tool used to look up elemental properties
             properties ([string]): List of properties to use for features
         """
-        self.data_source = data_source or MagpieData()
+        self.data_source = data_source or MagpieData(impute_nan=True)
         self.properties = properties
         self._preset_citations = []
 
@@ -483,7 +483,7 @@ class SiteElementalProperty(BaseFeaturizer):
 
         if preset == "seko-prb-2017":
             output = SiteElementalProperty(
-                data_source=MagpieData(),
+                data_source=MagpieData(impute_nan=True),
                 properties=[
                     "Number",
                     "AtomicWeight",

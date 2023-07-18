@@ -105,12 +105,27 @@ class CohesiveEnergyData(AbstractData):
     (http://www.knowledgedoor.com/2/elements_handbook/cohesive_energy.html),
     which in turn got the data from Introduction to Solid State Physics,
     8th Edition, by Charles Kittel (ISBN 978-0-471-41526-8), 2005.
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
+    def __init__(self, impute_nan=True):
         # Load elemental cohesive energy data from json file
         with open(os.path.join(module_dir, "data_files", "cohesive_energies.json")) as f:
             self.cohesive_energy_data = json.load(f)
+
+        self.impute_nan = impute_nan
+        if self.impute_nan:
+            elem_list = list(self.cohesive_energy_data)
+            missing_elements = [e.symbol for e in Element if e.symbol not in elem_list]
+            avg_cohesive_energy = np.nanmean(list(self.cohesive_energy_data.values()))
+
+            for e in Element:
+                if e.symbol in missing_elements or np.isnan(self.cohesive_energy_data[e.symbol]):
+                    self.cohesive_energy_data[e.symbol] = avg_cohesive_energy
 
     def get_elemental_property(self, elem, property_name="cohesive energy"):
         """
@@ -134,9 +149,14 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
 
     The meanings of each feature in the data can be found in
     ./data_files/deml_elementdata.py
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
+    def __init__(self, impute_nan=True):
         from matminer.utils.data_files.deml_elementdata import properties
 
         self.all_props = properties
@@ -149,12 +169,6 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
             "total_ioniz",
         ]
 
-        # Compute the FERE correction energy
-        fere_corr = {}
-        for k, v in self.all_props["GGAU_Etot"].items():
-            fere_corr[k] = self.all_props["mus_fere"][k] - v
-        self.all_props["FERE correction"] = fere_corr
-
         # List out the available charge-dependent properties
         self.charge_dependent_properties = [
             "xtal_field_split",
@@ -162,6 +176,44 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
             "so_coupling",
             "sat_magn",
         ]
+
+        self.impute_nan = impute_nan
+        if self.impute_nan:
+            avg_ioniz = np.nanmean([self.all_props["ionization_en"].get(e.symbol, [float("NaN")])[0] for e in Element])
+
+            for e in Element:
+                if e.symbol not in self.all_props["atom_num"]:
+                    self.all_props["atom_num"][e.symbol] = e.Z
+                if e.symbol not in self.all_props["atom_mass"]:
+                    self.all_props["atom_mass"][e.symbol] = e.atomic_mass
+                if e.symbol not in self.all_props["row_num"]:
+                    self.all_props["row_num"][e.symbol] = e.row
+                if e.symbol not in self.all_props["ionization_en"] or np.isnan(
+                    self.all_props["ionization_en"][e.symbol][0]
+                ):
+                    self.all_props["ionization_en"][e.symbol] = [avg_ioniz]
+                for key in [
+                    "col_num",
+                    "atom_radius",
+                    "molar_vol",
+                    "heat_fusion",
+                    "melting_point",
+                    "boiling_point",
+                    "heat_cap",
+                    "electron_affin",
+                    "electronegativity",
+                    "electric_pol",
+                    "GGAU_Etot",
+                    "mus_fere",
+                ]:
+                    if e.symbol not in self.all_props[key] or np.isnan(self.all_props[key][e.symbol]):
+                        self.all_props[key][e.symbol] = np.nanmean(list(self.all_props[key].values()))
+
+        # Compute the FERE correction energy
+        fere_corr = {}
+        for k, v in self.all_props["GGAU_Etot"].items():
+            fere_corr[k] = self.all_props["mus_fere"][k] - v
+        self.all_props["FERE correction"] = fere_corr
 
     def get_elemental_property(self, elem, property_name):
         if "valence" in property_name:
@@ -198,9 +250,14 @@ class MagpieData(AbstractData, OxidationStatesMixin):
 
     Finding the exact meaning of each of these features can be quite difficult.
     Reproduced in ./data_files/magpie_elementdata_feature_descriptions.txt.
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
+    def __init__(self, impute_nan=True):
         self.all_elemental_props = dict()
         available_props = []
         self.data_dir = os.path.join(module_dir, "data_files", "magpie_elementdata")
@@ -224,6 +281,35 @@ class MagpieData(AbstractData, OxidationStatesMixin):
                         prop_value = float("NaN")
                     self.all_elemental_props[descriptor_name][Element.from_Z(atomic_no).symbol] = prop_value
 
+        self.impute_nan = impute_nan
+        if self.impute_nan:
+            for prop in self.all_elemental_props:
+                if prop == "OxidationStates":
+                    nested_props = list(self.all_elemental_props["OxidationStates"].values())
+                    flatten_props = []
+                    for l in nested_props:
+                        if isinstance(l, list):
+                            for e in l:
+                                flatten_props.append(e)
+                        else:
+                            flatten_props.append(l)
+
+                    avg_prop = np.round(np.nanmean(flatten_props))
+                    for e in Element:
+                        if (
+                            e.symbol not in self.all_elemental_props[prop]
+                            or self.all_elemental_props[prop][e.symbol] == []
+                            or np.any(np.isnan(self.all_elemental_props[prop][e.symbol]))
+                        ):
+                            self.all_elemental_props[prop][e.symbol] = [avg_prop]
+                else:
+                    avg_prop = np.nanmean(list(self.all_elemental_props[prop].values()))
+                    for e in Element:
+                        if e.symbol not in self.all_elemental_props[prop] or np.isnan(
+                            self.all_elemental_props[prop][e.symbol]
+                        ):
+                            self.all_elemental_props[prop][e.symbol] = avg_prop
+
     def get_elemental_property(self, elem, property_name):
         return self.all_elemental_props[property_name][elem.symbol]
 
@@ -240,10 +326,16 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
 
     Meanings of each feature can be obtained from the pymatgen.Composition
     documentation (attributes).
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self, use_common_oxi_states=True):
+    def __init__(self, use_common_oxi_states=True, impute_nan=True):
         self.use_common_oxi_states = use_common_oxi_states
+        self.impute_nan = impute_nan
 
     def get_elemental_property(self, elem, property_name):
         if property_name == "block":
@@ -251,7 +343,21 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
             return block_key[getattr(elem, property_name)]
         else:
             value = getattr(elem, property_name)
-            return np.nan if value is None else value
+            if self.impute_nan:
+                if value:
+                    return value
+                else:
+                    if property_name == "ionic_radii":
+                        return {0: self.get_elemental_property(elem, "atomic_radius")}
+                    elif property_name in ["common_oxidation_states", "icsd_oxidation_states"]:
+                        return (0,)
+                    else:
+                        all_values = [getattr(e, property_name) for e in Element]
+                        all_values = [val if val else float("NaN") for val in all_values]
+                        value_avg = np.nanmean(all_values)
+                    return value_avg
+            else:
+                return np.nan if value is None else value
 
     def get_oxidation_states(self, elem):
         """Get the oxidation states of an element
@@ -283,9 +389,14 @@ class MixingEnthalpy:
         valid_element_list ([Element]): A list of elements for which the
             mixing enthalpy parameters are defined (although no guarantees
             are provided that all combinations of this list will be available).
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
+    def __init__(self, impute_nan=True):
         mixing_dataset = pd.read_csv(
             os.path.join(module_dir, "data_files", "MiedemaLiquidDeltaHf.tsv"),
             delim_whitespace=True,
@@ -373,6 +484,16 @@ class MixingEnthalpy:
         ]
         self.valid_element_list = [Element(e) for e in valid_elements]
 
+        self.impute_nan = impute_nan
+        if self.impute_nan:
+            avg_value = np.nanmean(list(self.mixing_data.values()))
+            for e1 in Element:
+                for e2 in Element:
+                    key = tuple(sorted((e1.symbol, e2.symbol)))
+                    if key not in self.mixing_data or np.isnan(self.mixing_data[key]):
+                        self.mixing_data[key] = avg_value
+            self.valid_element_list = list(Element)
+
     def get_mixing_enthalpy(self, elemA, elemB):
         """
         Get the mixing enthalpy between different elements
@@ -400,9 +521,14 @@ class MatscholarElementData(AbstractData):
     Tshitoyan, V., Dagdelen, J., Weston, L. et al. Unsupervised word embeddings
     capture latent knowledge from materials science literature. Nature 571,
     95–98 (2019). https://doi.org/10.1038/s41586-019-1335-8
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
+    def __init__(self, impute_nan=True):
         dfile = os.path.join(module_dir, "data_files/matscholar_els.json")
         with open(dfile) as fp:
             embeddings = json.load(fp)
@@ -411,6 +537,20 @@ class MatscholarElementData(AbstractData):
         for el, embedding in embeddings.items():
             all_element_data[el] = dict(zip(self.prop_names, embedding))
         self.all_element_data = all_element_data
+
+        self.impute_nan = impute_nan
+        if self.impute_nan:
+            for embedding in self.prop_names:
+                avg_value = np.nanmean(
+                    [self.all_element_data[e].get(embedding, float("NaN")) for e in self.all_element_data]
+                )
+                for e in Element:
+                    if e.symbol not in self.all_element_data:
+                        self.all_element_data[e.symbol] = {embedding: avg_value}
+                    elif embedding not in self.all_element_data[e.symbol] or np.isnan(
+                        self.all_element_data[e.symbol][embedding]
+                    ):
+                        self.all_element_data[e.symbol][embedding] = avg_value
 
     def get_elemental_property(self, elem, property_name):
         return self.all_element_data[str(elem)][property_name]
@@ -437,9 +577,14 @@ class MEGNetElementData(AbstractData):
 
     The representations are learned during training to predict a specific
     property, though they may be useful for a range of properties.
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
+    def __init__(self, impute_nan=True):
         dfile = os.path.join(module_dir, "data_files/megnet_elemental_embedding.json")
         self._dummy = "Dummy"
         with open(dfile) as fp:
@@ -452,6 +597,20 @@ class MEGNetElementData(AbstractData):
                 self.all_element_data[self._dummy] = embedding_dict
             else:
                 self.all_element_data[str(Element.from_Z(i))] = embedding_dict
+
+        self.impute_nan = impute_nan
+        if self.impute_nan:
+            for embedding in self.prop_names:
+                avg_value = np.nanmean(
+                    [self.all_element_data[e].get(embedding, float("NaN")) for e in self.all_element_data]
+                )
+                for e in Element:
+                    if e.symbol not in self.all_element_data:
+                        self.all_element_data[e.symbol] = {embedding: avg_value}
+                    elif embedding not in self.all_element_data[e.symbol] or np.isnan(
+                        self.all_element_data[e.symbol][embedding]
+                    ):
+                        self.all_element_data[e.symbol][embedding] = avg_value
 
     def get_elemental_property(self, elem, property_name):
         estr = str(elem)
@@ -625,6 +784,9 @@ class OpticalData(AbstractData):
         bins: number of bins to split the spectra.
         saving_dir: folder to save the data and csv file used for the featurization. Saving them helps fasten the
                     featurization.
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
     def __init__(
@@ -636,6 +798,7 @@ class OpticalData(AbstractData):
         n_wl=401,
         bins=10,
         saving_dir="~/.matminer/optical_props/",
+        impute_nan=True,
     ):
 
         # Handles the saving folder
@@ -691,6 +854,10 @@ class OpticalData(AbstractData):
 
         self.all_element_data = all_element_data
         self.prop_names = labels
+
+        self.impute_nan = impute_nan
+        if self.impute_nan:
+            self.all_element_data.fillna(self.all_element_data.mean(), inplace=True)
 
     def _get_element_props(self):
         """
@@ -1021,9 +1188,19 @@ class TransportData(AbstractData):
                Defaults to 0, and used only if method != "exact".
         saving_dir: folder to save the data and csv file used for the featurization. Saving them helps fasten the
                     featurization.
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self, props=None, method="pseudo_inverse", alpha=0, saving_dir="~/.matminer/transport_props/"):
+    def __init__(
+        self,
+        props=None,
+        method="pseudo_inverse",
+        alpha=0,
+        saving_dir="~/.matminer/transport_props/",
+        impute_nan=True,
+    ):
 
         # Handles the saving folder
         saving_dir = os.path.expanduser(saving_dir)
@@ -1061,6 +1238,10 @@ class TransportData(AbstractData):
         self.all_element_data = self._get_element_props()
 
         self.prop_names = list(self.all_element_data.columns)
+
+        self.impute_nan = impute_nan
+        if self.impute_nan:
+            self.all_element_data.fillna(self.all_element_data.mean(), inplace=True)
 
     def _get_element_props(self):
         #
