@@ -23,8 +23,8 @@ class BondingStructureTest(StructureFeaturesTest):
         bf_md = BondFractions.from_preset("MinimumDistanceNN")
         bf_md.no_oxi = True
         bf_md.fit([self.diamond_no_oxi])
-        self.assertArrayEqual(bf_md.featurize(self.diamond), [1.0])
-        self.assertArrayEqual(bf_md.featurize(self.diamond_no_oxi), [1.0])
+        np.testing.assert_array_equal(bf_md.featurize(self.diamond), [1.0])
+        np.testing.assert_array_equal(bf_md.featurize(self.diamond_no_oxi), [1.0])
 
         bf_voronoi = BondFractions.from_preset("VoronoiNN")
         bf_voronoi.bbv = float("nan")
@@ -45,20 +45,20 @@ class BondingStructureTest(StructureFeaturesTest):
         df = bf_voronoi.featurize_dataframe(df, "s")
 
         # Ensure all data is properly labelled and organized
-        self.assertArrayEqual(df["C - C bond frac."].to_numpy(), [1.0, np.nan])
-        self.assertArrayEqual(df["Al - Ni bond frac."].to_numpy(), [np.nan, 0.5])
-        self.assertArrayEqual(df["Al - Al bond frac."].to_numpy(), [np.nan, 0.0])
-        self.assertArrayEqual(df["Ni - Ni bond frac."].to_numpy(), [np.nan, 0.5])
+        np.testing.assert_array_equal(df["C - C bond frac."].to_numpy(), [1.0, np.nan])
+        np.testing.assert_array_equal(df["Al - Ni bond frac."].to_numpy(), [np.nan, 0.5])
+        np.testing.assert_array_equal(df["Al - Al bond frac."].to_numpy(), [np.nan, 0.0])
+        np.testing.assert_array_equal(df["Ni - Ni bond frac."].to_numpy(), [np.nan, 0.5])
 
         # Test to make sure bad_bond_values (bbv) are still changed correctly
         # and check inplace behavior of featurize dataframe.
         bf_voronoi.bbv = 0.0
         df = pd.DataFrame.from_dict({"s": s_list})
         df = bf_voronoi.featurize_dataframe(df, "s")
-        self.assertArrayEqual(df["C - C bond frac."].to_numpy(), [1.0, 0.0])
-        self.assertArrayEqual(df["Al - Ni bond frac."].to_numpy(), [0.0, 0.5])
-        self.assertArrayEqual(df["Al - Al bond frac."].to_numpy(), [0.0, 0.0])
-        self.assertArrayEqual(df["Ni - Ni bond frac."].to_numpy(), [0.0, 0.5])
+        np.testing.assert_array_equal(df["C - C bond frac."].to_numpy(), [1.0, 0.0])
+        np.testing.assert_array_equal(df["Al - Ni bond frac."].to_numpy(), [0.0, 0.5])
+        np.testing.assert_array_equal(df["Al - Al bond frac."].to_numpy(), [0.0, 0.0])
+        np.testing.assert_array_equal(df["Ni - Ni bond frac."].to_numpy(), [0.0, 0.5])
 
     def test_bob(self):
         # Test a single fit and featurization
@@ -101,7 +101,7 @@ class BondingStructureTest(StructureFeaturesTest):
             "Ni - Ni bond #4",
             "Ni - Ni bond #5",
         ]
-        self.assertArrayAlmostEqual(bob.featurize(self.ni3al), truth1)
+        np.testing.assert_array_almost_equal(bob.featurize(self.ni3al), truth1)
         self.assertEqual(bob.feature_labels(), truth1_labels)
 
         # Test padding from fitting and dataframe featurization
@@ -126,7 +126,7 @@ class BondingStructureTest(StructureFeaturesTest):
 
         # Test Ni3Al, which is uniform
         features = f.featurize(self.ni3al)
-        self.assertArrayAlmostEqual([0, 1, 1, 0, 0, 0, 0, 0, 0], features)
+        np.testing.assert_array_almost_equal([0, 1, 1, 0, 0, 0, 0, 0, 0], features)
 
         # Do CsCl, which has variation in the neighbors
         big_face_area = np.sqrt(3) * 3 / 2 * (2 / 4 / 4)
@@ -149,7 +149,7 @@ class BondingStructureTest(StructureFeaturesTest):
             site_properties=None,
         )
         features = f.featurize(cscl)
-        self.assertArrayAlmostEqual([0, 1, 1, rel_var, rel_var, 0, rel_var, 0, 0], features)
+        np.testing.assert_array_almost_equal([0, 1, 1, rel_var, rel_var, 0, rel_var, 0, 0], features)
 
     def test_GlobalInstabilityIndex(self):
         # Test diamond and ni3al fail precheck
