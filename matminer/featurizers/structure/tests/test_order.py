@@ -42,7 +42,7 @@ class OrderStructureFeaturesTest(StructureFeaturesTest):
 
         # Check that elemental structures return zero
         features = f.featurize(self.diamond)
-        self.assertArrayAlmostEqual([0, 0, 0], features)
+        np.testing.assert_array_almost_equal([0, 0, 0], features)
 
         # Check result for CsCl
         #   These were calculated by hand by Logan Ward
@@ -59,10 +59,10 @@ class OrderStructureFeaturesTest(StructureFeaturesTest):
         f = MaximumPackingEfficiency()
 
         # Test L1_2
-        self.assertArrayAlmostEqual([np.pi / 3 / np.sqrt(2)], f.featurize(self.ni3al))
+        np.testing.assert_array_almost_equal([np.pi / 3 / np.sqrt(2)], f.featurize(self.ni3al))
 
         # Test B1
-        self.assertArrayAlmostEqual([np.pi / 6], f.featurize(self.nacl), decimal=3)
+        np.testing.assert_array_almost_equal([np.pi / 6], f.featurize(self.nacl), decimal=3)
 
     def test_structural_complexity(self):
         s = Structure.from_file(os.path.join(test_dir, "Dy2HfS5_mp-1198001_computed.cif"))

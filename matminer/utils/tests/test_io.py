@@ -3,14 +3,47 @@ import os
 import shutil
 import unittest
 
+import numpy as np
 import pandas as pd
 from monty.io import zopen
 from pymatgen.core import Lattice, Structure
 from pymatgen.util.testing import PymatgenTest
+from pytest import approx
 
 from matminer.utils.io import load_dataframe_from_json, store_dataframe_as_json
 
 test_dir = os.path.dirname(__file__)
+
+
+class PymatgenTestExtended(PymatgenTest):
+    """Reintroduces legacy methods from the `PymatgenTest` class."""
+
+    @staticmethod
+    def assertDictsAlmostEqual(actual, desired, decimal=7, err_msg="", verbose=True) -> bool:
+        """
+        Tests if entries in a dictionary are almost equal to a tolerance. The CamelCase
+        naming is so that it is consistent with standard unittest methods.
+
+        Modified from: https://github.com/materialsproject/pymatgen/blob/1156d0db2360a0ef32bfc1ba5c8314f7421755a3/pymatgen/util/testing.py#L80-L103
+        """
+        for k, v in actual.items():
+            if k not in desired:
+                return False
+            v2 = desired[k]
+            if isinstance(v, dict):
+                pass_test = PymatgenTestExtended.assertDictsAlmostEqual(
+                    v, v2, decimal=decimal, err_msg=err_msg, verbose=verbose
+                )
+                if not pass_test:
+                    return False
+            elif isinstance(v, (list, tuple)):
+                np.testing.assert_almost_equal(v, v2, decimal, err_msg, verbose)
+                return True
+            elif isinstance(v, (int, float)):
+                assert v == approx(v2, abs=decimal)
+            else:
+                assert v == v2
+        return True
 
 
 def generate_json_files():
@@ -35,7 +68,7 @@ def generate_json_files():
     store_dataframe_as_json(df, bz2_file, compression="bz2")
 
 
-class IOTest(PymatgenTest):
+class IOTest(PymatgenTestExtended):
     def setUp(self):
         self.temp_folder = os.path.join(test_dir, "gzip_dir")
         os.mkdir(self.temp_folder)

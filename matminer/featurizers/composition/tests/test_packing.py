@@ -1,5 +1,6 @@
 import unittest
 
+import numpy as np
 import pandas as pd
 from pymatgen.core import Composition
 from pymatgen.core.periodic_table import Element
@@ -39,12 +40,14 @@ class PackingFeaturesTest(CompositionFeaturesTest):
             Composition("Cu17Zr"),
         ]
         ds, _ = nn_lookup.kneighbors(ef.featurize_many(stable_clusters), n_neighbors=1)
-        self.assertArrayAlmostEqual([[0]] * 8, ds)
+        np.testing.assert_array_almost_equal([[0]] * 8, ds)
         self.assertEqual(8, nn_lookup._fit_X.shape[0])
 
         # Swap the order of the clusters, make sure it gets the same list
         nn_lookup_swapped = f.create_cluster_lookup_tool([Element("Zr"), Element("Cu")])
-        self.assertArrayAlmostEqual(sorted(nn_lookup._fit_X.tolist()), sorted(nn_lookup_swapped._fit_X.tolist()))
+        np.testing.assert_array_almost_equal(
+            sorted(nn_lookup._fit_X.tolist()), sorted(nn_lookup_swapped._fit_X.tolist())
+        )
 
         # Make sure we had a cache hit
         self.assertEqual(1, f._create_cluster_lookup_tool.cache_info().misses)
@@ -58,7 +61,7 @@ class PackingFeaturesTest(CompositionFeaturesTest):
             ef.featurize_many([Composition("CuZr10"), Composition("Cu3Zr12")]),
             n_neighbors=1,
         )
-        self.assertArrayAlmostEqual([[0]] * 2, ds)
+        np.testing.assert_array_almost_equal([[0]] * 2, ds)
 
         # Make sure we had a cache miss
         self.assertEqual(2, f._create_cluster_lookup_tool.cache_info().misses)
@@ -66,10 +69,10 @@ class PackingFeaturesTest(CompositionFeaturesTest):
 
         # Compute the distances from Cu50Zr50
         mean_dists = f.compute_nearest_cluster_distance(Composition("CuZr"))
-        self.assertArrayAlmostEqual([0.424264, 0.667602, 0.800561], mean_dists, decimal=6)
+        np.testing.assert_array_almost_equal([0.424264, 0.667602, 0.800561], mean_dists, decimal=6)
 
         # Compute the optimal APE for Cu50Zr50
-        self.assertArrayAlmostEqual(
+        np.testing.assert_array_almost_equal(
             [0.000233857, 0.003508794],
             f.compute_simultaneous_packing_efficiency(Composition("Cu50Zr50")),
         )
@@ -85,7 +88,7 @@ class PackingFeaturesTest(CompositionFeaturesTest):
 
         # Make sure it works with composition that do not match any efficient clusters
         feat = f.compute_nearest_cluster_distance(Composition("Al"))
-        self.assertArrayAlmostEqual([1] * 3, feat)
+        np.testing.assert_array_almost_equal([1] * 3, feat)
 
 
 if __name__ == "__main__":

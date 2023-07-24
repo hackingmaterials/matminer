@@ -1,5 +1,7 @@
 import unittest
 
+import numpy as np
+
 from matminer.featurizers.composition import ElementProperty
 from matminer.featurizers.structure.misc import (
     EwaldEnergy,
@@ -17,7 +19,7 @@ class MiscStructureFeaturesTest(StructureFeaturesTest):
 
         # Test basic
         ewald = EwaldEnergy(accuracy=2)
-        self.assertArrayAlmostEqual(ewald.featurize(self.diamond), [0])
+        np.testing.assert_array_almost_equal(ewald.featurize(self.diamond), [0])
         self.assertAlmostEqual(ewald.featurize(self.nacl)[0], -4.418439, 2)
         self.assertLess(ewald.featurize(self.nacl), ewald.featurize(self.cscl))  # Atoms are closer in NaCl
 
@@ -30,7 +32,7 @@ class MiscStructureFeaturesTest(StructureFeaturesTest):
 
         # Test the features
         features = f.featurize(self.nacl)
-        self.assertArrayAlmostEqual(comp.featurize(self.nacl.composition), features)
+        np.testing.assert_array_almost_equal(comp.featurize(self.nacl.composition), features)
 
         # Test the citations/implementors
         self.assertEqual(comp.citations(), f.citations())
