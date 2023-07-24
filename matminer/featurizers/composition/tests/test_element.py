@@ -1,5 +1,6 @@
 import unittest
 
+import numpy as np
 from pymatgen.core import Composition
 
 from matminer.featurizers.composition.element import (
@@ -21,8 +22,8 @@ class ElementFeaturesTest(CompositionFeaturesTest):
 
         # Test whether the number of formula units affects result
         original_value = featurizer.featurize(Composition("FeO"))
-        self.assertArrayAlmostEqual(featurizer.featurize(Composition("Fe0.5O0.5")), original_value)
-        self.assertArrayAlmostEqual(featurizer.featurize(Composition("Fe2O2")), original_value)
+        np.testing.assert_array_almost_equal(featurizer.featurize(Composition("Fe0.5O0.5")), original_value)
+        np.testing.assert_array_almost_equal(featurizer.featurize(Composition("Fe2O2")), original_value)
 
     def test_fraction(self):
         df_frac = ElementFraction().featurize_dataframe(self.df, col_id="composition")

@@ -2,6 +2,7 @@ import json
 import math
 import unittest
 
+import numpy as np
 from monty.json import MontyEncoder
 from pandas import DataFrame, MultiIndex
 from pymatgen.core import SETTINGS, Composition, Element, Lattice, Structure
@@ -330,7 +331,7 @@ class TestConversions(PymatgenTest):
         pfa = PymatgenFunctionApplicator(func=lambda s: s.is_ordered, target_col_id="is_ordered")
 
         df = pfa.featurize_dataframe(df, "structure")
-        self.assertArrayEqual(df["is_ordered"].tolist(), [False, True])
+        np.testing.assert_array_equal(df["is_ordered"].tolist(), [False, True])
 
         # Try a conversion with args
         pfa2 = PymatgenFunctionApplicator(
@@ -338,7 +339,7 @@ class TestConversions(PymatgenTest):
         )
 
         df = pfa2.featurize_dataframe(df, "structure")
-        self.assertArrayEqual(df["anonymous formula"].tolist(), ["A0.5B1.5", "AB"])
+        np.testing.assert_array_equal(df["anonymous formula"].tolist(), ["A0.5B1.5", "AB"])
 
         # Test for compatibility with return_errors
         df = DataFrame(data={"structure": [si, cscl, float("nan")]})

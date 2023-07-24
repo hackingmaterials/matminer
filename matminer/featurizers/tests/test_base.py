@@ -148,17 +148,17 @@ class TestBaseClass(PymatgenTest):
     def test_dataframe(self):
         data = self.make_test_data()
         data = self.single.featurize_dataframe(data, "x")
-        self.assertArrayAlmostEqual(data["y"], [2, 3, 4])
+        np.testing.assert_array_almost_equal(data["y"], [2, 3, 4])
 
         data = self.multi.featurize_dataframe(data, "x")
-        self.assertArrayAlmostEqual(data["w"], [0, 1, 2])
-        self.assertArrayAlmostEqual(data["z"], [3, 4, 5])
+        np.testing.assert_array_almost_equal(data["w"], [0, 1, 2])
+        np.testing.assert_array_almost_equal(data["z"], [3, 4, 5])
 
     def test_matrix(self):
         """Test the ability to add features that are matrices to a dataframe"""
         data = self.make_test_data()
         data = self.matrix.featurize_dataframe(data, "x")
-        self.assertArrayAlmostEqual(np.eye(2, 2), data["representation"][0])
+        np.testing.assert_array_almost_equal(np.eye(2, 2), data["representation"][0])
 
     def test_inplace(self):
         data = self.make_test_data()
@@ -175,7 +175,7 @@ class TestBaseClass(PymatgenTest):
         data.index = [4, 6, 6]
 
         data = self.single.featurize_dataframe(data, "x")
-        self.assertArrayAlmostEqual(data["y"], [2, 3, 4])
+        np.testing.assert_array_almost_equal(data["y"], [2, 3, 4])
 
     def test_multiple(self):
         # test iterating over both entries and featurizers
@@ -183,9 +183,9 @@ class TestBaseClass(PymatgenTest):
             multi_f = MultipleFeaturizer([self.single, self.multi], iterate_over_entries=iter_entries)
             data = self.make_test_data()
 
-            self.assertArrayAlmostEqual([2, 0, 3], multi_f.featurize(1))
+            np.testing.assert_array_almost_equal([2, 0, 3], multi_f.featurize(1))
 
-            self.assertArrayEqual(["A"], multi_f.citations())
+            np.testing.assert_array_equal(["A"], multi_f.citations())
 
             implementors = multi_f.implementors()
             self.assertIn("Us", implementors)
@@ -196,9 +196,9 @@ class TestBaseClass(PymatgenTest):
             with warnings.catch_warnings(record=True) as w:
                 data = multi_f.featurize_dataframe(data, "x")
                 self.assertEqual(len(w), 0)
-            self.assertArrayAlmostEqual(data["y"], [2, 3, 4])
-            self.assertArrayAlmostEqual(data["w"], [0, 1, 2])
-            self.assertArrayAlmostEqual(data["z"], [3, 4, 5])
+            np.testing.assert_array_almost_equal(data["y"], [2, 3, 4])
+            np.testing.assert_array_almost_equal(data["w"], [0, 1, 2])
+            np.testing.assert_array_almost_equal(data["z"], [3, 4, 5])
 
             f = MatrixFeaturizer()
             multi_f = MultipleFeaturizer([self.single, self.multi, f])
@@ -207,7 +207,7 @@ class TestBaseClass(PymatgenTest):
                 data = multi_f.featurize_dataframe(data, "x")
                 self.assertEqual(len(w), 0)
 
-            self.assertArrayAlmostEqual(data["representation"][0], [[1.0, 0.0], [0.0, 1.0]])
+            np.testing.assert_array_almost_equal(data["representation"][0], [[1.0, 0.0], [0.0, 1.0]])
 
     def test_multifeatures_multiargs(self):
         multiargs2 = MultiArgs2()
@@ -223,17 +223,17 @@ class TestBaseClass(PymatgenTest):
 
             # Test featurize with multiple arguments
             features = multi_f.featurize(0, 2)
-            self.assertArrayAlmostEqual([2, 2], features)
+            np.testing.assert_array_almost_equal([2, 2], features)
 
             # Test dataframe
             data = multi_f.featurize_dataframe(data, ["x", "x2"])
             self.assertEqual(["y", "y2"], multi_f.feature_labels())
-            self.assertArrayAlmostEqual([[5, 5], [7, 7], [9, 9]], data[["y", "y2"]])
+            np.testing.assert_array_almost_equal([[5, 5], [7, 7], [9, 9]], data[["y", "y2"]])
             # Test with multiindex
             data = multi_f.featurize_dataframe(data, ["x", "x2"], multiindex=True)
             self.assertIn(("MultiArgs2", "y2"), data.columns)
             self.assertIn(("SingleFeaturizerMultiArgs", "y"), data.columns)
-            self.assertArrayAlmostEqual(
+            np.testing.assert_array_almost_equal(
                 [[5, 5], [7, 7], [9, 9]],
                 data[[("SingleFeaturizerMultiArgs", "y"), ("MultiArgs2", "y2")]],
             )
@@ -243,13 +243,13 @@ class TestBaseClass(PymatgenTest):
         s = self.single
         s.set_n_jobs(2)
         mat = s.featurize_many([1, 2, 3])
-        self.assertArrayAlmostEqual(mat, [[2], [3], [4]])
+        np.testing.assert_array_almost_equal(mat, [[2], [3], [4]])
 
         # Multi-argument
         s = self.multiargs
         s.set_n_jobs(2)
         mat = s.featurize_many([[1, 4], [2, 5], [3, 6]])
-        self.assertArrayAlmostEqual(mat, [[5], [7], [9]])
+        np.testing.assert_array_almost_equal(mat, [[5], [7], [9]])
 
     def test_multiprocessing_df(self):
         # Single argument
@@ -257,7 +257,7 @@ class TestBaseClass(PymatgenTest):
         data = self.make_test_data()
         s.set_n_jobs(2)
         data = s.featurize_dataframe(data, "x")
-        self.assertArrayAlmostEqual(data["y"], [2, 3, 4])
+        np.testing.assert_array_almost_equal(data["y"], [2, 3, 4])
 
         # Multi-argument
         s = self.multiargs
@@ -265,7 +265,7 @@ class TestBaseClass(PymatgenTest):
         s.set_n_jobs(2)
         data["x2"] = [4, 5, 6]
         data = s.featurize_dataframe(data, ["x", "x2"])
-        self.assertArrayAlmostEqual(data["y"], [5, 7, 9])
+        np.testing.assert_array_almost_equal(data["y"], [5, 7, 9])
 
     def test_fittable(self):
         data = self.make_test_data()
@@ -274,18 +274,18 @@ class TestBaseClass(PymatgenTest):
         # Test fit and featurize separately
         ft.fit(data["x"][:2])
         data = ft.featurize_dataframe(data, "x")
-        self.assertArrayAlmostEqual(data["a"], [4, 5, 6])
+        np.testing.assert_array_almost_equal(data["a"], [4, 5, 6])
         self.assertRaises(Exception, data.__getattr__, "c")
 
         # Test fit + featurize methods on new fits
         data = self.make_test_data()
         transformed = ft.fit_transform([data["x"][1]])
-        self.assertArrayAlmostEqual(transformed[0], [5])
+        np.testing.assert_array_almost_equal(transformed[0], [5])
         data = self.make_test_data()
         data = ft.fit_featurize_dataframe(data, "x")
-        self.assertArrayAlmostEqual(data["a"], [4, 5, 6])
-        self.assertArrayAlmostEqual(data["b"], [5, 6, 7])
-        self.assertArrayAlmostEqual(data["c"], [2, 4, 6])
+        np.testing.assert_array_almost_equal(data["a"], [4, 5, 6])
+        np.testing.assert_array_almost_equal(data["b"], [5, 6, 7])
+        np.testing.assert_array_almost_equal(data["c"], [2, 4, 6])
 
     def test_stacked_featurizer(self):
         data = self.make_test_data()
@@ -322,7 +322,7 @@ class TestBaseClass(PymatgenTest):
         data["y"] = [0, 2, 1]
         model.fit(self.multi.featurize_many(data["x"]), data["y"])
 
-        self.assertArrayAlmostEqual([1.0 / 3] * 2, f.featurize(data["x"][0]))
+        np.testing.assert_array_almost_equal([1.0 / 3] * 2, f.featurize(data["x"][0]))
         f.class_names = ["A", "B", "C"]
         self.assertEqual(["ML P(A)", "ML P(B)"], f.feature_labels())
 
@@ -493,8 +493,8 @@ class TestBaseClass(PymatgenTest):
 
             # Make sure the types are as expected
             labels = f.feature_labels()
-            self.assertArrayEqual(["int64", "object", "int64"], data[labels].dtypes.astype(str).tolist())
-            self.assertArrayAlmostEqual(data["y"], [2, 3, 4])
+            np.testing.assert_array_equal(["int64", "object", "int64"], data[labels].dtypes.astype(str).tolist())
+            np.testing.assert_array_almost_equal(data["y"], [2, 3, 4])
 
     def test_multifeature_no_zero_index(self):
         """Test whether multifeaturizer can handle series that lack a entry
@@ -522,10 +522,10 @@ class TestBaseClass(PymatgenTest):
         data_ip = copy.deepcopy(data)
         f.precheck_dataframe(data_ip, "x", return_frac=False, inplace=True)
         pckey = "SingleFeaturizerWithPrecheck precheck pass"
-        self.assertArrayEqual(data_ip[pckey].tolist(), [False, True, False])
+        np.testing.assert_array_equal(data_ip[pckey].tolist(), [False, True, False])
 
         df2 = f.precheck_dataframe(data, "x", return_frac=False, inplace=False)
-        self.assertArrayEqual(df2[pckey].tolist(), [False, True, False])
+        np.testing.assert_array_equal(df2[pckey].tolist(), [False, True, False])
         self.assertNotIn(pckey, data.columns.tolist())
 
         # Test with multiple arguments
@@ -541,10 +541,10 @@ class TestBaseClass(PymatgenTest):
 
         data_ipm = copy.deepcopy(data)
         fm.precheck_dataframe(data_ipm, ["x", "x2"], return_frac=False, inplace=True)
-        self.assertArrayEqual(data_ipm[mpckey].tolist(), [True, False, True])
+        np.testing.assert_array_equal(data_ipm[mpckey].tolist(), [True, False, True])
 
         df3 = fm.precheck_dataframe(data, ["x", "x2"], return_frac=False, inplace=False)
-        self.assertArrayEqual(df3[mpckey].tolist(), [True, False, True])
+        np.testing.assert_array_equal(df3[mpckey].tolist(), [True, False, True])
         self.assertNotIn(mpckey, data.columns.tolist())
 
 

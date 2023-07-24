@@ -1,5 +1,6 @@
 import unittest
 
+import numpy as np
 import pandas as pd
 from pymatgen.analysis.local_env import VoronoiNN
 
@@ -82,7 +83,7 @@ class ChemicalSiteTests(SiteFeaturizerTest):
             s.add_oxidation_state_by_guess()
 
         # Run the sc-Al structure
-        self.assertArrayAlmostEqual(ewald.featurize(self.sc, 0), [0])
+        np.testing.assert_array_almost_equal(ewald.featurize(self.sc, 0), [0])
 
         # Run the cscl-structure
         #   Compared to a result computed using GULP
@@ -91,20 +92,20 @@ class ChemicalSiteTests(SiteFeaturizerTest):
 
         # Re-run the Al structure to make sure it is accurate
         #  This is to test the caching feature
-        self.assertArrayAlmostEqual(ewald.featurize(self.sc, 0), [0])
+        np.testing.assert_array_almost_equal(ewald.featurize(self.sc, 0), [0])
 
     def test_local_prop_diff(self):
         f = LocalPropertyDifference()
 
         # Test for Al, all features should be zero
         features = f.featurize(self.sc, 0)
-        self.assertArrayAlmostEqual(features, [0])
+        np.testing.assert_array_almost_equal(features, [0])
 
         # Change the property to Number, compute for B1
         f.set_params(properties=["Number"])
         for i in range(2):
             features = f.featurize(self.b1, i)
-            self.assertArrayAlmostEqual(features, [1])
+            np.testing.assert_array_almost_equal(features, [1])
 
     def test_site_elem_prop(self):
         f = SiteElementalProperty.from_preset("seko-prb-2017")

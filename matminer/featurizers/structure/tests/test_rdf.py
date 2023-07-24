@@ -119,7 +119,7 @@ class StructureRDFTest(StructureFeaturesTest):
         featurizer.elements_ = ["C"]
         features = featurizer.featurize(self.diamond)
         prdf = featurizer.compute_prdf(self.diamond)[1]
-        self.assertArrayAlmostEqual(features, prdf[("C", "C")])
+        np.testing.assert_array_almost_equal(features, prdf[("C", "C")])
 
         # Check the featurize_dataframe
         df = pd.DataFrame.from_dict({"structure": [self.diamond, self.cscl]})
@@ -138,7 +138,7 @@ class StructureRDFTest(StructureFeaturesTest):
         self.assertTrue(labels[0].startswith("Al-Al"))
         self.assertTrue(labels[n_bins].startswith("Al-Ni"))
         self.assertTrue(labels[2 * n_bins].startswith("Ni-Ni"))
-        self.assertArrayAlmostEqual(
+        np.testing.assert_array_almost_equal(
             features,
             np.hstack([prdf[("Al", "Al")], prdf[("Al", "Ni")], prdf[("Ni", "Ni")]]),
         )
