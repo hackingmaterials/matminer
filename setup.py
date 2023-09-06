@@ -56,7 +56,7 @@ if __name__ == "__main__":
         install_requires=[
             "numpy>=1.20.1",
             "requests",
-            "pandas~=1.5",
+            "pandas",
             "tqdm",
             "pymongo",
             "future",
