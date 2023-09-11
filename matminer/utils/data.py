@@ -500,7 +500,7 @@ class IUCrBondValenceData:
         oxidation state, indicating they can be used with all oxidation states.
         """
         filepath = os.path.join(module_dir, "data_files", "bvparm2020.cif")
-        self.params = pd.read_csv(
+        self.params: pd.DataFrame = pd.read_csv(
             filepath,
             sep=r"\s+",
             header=None,
@@ -549,7 +549,7 @@ class IUCrBondValenceData:
                     }
                     data.append(entry)
         new_data = pd.DataFrame(data)
-        new_params = self.params.append(new_data, sort=True, ignore_index=True)
+        new_params = pd.concat((self.params, new_data), sort=True, ignore_index=True)
         return new_params
 
     def get_bv_params(self, cation, anion, cat_val, an_val):
