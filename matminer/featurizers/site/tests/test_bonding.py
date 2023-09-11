@@ -34,19 +34,21 @@ class BondingTest(SiteFeaturizerTest):
         b1_features = f.featurize(self.b1, 0)
 
         # They should be equal
-        self.assertArrayAlmostEqual(sc_features, b1_features)
+        np.testing.assert_array_almost_equal(sc_features, b1_features)
 
         # Comparing Q's to results from https://aip.scitation.org/doi/10.1063/1.4774084
-        self.assertArrayAlmostEqual([0, 0, 0, 0.764, 0, 0.354, 0, 0.718, 0, 0.411], sc_features[:10], decimal=3)
+        np.testing.assert_array_almost_equal(
+            [0, 0, 0, 0.764, 0, 0.354, 0, 0.718, 0, 0.411], sc_features[:10], decimal=3
+        )
 
         # Comparing W's to results from https://link.aps.org/doi/10.1103/PhysRevB.28.784
-        self.assertArrayAlmostEqual(
+        np.testing.assert_array_almost_equal(
             [0, 0, 0, 0.043022, 0, 0.000612, 0, 0.034055, 0, 0.013560],
             sc_features[10:20],
             decimal=3,
         )
 
-        self.assertArrayAlmostEqual(
+        np.testing.assert_array_almost_equal(
             [0, 0, 0, 0.159317, 0, 0.013161, 0, 0.058455, 0, 0.090130],
             sc_features[20:],
             decimal=3,

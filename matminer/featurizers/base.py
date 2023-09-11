@@ -4,7 +4,7 @@ import warnings
 from abc import ABC, abstractmethod
 from functools import partial
 from multiprocessing import Pool, cpu_count
-from typing import Union
+from typing import Any, Union
 
 import numpy as np
 import pandas as pd
@@ -211,7 +211,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
                 df = pd.concat([df, res], axis=1)
             return df
 
-    def precheck(self, *x) -> bool:
+    def precheck(self, x: Any) -> bool:
         """
         Precheck (provide an estimate of whether a featurizer will work or not)
         for a single entry (e.g., a single composition). If the entry fails the

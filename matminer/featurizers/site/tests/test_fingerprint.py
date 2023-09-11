@@ -23,7 +23,7 @@ class FingerprintTests(SiteFeaturizerTest):
         features = agni.featurize(self.sc, 0)
         self.assertEqual(8 * 3, len(features))
         self.assertEqual(8 * 3, len(set(agni.feature_labels())))
-        self.assertArrayAlmostEqual(
+        np.testing.assert_array_almost_equal(
             [
                 0,
             ]
@@ -52,7 +52,7 @@ class FingerprintTests(SiteFeaturizerTest):
         # Test that passing etas to constructor works
         new_etas = np.logspace(-4, 2, 6)
         agni = AGNIFingerprints(directions=["x", "y", "z"], etas=new_etas)
-        self.assertArrayAlmostEqual(new_etas, agni.etas)
+        np.testing.assert_array_almost_equal(new_etas, agni.etas)
 
     def test_off_center_cscl(self):
         agni = AGNIFingerprints(directions=[None, "x", "y", "z"], cutoff=4)
@@ -62,10 +62,10 @@ class FingerprintTests(SiteFeaturizerTest):
         site2 = agni.featurize(self.cscl, 1)
 
         # The atomic attributes should be equal
-        self.assertArrayAlmostEqual(site1[:8], site2[:8])
+        np.testing.assert_array_almost_equal(site1[:8], site2[:8])
 
         # The direction-dependent ones should be equal and opposite in sign
-        self.assertArrayAlmostEqual(-1 * site1[8:], site2[8:])
+        np.testing.assert_array_almost_equal(-1 * site1[8:], site2[8:])
 
         # Make sure the site-ones are as expected.
         right_dist = 4.209 * np.sqrt(0.45**2 + 2 * 0.5**2)

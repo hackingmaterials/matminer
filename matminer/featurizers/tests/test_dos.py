@@ -2,6 +2,7 @@ import json
 import os
 import unittest
 
+import numpy as np
 import pandas as pd
 from pymatgen.electronic_structure.dos import CompleteDos
 from pymatgen.util.testing import PymatgenTest
@@ -33,7 +34,7 @@ class DOSFeaturesTest(PymatgenTest):
         # ensure that both sites give same scores (expected behavior for si)
         features0 = SiteDOS(decay_length=0.1).featurize(dos, 0)
         features1 = SiteDOS(decay_length=0.1).featurize(dos, 1)
-        self.assertArrayEqual(features0, features1)
+        np.testing.assert_array_equal(features0, features1)
 
         # ensure that fractional scores sum to 1
         total_fraction = sum(features0[0:4])

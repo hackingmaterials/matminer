@@ -23,8 +23,8 @@ class MatrixStructureFeaturesTest(StructureFeaturesTest):
         df = cm.fit_featurize_dataframe(df, "s")
         labels = cm.feature_labels()
         self.assertListEqual(labels, ["coulomb matrix eig 0", "coulomb matrix eig 1"])
-        self.assertArrayAlmostEqual(df[labels].iloc[0], [49.169453, 24.546758], decimal=5)
-        self.assertArrayAlmostEqual(df[labels].iloc[1], [153.774731, 452.894322], decimal=5)
+        np.testing.assert_array_almost_equal(df[labels].iloc[0], [49.169453, 24.546758], decimal=5)
+        np.testing.assert_array_almost_equal(df[labels].iloc[1], [153.774731, 452.894322], decimal=5)
 
         # matrix
         species = ["C", "C", "H", "H"]
@@ -53,8 +53,8 @@ class MatrixStructureFeaturesTest(StructureFeaturesTest):
         df = scm.fit_featurize_dataframe(df, "s")
         labels = scm.feature_labels()
         self.assertEqual(labels[0], "sine coulomb matrix eig 0")
-        self.assertArrayAlmostEqual(df[labels].iloc[0], [235.740418, 0.0, 0.0, 0.0], decimal=5)
-        self.assertArrayAlmostEqual(
+        np.testing.assert_array_almost_equal(df[labels].iloc[0], [235.740418, 0.0, 0.0, 0.0], decimal=5)
+        np.testing.assert_array_almost_equal(
             df[labels].iloc[1],
             [232.578562, 1656.288171, 1403.106576, 1403.106576],
             decimal=5,

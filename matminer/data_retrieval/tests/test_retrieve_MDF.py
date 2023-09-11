@@ -11,7 +11,7 @@ class MDFDataRetrievalTest(unittest.TestCase):
     # in setUpClass instead
     @classmethod
     def setUpClass(cls) -> None:
-        cls.mdf_dr = MDFDataRetrieval(anonymous=True)
+        cls.mdf_dr = MDFDataRetrieval(anonymous=True)  # type: ignore[attr-defined]
 
     def test_get_dataframe(self):
         results = self.mdf_dr.get_dataframe(
