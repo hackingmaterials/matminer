@@ -17,7 +17,11 @@ from citrination_client import (
     PropertyQuery,
     ReferenceQuery,
 )
-from pandas.io.json import json_normalize
+
+try:
+    from pandas.io.json import json_normalize
+except ImportError:
+    from pandas import json_normalize
 from tqdm import tqdm
 
 from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
