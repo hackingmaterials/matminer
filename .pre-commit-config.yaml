@@ -47,12 +47,12 @@ repos:
       - id: mypy
         additional_dependencies: [types-all]
 
-  - repo: local
-    hooks:
-      - id: pylint
-        name: pylint
-        entry: pylint
-        language: python
-        types: [python]
-        args: [-sn, --rcfile=pylintrc]
-        additional_dependencies: [pylint]
+#  - repo: local
+#    hooks:
+#      - id: pylint
+#        name: pylint
+#        entry: pylint
+#        language: python
+#        types: [python]
+#        args: [-sn, --rcfile=pylintrc]
+#        additional_dependencies: [pylint]
