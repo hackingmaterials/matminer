@@ -5,7 +5,7 @@ import httplib2
 try:
     import ujson as json
 except ImportError:
-    import json
+    import json  # type: ignore[no-redef]
 
 import unittest
 
