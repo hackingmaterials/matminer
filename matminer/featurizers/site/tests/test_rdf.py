@@ -36,13 +36,13 @@ class RDFTests(SiteFeaturizerTest):
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3], mode="GRDF")
         grdf.fit(s_tuples)
         features = grdf.transform(s_tuples)
-        self.assertArrayAlmostEqual(
+        np.testing.assert_array_almost_equal(
             features,
             [[4.4807e-06, 0.00031, 0.02670], [3.3303e-06, 0.00026, 0.01753]],
             3,
         )
         features = grdf.featurize_dataframe(pd.DataFrame(s_tuples), [0, 1])
-        self.assertArrayEqual(
+        np.testing.assert_array_equal(
             list(features.columns.values),
             [
                 0,
@@ -57,14 +57,14 @@ class RDFTests(SiteFeaturizerTest):
         grdf = GeneralizedRadialDistributionFunction(bins=[f1, f2, f3], mode="pairwise_GRDF")
         grdf.fit(s_tuples)
         features = grdf.transform(s_tuples)
-        self.assertArrayAlmostEqual(features[0], [4.4807e-06, 3.1661e-04, 0.0267], 3)
-        self.assertArrayAlmostEqual(
+        np.testing.assert_array_almost_equal(features[0], [4.4807e-06, 3.1661e-04, 0.0267], 3)
+        np.testing.assert_array_almost_equal(
             features[1],
             [2.1807e-08, 6.1119e-06, 0.0142, 3.3085e-06, 2.5898e-04, 0.0032],
             3,
         )
         features = grdf.featurize_dataframe(pd.DataFrame(s_tuples), [0, 1])
-        self.assertArrayEqual(
+        np.testing.assert_array_equal(
             list(features.columns.values),
             [
                 0,
@@ -81,7 +81,7 @@ class RDFTests(SiteFeaturizerTest):
         # test preset
         grdf = GeneralizedRadialDistributionFunction.from_preset("gaussian")
         grdf.featurize(self.sc, 0)
-        self.assertArrayEqual(
+        np.testing.assert_array_equal(
             [bin.name() for bin in grdf.bins],
             [f"Gaussian center={i} width=1.0" for i in np.arange(10.0)],
         )
@@ -95,7 +95,7 @@ class RDFTests(SiteFeaturizerTest):
         # test transform,and featurize dataframe
         afs = AngularFourierSeries(bins=[f1, f2, f3])
         features = afs.transform(s_tuples)
-        self.assertArrayAlmostEqual(
+        np.testing.assert_array_almost_equal(
             features,
             [
                 [
@@ -124,7 +124,7 @@ class RDFTests(SiteFeaturizerTest):
             3,
         )
         features = afs.featurize_dataframe(pd.DataFrame(s_tuples), [0, 1])
-        self.assertArrayEqual(
+        np.testing.assert_array_equal(
             list(features.columns.values),
             [
                 0,
@@ -144,14 +144,14 @@ class RDFTests(SiteFeaturizerTest):
         # test preset
         afs = AngularFourierSeries.from_preset("gaussian")
         afs.featurize(self.sc, 0)
-        self.assertArrayEqual(
+        np.testing.assert_array_equal(
             [bin.name() for bin in afs.bins],
             [f"Gaussian center={i} width=0.5" for i in np.arange(0, 10, 0.5)],
         )
 
         afs = AngularFourierSeries.from_preset("histogram")
         afs.featurize(self.sc, 0)
-        self.assertArrayEqual(
+        np.testing.assert_array_equal(
             [bin.name() for bin in afs.bins],
             [f"Histogram start={i} width=0.5" for i in np.arange(0, 10, 0.5)],
         )

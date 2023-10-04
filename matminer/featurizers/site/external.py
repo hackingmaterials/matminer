@@ -72,7 +72,11 @@ class SOAP(BaseFeaturizer):
             and Z'. If disabled, the power spectrum does not contain
             cross-species information and is only run over each unique
             species Z. Turned on by default to correspond to the original
-            definition
+            definition. Deprecated in DScribe 2.1 and replace with general
+            'compression' parameter (see below).
+        compression (dict): Contains the options which specify the feature compression to apply.
+            See DScribe documentation for details.
+
     """
 
     @requires(
@@ -88,6 +92,7 @@ class SOAP(BaseFeaturizer):
         periodic,
         rbf="gto",
         crossover=True,
+        compression=None,
     ):
         self.rcut = rcut
         self.nmax = nmax
@@ -96,6 +101,10 @@ class SOAP(BaseFeaturizer):
         self.rbf = rbf
         self.periodic = periodic
         self.crossover = crossover
+        if self.crossover and compression is None:
+            self.compression = {"mode": "crossover"}
+        else:
+            self.compression = {"mode": "off", "species_weighting": None}
         self.adaptor = AseAtomsAdaptor()
         self.length = None
         self.atomic_numbers = None
@@ -154,7 +163,7 @@ class SOAP(BaseFeaturizer):
             sigma=self.sigma,
             rbf=self.rbf,
             periodic=self.periodic,
-            crossover=self.crossover,
+            compression=self.compression,
             average="off",
             sparse=False,
         )

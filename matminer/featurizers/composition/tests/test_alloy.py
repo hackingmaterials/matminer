@@ -113,10 +113,10 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
         #   of radii than the original paper (do not have Kittel's atomic
         #   radii available)
         self.assertEqual((5, 2), np.array(features).shape)
-        self.assertArrayAlmostEqual([0.95, 0.1021], features[0], decimal=2)
-        self.assertArrayAlmostEqual([2.22, 0.0], features[1], decimal=2)
-        self.assertArrayAlmostEqual([158.5, 0.0315], features[2], decimal=1)
-        self.assertArrayAlmostEqual([5.06, 0.0482], features[3], decimal=1)
+        np.testing.assert_array_almost_equal([0.95, 0.1021], features[0], decimal=2)
+        np.testing.assert_array_almost_equal([2.22, 0.0], features[1], decimal=2)
+        np.testing.assert_array_almost_equal([158.5, 0.0315], features[2], decimal=1)
+        np.testing.assert_array_almost_equal([5.06, 0.0482], features[3], decimal=1)
 
     def test_WenAlloys(self):
         wa = WenAlloys()

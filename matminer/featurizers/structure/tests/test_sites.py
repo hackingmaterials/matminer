@@ -58,15 +58,15 @@ class StructureSitesFeaturesTest(StructureFeaturesTest):
 
         #  Test a structure with all the same type (cov should be zero)
         features = prop_fp.featurize(self.diamond)
-        self.assertArrayAlmostEqual(features, [6, 12.0107, 0])
+        np.testing.assert_array_almost_equal(features, [6, 12.0107, 0])
 
         #  Test a structure with only one atom (cov should be zero too)
         features = prop_fp.featurize(self.sc)
-        self.assertArrayAlmostEqual([13, 26.9815386, 0], features)
+        np.testing.assert_array_almost_equal([13, 26.9815386, 0], features)
 
         #  Test a structure with nonzero covariance
         features = prop_fp.featurize(self.nacl)
-        self.assertArrayAlmostEqual([14, 29.22138464, 37.38969216], features)
+        np.testing.assert_array_almost_equal([14, 29.22138464, 37.38969216], features)
 
         # Test soap site featurizer
         soap_fp = SiteStatsFingerprint.from_preset("SOAP_formation_energy")
@@ -83,9 +83,9 @@ class StructureSitesFeaturesTest(StructureFeaturesTest):
 
         # Test diamond
         features = f.featurize(self.diamond)
-        self.assertArrayAlmostEqual(features, [0] * (22 * 5))
+        np.testing.assert_array_almost_equal(features, [0] * (22 * 5))
         features = f.featurize(self.diamond_no_oxi)
-        self.assertArrayAlmostEqual(features, [0] * (22 * 5))
+        np.testing.assert_array_almost_equal(features, [0] * (22 * 5))
 
         # Test CsCl
         big_face_area = np.sqrt(3) * 3 / 2 * (2 / 4 / 4)
@@ -111,7 +111,7 @@ class StructureSitesFeaturesTest(StructureFeaturesTest):
         labels = f.feature_labels()
         my_label = "mean CN_VoronoiNN"
         self.assertAlmostEqual(12, features[labels.index(my_label)])
-        self.assertArrayAlmostEqual([12, 12, 0, 12, 0], features)
+        np.testing.assert_array_almost_equal([12, 12, 0, 12, 0], features)
 
 
 class PartialStructureSitesFeaturesTest(StructureFeaturesTest):
@@ -172,17 +172,17 @@ class PartialStructureSitesFeaturesTest(StructureFeaturesTest):
         #  Test a structure with all the same type (cov should be zero)
         prop_fp.fit([self.diamond])
         features = prop_fp.featurize(self.diamond)
-        self.assertArrayAlmostEqual(features, [6, 12.0107, 0])
+        np.testing.assert_array_almost_equal(features, [6, 12.0107, 0])
 
         #  Test a structure with only one atom (cov should be zero too)
         prop_fp.fit([self.sc])
         features = prop_fp.featurize(self.sc)
-        self.assertArrayAlmostEqual([13, 26.9815386, 0], features)
+        np.testing.assert_array_almost_equal([13, 26.9815386, 0], features)
 
         #  Test a structure with nonzero covariance
         prop_fp.fit([self.nacl])
         features = prop_fp.featurize(self.nacl)
-        self.assertArrayAlmostEqual([11, 22.9897693, np.nan, 17, 35.453, np.nan], features)
+        np.testing.assert_array_almost_equal([11, 22.9897693, np.nan, 17, 35.453, np.nan], features)
 
     def test_ward_prb_2017_lpd(self):
         """Test the local property difference attributes from Ward 2017"""
@@ -191,9 +191,9 @@ class PartialStructureSitesFeaturesTest(StructureFeaturesTest):
         # Test diamond
         f.fit([self.diamond])
         features = f.featurize(self.diamond)
-        self.assertArrayAlmostEqual(features, [0] * (22 * 5))
+        np.testing.assert_array_almost_equal(features, [0] * (22 * 5))
         features = f.featurize(self.diamond_no_oxi)
-        self.assertArrayAlmostEqual(features, [0] * (22 * 5))
+        np.testing.assert_array_almost_equal(features, [0] * (22 * 5))
 
         # Test CsCl
         f.fit([self.cscl])
@@ -221,7 +221,7 @@ class PartialStructureSitesFeaturesTest(StructureFeaturesTest):
         labels = f.feature_labels()
         self.assertAlmostEqual(12, features[labels.index("Al mean CN_VoronoiNN")])
         self.assertAlmostEqual(12, features[labels.index("Ni mean CN_VoronoiNN")])
-        self.assertArrayAlmostEqual([12, 12, 0, 12, 0] * 2, features)
+        np.testing.assert_array_almost_equal([12, 12, 0, 12, 0] * 2, features)
 
 
 if __name__ == "__main__":

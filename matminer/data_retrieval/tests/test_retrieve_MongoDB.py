@@ -1,5 +1,6 @@
 import unittest
 
+import numpy as np
 from pymatgen.util.testing import PymatgenTest
 from pymongo import MongoClient
 
@@ -55,7 +56,7 @@ class MongoDataRetrievalTest(PymatgenTest):
         floats = df["final"] != 16.938475
         self.assertTrue(floats.any() and not floats.all())
 
-        self.assertArrayAlmostEqual(df["array"].iloc[0], [1.4, 5.6, 11.2, 1.1])
+        np.testing.assert_array_almost_equal(df["array"].iloc[0], [1.4, 5.6, 11.2, 1.1])
         self.assertTrue(df["valid"].all())
 
         c.drop()

@@ -14,7 +14,7 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 
 extras_require = {
     "mpds": ["ujson", "jmespath", "httplib2", "ase", "jsonschema"],
-    "dscribe": ["dscribe~=2.0"],
+    "dscribe": ["dscribe~=2.1"],
     "mdfforge": ["mdf-forge"],
     "aflow": ["aflow"],
     "citrine": ["citrination-client"],
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         install_requires=[
             "numpy>=1.20.1",
             "requests",
-            "pandas~=1.5",
+            "pandas",
             "tqdm",
             "pymongo",
             "future",

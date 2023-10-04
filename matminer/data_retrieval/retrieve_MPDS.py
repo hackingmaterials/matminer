@@ -18,7 +18,7 @@ from matminer.data_retrieval.retrieve_base import BaseDataRetrieval
 try:
     import ujson as json
 except ImportError:
-    import json
+    import json  # type: ignore[no-redef]
 
 import pandas as pd
 from pymatgen.core.lattice import Lattice
