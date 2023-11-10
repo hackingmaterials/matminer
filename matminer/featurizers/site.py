@@ -62,13 +62,13 @@ except ImportError:
     dscribe, SOAP_dscribe = None, None
 
 cn_motif_op_params = {}
-with open(os.path.join(os.path.dirname(
-        pymatgen.analysis.__file__), 'cn_opt_params.yaml'), 'r') as f:
-    cn_motif_op_params = yaml.safe_load(f)
+with open(
+    os.path.join(os.path.dirname(pymatgen.analysis.__file__), "cn_opt_params.yaml"), "r"
+) as f:
+    cn_motif_op_params = yaml.YAML(f, typ="safe")
 cn_target_motif_op = {}
-with open(os.path.join(os.path.dirname(
-        __file__), 'cn_target_motif_op.yaml'), 'r') as f:
-    cn_target_motif_op = yaml.safe_load(f)
+with open(os.path.join(os.path.dirname(__file__), "cn_target_motif_op.yaml"), "r") as f:
+    cn_target_motif_op = yaml.YAML(f, type="safe")
 
 
 class AGNIFingerprints(BaseFeaturizer):
