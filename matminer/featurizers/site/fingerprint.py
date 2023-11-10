@@ -873,7 +873,7 @@ def load_cn_motif_op_params():
     with open(
         os.path.join(os.path.dirname(pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"),
     ) as f:
-        return yaml.safe_load(f)
+        return yaml.YAML(typ="safe", pure=True).load(f)
 
 
 def load_cn_target_motif_op():
@@ -884,4 +884,4 @@ def load_cn_target_motif_op():
         (dict)
     """
     with open(os.path.join(os.path.dirname(__file__), "cn_target_motif_op.yaml")) as f:
-        return yaml.safe_load(f)
+        return yaml.YAML(typ="safe", pure=True).load(f)
