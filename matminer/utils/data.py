@@ -976,7 +976,7 @@ class OpticalData(AbstractData):
 
         # Open the yml file
         with open(yaml_file) as yml:
-            data = yaml.safe_load(yml)["DATA"][0]
+            data = yaml.YAML(typ="safe", pure=True).load(yml)["DATA"][0]
 
         data_format = data["type"]
 
