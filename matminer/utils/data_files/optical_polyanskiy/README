@@ -1,0 +1,5 @@
+This data has been retrieved from https://github.com/polyanskiy/refractiveindex.info-database
+on August 27, 2022. The script used to transform the data from the original repository to
+an easier-to-use database for matminer can be found in matminer/dev_scripts/dataset_management/handle_refractiveindex.py
+This script is ugly because the data format is not homogeneous and many things have been handled by hand.
+Do not hesitate to contact Matgenix in case you have troubles to re-create the dataset used by matminer (in case you want to update the database).

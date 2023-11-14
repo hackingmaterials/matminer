@@ -59,7 +59,7 @@ class IntersticeDistribution(BaseFeaturizer):
             raise ValueError("interstice_types only support sub-list of " "['dist', 'area', 'vol']")
         self.stats = ["mean", "std_dev", "minimum", "maximum"] if stats is None else stats
         self.radius_type = radius_type
-        self.data_source = MagpieData()
+        self.data_source = MagpieData(impute_nan=True)
 
     def featurize(self, struct, idx):
         """

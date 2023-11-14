@@ -21,7 +21,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
                 ]
             }
         )
-        miedema = Miedema(struct_types="all")
+        miedema = Miedema(struct_types="all", missing_is_mean=False)
         self.assertTrue(miedema.precheck(df["composition"].iloc[0]))
         self.assertFalse(miedema.precheck(df["composition"].iloc[-1]))
         self.assertAlmostEqual(miedema.precheck_dataframe(df, "composition"), 2 / 3)
@@ -62,7 +62,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
                 ]
             }
         )
-        miedema = Miedema(struct_types="ss", ss_types=["min", "fcc", "bcc", "hcp", "no_latt"])
+        miedema = Miedema(struct_types="ss", ss_types=["min", "fcc", "bcc", "hcp", "no_latt"], missing_is_mean=False)
         mfps = miedema.featurize_dataframe(df, col_id="composition")
         self.assertAlmostEqual(mfps["Miedema_deltaH_ss_min"][0], 0.03663599755)
         self.assertAlmostEqual(mfps["Miedema_deltaH_ss_fcc"][0], 0.04700027066)

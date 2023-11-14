@@ -35,7 +35,7 @@ class CationProperty(ElementProperty):
     """
 
     @classmethod
-    def from_preset(cls, preset_name):
+    def from_preset(cls, preset_name, impute_nan=True):
         if preset_name == "deml":
             data_source = "deml"
             features = [
@@ -48,7 +48,7 @@ class CationProperty(ElementProperty):
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
             raise ValueError('Preset "%s" not found' % preset_name)
-        return cls(data_source, features, stats)
+        return cls(data_source, features, stats, impute_nan=impute_nan)
 
     def feature_labels(self):
         return [f + " of cations" for f in super().feature_labels()]
@@ -141,7 +141,7 @@ class IonProperty(BaseFeaturizer):
     Ionic property attributes. Similar to ElementProperty.
     """
 
-    def __init__(self, data_source=PymatgenData(), fast=False):
+    def __init__(self, data_source=PymatgenData(impute_nan=True), fast=False):
         """
 
         Args:
@@ -236,10 +236,16 @@ class ElectronAffinity(BaseFeaturizer):
     Calculate average electron affinity times formal charge of anion elements.
     Note: The formal charges must already be computed before calling `featurize`.
     Generates average (electron affinity*formal charge) of anions.
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
-        self.data_source = DemlData()
+    def __init__(self, impute_nan=True):
+        self.impute_nan = impute_nan
+        self.data_source = DemlData(impute_nan=self.impute_nan)
 
     def featurize(self, comp):
         """

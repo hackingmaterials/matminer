@@ -51,7 +51,7 @@ class AtomicOrbitals(BaseFeaturizer):
         integer_comp, factor = comp.get_integer_formula_and_factor()
 
         # warning message if composition is dilute and truncated
-        if not (len(Composition(comp).elements) == len(Composition(integer_comp).elements)):
+        if not len(Composition(comp).elements) == len(Composition(integer_comp).elements):
             warn(f"AtomicOrbitals: {comp} truncated to {integer_comp}")
 
         homo_lumo = MolecularOrbitals(integer_comp).band_edges
@@ -103,10 +103,14 @@ class ValenceOrbital(BaseFeaturizer):
         orbitals (list): orbitals to calculate
         props (list): specifies whether to return average number of electrons in each orbital,
             fraction of electrons in each orbital, or both
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac")):
-        self.data_source = MagpieData()
+    def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac"), impute_nan=True):
+        self.impute_nan = impute_nan
+        self.data_source = MagpieData(impute_nan=self.impute_nan)
         self.orbitals = orbitals
         self.props = props
 
@@ -126,7 +130,7 @@ class ValenceOrbital(BaseFeaturizer):
         # Get the mean number of electrons in each shell
         avg = [
             PropertyStats.mean(
-                self.data_source.get_elemental_properties(elements, "N%sValence" % orb),
+                self.data_source.get_elemental_properties(elements, f"N{orb}Valence"),
                 weights=fractions,
             )
             for orb in self.orbitals

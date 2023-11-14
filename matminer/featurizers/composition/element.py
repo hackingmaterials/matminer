@@ -27,7 +27,7 @@ class ElementFraction(BaseFeaturizer):
             vector (list of floats): fraction of each element in a composition
         """
 
-        vector = [0] * 103
+        vector = [0] * len(Element)
         el_list = list(comp.element_composition.fractional_composition.items())
         for el in el_list:
             obj = el
@@ -37,7 +37,7 @@ class ElementFraction(BaseFeaturizer):
 
     def feature_labels(self):
         labels = []
-        for i in range(1, 104):
+        for i in range(1, len(Element) + 1):
             labels.append(Element.from_Z(i).symbol)
         return labels
 
@@ -207,12 +207,12 @@ class BandCenter(BaseFeaturizer):
         - Band center
     """
 
-    magpie_data = MagpieData()
-    deml_data = DemlData()
+    magpie_data = MagpieData(impute_nan=True)
+    deml_data = DemlData(impute_nan=True)
 
     def featurize(self, comp):
         """
-        (Rough) estimation of absolution position of band center using
+        (Rough) estimation of absolute position of band center using
         geometric mean of electronegativity.
 
         Args:
