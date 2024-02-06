@@ -11,7 +11,7 @@ from glob import glob
 
 import numpy as np
 import pandas as pd
-from pymatgen.core.periodic_table import Element, _pt_data
+from pymatgen.core.periodic_table import Element
 
 __author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"
 
@@ -206,7 +206,7 @@ class MagpieData(AbstractData, OxidationStatesMixin):
             with open(os.path.join(self.data_dir, f"{descriptor_name}.table")) as f:
                 self.all_elemental_props[descriptor_name] = dict()
                 lines = f.readlines()
-                for atomic_no in range(1, len(_pt_data) + 1):  # max Z=103
+                for atomic_no in range(1, 118 + 1):  # (max Z=118)
                     try:
                         if descriptor_name in ["OxidationStates"]:
                             prop_value = [float(i) for i in lines[atomic_no - 1].split()]
