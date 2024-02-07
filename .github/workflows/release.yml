@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools build setuptools setuptools_scm wheel
-          python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}_extras.txt
+          python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}.txt
           # Using non-editable install for testing building of MANIFEST files
           python${{ matrix.python-version }} -m pip install --no-deps .
 
