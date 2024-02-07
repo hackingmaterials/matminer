@@ -242,7 +242,7 @@ class PropertyStats:
             mode
         """
         if weights is None:
-            return scipy.stats.mode(data_lst).mode[0]
+            return scipy.stats.mode(data_lst, keepdims=True).mode[0]
         else:
             # Find the entry(s) with the largest weight
             data_lst = np.array(data_lst)
