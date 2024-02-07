@@ -54,7 +54,7 @@ if __name__ == "__main__":
         include_package_data=True,
         zip_safe=False,
         install_requires=[
-            "numpy>=1.20.1",
+            "numpy>=1.20.1,<2",
             "requests",
             "pandas",
             "tqdm",
@@ -67,8 +67,9 @@ if __name__ == "__main__":
         ],
         extras_require=extras_require,
         classifiers=[
-            "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11",
             "Development Status :: 4 - Beta",
             "Intended Audience :: Science/Research",
             "Intended Audience :: System Administrators",
@@ -77,6 +78,7 @@ if __name__ == "__main__":
             "Topic :: Other/Nonlisted Topic",
             "Topic :: Scientific/Engineering",
         ],
+        python_requires=">=3.9",
         test_suite="matminer",
         tests_require=tests_require,
         scripts=[],
