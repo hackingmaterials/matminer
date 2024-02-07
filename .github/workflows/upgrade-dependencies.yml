@@ -28,8 +28,7 @@ jobs:
         shell: bash
         run: |
           python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools
-          python${{ matrix.python-version }} -m piptools compile -q --upgrade -o requirements/${{ matrix.os }}_py${{ matrix.python-version }}.txt
-          python${{ matrix.python-version }} -m piptools compile -q --upgrade --all-extras -o requirements/${{ matrix.os }}_py${{ matrix.python-version }}_extras.txt
+          python${{ matrix.python-version }} -m piptools compile -q --upgrade --all-extras -o requirements/${{ matrix.os }}_py${{ matrix.python-version }}.txt
       - name: Detect changes
         id: changes
         shell: bash
