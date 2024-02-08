@@ -54,9 +54,9 @@ if __name__ == "__main__":
         include_package_data=True,
         zip_safe=False,
         install_requires=[
-            "numpy>=1.20.1,<2",
+            "numpy >= 1.20.1, < 2",
             "requests",
-            "pandas",
+            "pandas ~= 1.5",
             "tqdm",
             "pymongo",
             "future",
