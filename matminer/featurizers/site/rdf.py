@@ -428,7 +428,7 @@ class AngularFourierSeries(BaseFeaturizer):
         # Generate cos(theta) between neighbor pairs for each central site.
         # Also, retain data on neighbor distances for each pair
         # process with matrix algebra, we really need the speed here
-        data = np.array(list(neighbor_tuples))
+        data = np.array(list(neighbor_tuples), dtype=object)
         v1, v2 = np.vstack(data[:, 0, 0]), np.vstack(data[:, 1, 0])
         distances = data[:, :, 1]
         neighbor_pairs = np.concatenate(
