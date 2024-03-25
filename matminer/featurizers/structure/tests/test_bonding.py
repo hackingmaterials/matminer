@@ -60,7 +60,6 @@ class BondingStructureTest(StructureFeaturesTest):
         np.testing.assert_array_equal(df["Al - Al bond frac."].to_numpy(), [0.0, 0.0])
         np.testing.assert_array_equal(df["Ni - Ni bond frac."].to_numpy(), [0.0, 0.5])
 
-    @unittest.skip("Test does not pass with latest deps")
     def test_bob(self):
         # Test a single fit and featurization
         scm = SineCoulombMatrix(flatten=False)
