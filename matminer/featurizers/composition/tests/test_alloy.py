@@ -160,7 +160,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "Shear modulus mean": 79.48600137832061,
             "Shear modulus strength model": -0.009636621848440554,
             "Total weight": 57.243028243301005,
-            "VEC mean": 8.447250438374748,
+            "VEC mean": 8.395723406331793,
             "Weight Fraction": "Fe0.6048579375087819 C0.00019995792415715736 "
             "Mn0.0005000210911858884 Si0.0005004488909678273 "
             "Cr9.991733798026916e-05 Ni0.19686472127404955 "

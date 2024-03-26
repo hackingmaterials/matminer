@@ -32,7 +32,6 @@ class GRDFTests(PymatgenTest):
         self.assertIn("width=4", name)
         self.assertIn("center=4", name)
 
-    @unittest.skip("Test does not pass with latest deps")
     def test_histogram(self):
         h = Histogram(1, 4)
         np.testing.assert_array_almost_equal([0, 1, 0], h([0.5, 2, 5]))

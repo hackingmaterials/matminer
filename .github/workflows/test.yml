@@ -3,6 +3,9 @@
 # The ext package is also only tested in this workflow. Coverage is also computed based on this platform.
 name: Testing
 
+env:
+  PYTEST_ADDOPTS: "--color=yes"
+
 on:
   push:
     branches:

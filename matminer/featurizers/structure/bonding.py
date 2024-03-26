@@ -533,7 +533,7 @@ class BagofBonds(BaseFeaturizer):
         """
         unpadded_bobs = [self.bag(s, return_baglens=True) for s in X]
         bonds = [list(bob.keys()) for bob in unpadded_bobs]
-        bonds = np.unique(sum(bonds, []))
+        bonds = np.unique(np.array(sum(bonds, []), dtype=object))
         baglens = [0] * len(bonds)
 
         for i, bond in enumerate(bonds):
