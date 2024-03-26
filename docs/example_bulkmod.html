@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Predicting bulk moduli with matminer &#8212; matminer 0.9.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <title>Predicting bulk moduli with matminer &#8212; matminer 0.9.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=8b5d5988" />
+    <script src="_static/documentation_options.js?v=9dc39874"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -30,7 +26,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Predicting bulk moduli with matminer</a></li> 
       </ul>
     </div>  
@@ -41,16 +37,16 @@
           <div class="body" role="main">
             
   <section id="predicting-bulk-moduli-with-matminer">
-<h1>Predicting bulk moduli with matminer<a class="headerlink" href="#predicting-bulk-moduli-with-matminer" title="Permalink to this heading">¶</a></h1>
+<h1>Predicting bulk moduli with matminer<a class="headerlink" href="#predicting-bulk-moduli-with-matminer" title="Link to this heading">¶</a></h1>
 <section id="fit-data-mining-models-to-6000-calculated-bulk-moduli-from-materials-project">
-<h2>Fit data mining models to ~6000 calculated bulk moduli from Materials Project<a class="headerlink" href="#fit-data-mining-models-to-6000-calculated-bulk-moduli-from-materials-project" title="Permalink to this heading">¶</a></h2>
+<h2>Fit data mining models to ~6000 calculated bulk moduli from Materials Project<a class="headerlink" href="#fit-data-mining-models-to-6000-calculated-bulk-moduli-from-materials-project" title="Link to this heading">¶</a></h2>
 <p><strong>Time to complete: 30 minutes</strong></p>
 <p>This notebook is an example of using the MP data retrieval tool <code class="code docutils literal notranslate"><span class="pre">retrieve_MP.py</span></code> to retrieve computed bulk moduli from
 <a class="reference external" href="https://materialsproject.org/">the materials project databases</a> in the form of a pandas dataframe, using matminer’s tools to populate
 the dataframe with descriptors/features from pymatgen, and then fitting regression models from the scikit-learn library to
 the dataset.</p>
 <section id="preamble">
-<h3>Preamble<a class="headerlink" href="#preamble" title="Permalink to this heading">¶</a></h3>
+<h3>Preamble<a class="headerlink" href="#preamble" title="Link to this heading">¶</a></h3>
 <p><strong>Import libraries, and set pandas display options.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># filter warnings messages from the notebook</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -67,7 +63,7 @@ the dataset.</p>
 </div>
 </section>
 <section id="step-1-use-matminer-to-obtain-data-from-mp-automatically-in-a-pandas-dataframe">
-<h3>Step 1: Use matminer to obtain data from MP (automatically) in a “pandas” dataframe<a class="headerlink" href="#step-1-use-matminer-to-obtain-data-from-mp-automatically-in-a-pandas-dataframe" title="Permalink to this heading">¶</a></h3>
+<h3>Step 1: Use matminer to obtain data from MP (automatically) in a “pandas” dataframe<a class="headerlink" href="#step-1-use-matminer-to-obtain-data-from-mp-automatically-in-a-pandas-dataframe" title="Link to this heading">¶</a></h3>
 <p><strong>Step 1a: Import matminer’s MP data retrieval tool and get calculated bulk moduli and possible descriptors.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.data_retrieval.retrieve_MP</span> <span class="kn">import</span> <span class="n">MPDataRetrieval</span>
 
@@ -101,7 +97,7 @@ the dataset.</p>
 </div>
 </section>
 <section id="step-2-add-descriptors-features">
-<h3>Step 2: Add descriptors/features<a class="headerlink" href="#step-2-add-descriptors-features" title="Permalink to this heading">¶</a></h3>
+<h3>Step 2: Add descriptors/features<a class="headerlink" href="#step-2-add-descriptors-features" title="Link to this heading">¶</a></h3>
 <p><strong>Step 2a: create volume per atom descriptor</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># add volume per atom descriptor</span>
 <span class="n">df_mp</span><span class="p">[</span><span class="s1">&#39;vpa&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_mp</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">df_mp</span><span class="p">[</span><span class="s1">&#39;nsites&#39;</span><span class="p">]</span>
@@ -133,7 +129,7 @@ the dataset.</p>
 </div>
 </section>
 <section id="step-3-fit-a-linear-regression-model-get-r2-and-rmse">
-<h3>Step 3: Fit a Linear Regression model, get R<sup>2</sup> and RMSE<a class="headerlink" href="#step-3-fit-a-linear-regression-model-get-r2-and-rmse" title="Permalink to this heading">¶</a></h3>
+<h3>Step 3: Fit a Linear Regression model, get R<sup>2</sup> and RMSE<a class="headerlink" href="#step-3-fit-a-linear-regression-model-get-r2-and-rmse" title="Link to this heading">¶</a></h3>
 <p><strong>Step 3a: Define what column is the target output, and what are the relevant descriptors</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># target output column</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">df_mp</span><span class="p">[</span><span class="s1">&#39;elasticity.K_VRH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
@@ -191,7 +187,7 @@ the dataset.</p>
 </div>
 </section>
 <section id="step-4-plot-the-results-with-figrecipes">
-<h3>Step 4: Plot the results with FigRecipes<a class="headerlink" href="#step-4-plot-the-results-with-figrecipes" title="Permalink to this heading">¶</a></h3>
+<h3>Step 4: Plot the results with FigRecipes<a class="headerlink" href="#step-4-plot-the-results-with-figrecipes" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.figrecipes.plotly.make_plots</span> <span class="kn">import</span> <span class="n">PlotlyFig</span>
 
 <span class="n">pf</span> <span class="o">=</span> <span class="n">PlotlyFig</span><span class="p">(</span><span class="n">x_title</span><span class="o">=</span><span class="s1">&#39;DFT (MP) bulk modulus (GPa)&#39;</span><span class="p">,</span>
@@ -225,7 +221,7 @@ the dataset.</p>
 Forest model to examine the importance of our features.</p>
 </section>
 <section id="step-5-follow-similar-steps-for-a-random-forest-model">
-<h3>Step 5: Follow similar steps for a Random Forest model<a class="headerlink" href="#step-5-follow-similar-steps-for-a-random-forest-model" title="Permalink to this heading">¶</a></h3>
+<h3>Step 5: Follow similar steps for a Random Forest model<a class="headerlink" href="#step-5-follow-similar-steps-for-a-random-forest-model" title="Link to this heading">¶</a></h3>
 <p><strong>Step 5a: Fit the Random Forest model, get R2 and RMSE</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
 
@@ -255,7 +251,7 @@ Forest model to examine the importance of our features.</p>
 </div>
 </section>
 <section id="step-6-plot-our-results-and-determine-what-features-are-the-most-important">
-<h3>Step 6: Plot our results and determine what features are the most important<a class="headerlink" href="#step-6-plot-our-results-and-determine-what-features-are-the-most-important" title="Permalink to this heading">¶</a></h3>
+<h3>Step 6: Plot our results and determine what features are the most important<a class="headerlink" href="#step-6-plot-our-results-and-determine-what-features-are-the-most-important" title="Link to this heading">¶</a></h3>
 <p><strong>Step 6a: Plot the random forest model</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.figrecipes.plotly.make_plots</span> <span class="kn">import</span> <span class="n">PlotlyFig</span>
 
@@ -365,14 +361,14 @@ Forest model to examine the importance of our features.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Predicting bulk moduli with matminer</a></li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    &#169; Copyright 2015, Anubhav Jain.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
 
   </body>

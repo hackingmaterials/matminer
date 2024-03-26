@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Installing matminer &#8212; matminer 0.9.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <title>Installing matminer &#8212; matminer 0.9.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=8b5d5988" />
+    <script src="_static/documentation_options.js?v=9dc39874"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -30,7 +26,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Installing matminer</a></li> 
       </ul>
     </div>  
@@ -41,38 +37,42 @@
           <div class="body" role="main">
             
   <section id="installing-matminer">
-<span id="installation-tutorial"></span><h1>Installing matminer<a class="headerlink" href="#installing-matminer" title="Permalink to this heading">¶</a></h1>
-<p>Matminer requires Python 3.6+.</p>
+<span id="installation-tutorial"></span><h1>Installing matminer<a class="headerlink" href="#installing-matminer" title="Link to this heading">¶</a></h1>
+<p>Matminer requires Python 3.9+.</p>
+<p>It is strongly recommend that you install it in a virtual environment (using e.g., conda, Python’s venv, or related tools) to avoid conflicts with other packages.</p>
 <p>There are a couple of quick and easy ways to install matminer (see also some <strong>tips</strong> below):</p>
 <section id="install-and-update-via-pip">
-<h2>Install and update via pip<a class="headerlink" href="#install-and-update-via-pip" title="Permalink to this heading">¶</a></h2>
+<h2>Install and update via pip<a class="headerlink" href="#install-and-update-via-pip" title="Link to this heading">¶</a></h2>
 <p>If you have installed pip, simply run the command in a bash terminal:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install matminer
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matminer
 </pre></div>
 </div>
 <p>or, to install matminer in your user home folder, run the command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install matminer --user
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matminer<span class="w"> </span>--user
 </pre></div>
 </div>
 <p>To update matminer, simply type <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">matminer</span></code>.</p>
+<p>This will install the latest version of all of matminer’s dependencies.
+In cases of future incompatibility, you can install the specific versions used for testing matminer by following the development instructions below.</p>
 </section>
 <section id="install-in-development-mode">
-<h2>Install in development mode<a class="headerlink" href="#install-in-development-mode" title="Permalink to this heading">¶</a></h2>
+<h2>Install in development mode<a class="headerlink" href="#install-in-development-mode" title="Link to this heading">¶</a></h2>
 <p>To install from the latest source of the matminer code in developmental mode, clone the Git source:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/hackingmaterials/matminer.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/hackingmaterials/matminer.git
 </pre></div>
 </div>
 <p>and then enter the cloned repository/folder to install in developer mode:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> matminer
-$ python setup.py develop
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>matminer
+$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements/requirements-ubuntu_py3.11.txt<span class="w">  </span><span class="c1"># or corresponding file for your platform</span>
+$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </pre></div>
 </div>
-<p>To update matminer, enter your cloned folder and type <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> followed by <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">develop</span></code>.</p>
+<p>To update matminer, simply enter your cloned folder and type <a href="#id1"><span class="problematic" id="id2">``</span></a>git pull``g</p>
 </section>
 <section id="tips">
-<h2>Tips<a class="headerlink" href="#tips" title="Permalink to this heading">¶</a></h2>
+<h2>Tips<a class="headerlink" href="#tips" title="Link to this heading">¶</a></h2>
 <ul>
-<li><p>Make sure you are using Python 3.6 or higher</p></li>
+<li><p>Make sure you are using a compatible Python version (3.9+ at time of writing).</p></li>
 <li><p>If you have trouble with the installation of a component library (sympy, pymatgen, mdf-forge, etc.), you can try to run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&lt;&lt;component&gt;&gt;</span></code> or (if you are using <a class="reference external" href="https://www.anaconda.com/distribution/">Anaconda</a>) <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">&lt;&lt;component&gt;&gt;</span></code> first, and then re-try the installation.</p>
 <blockquote>
 <div><ul class="simple">
@@ -134,14 +134,14 @@ $ python setup.py develop
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Installing matminer</a></li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    &#169; Copyright 2015, Anubhav Jain.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
 
   </body>
