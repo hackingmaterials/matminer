@@ -7,7 +7,9 @@
 Installing matminer
 ===================
 
-Matminer requires Python 3.6+.
+Matminer requires Python 3.9+.
+
+It is strongly recommend that you install it in a virtual environment (using e.g., conda, Python's venv, or related tools) to avoid conflicts with other packages.
 
 There are a couple of quick and easy ways to install matminer (see also some **tips** below):
 
@@ -28,6 +30,9 @@ or, to install matminer in your user home folder, run the command:
 
 To update matminer, simply type ``pip install --upgrade matminer``.
 
+This will install the latest version of all of matminer's dependencies.
+In cases of future incompatibility, you can install the specific versions used for testing matminer by following the development instructions below.
+
 Install in development mode
 -----------------------------
 
@@ -42,15 +47,16 @@ and then enter the cloned repository/folder to install in developer mode:
 .. code-block:: bash
 
     $ cd matminer
-    $ python setup.py develop
+    $ pip install -r requirements/requirements-ubuntu_py3.11.txt  # or corresponding file for your platform
+    $ pip install -e .
 
-To update matminer, enter your cloned folder and type ``git pull`` followed by ``python setup.py develop``.
+To update matminer, simply enter your cloned folder and type ``git pull``g
 
 
 Tips
 ----
 
-* Make sure you are using Python 3.6 or higher
+* Make sure you are using a compatible Python version (3.9+ at time of writing).
 * If you have trouble with the installation of a component library (sympy, pymatgen, mdf-forge, etc.), you can try to run ``pip install <<component>>`` or (if you are using `Anaconda <https://www.anaconda.com/distribution/>`_) ``conda install <<component>>`` first, and then re-try the installation.
 
     - For example, installing pymatgen on a Windows platform is easiest with Anaconda via ``conda install -c conda-forge pymatgen``.
