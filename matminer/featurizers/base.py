@@ -329,7 +329,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
             )
 
         # Generate the labels for the columns
-        labels = self._generate_column_labels(multiindex, return_errors)
+        labels = self._generate_column_labels(multiindex, return_errors).tolist()
 
         # Check names to avoid overwriting the current columns
         # ConversionFeaturizer have attribute called _overwrite_data which
