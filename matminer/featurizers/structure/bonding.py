@@ -356,8 +356,9 @@ class BondFractions(BaseFeaturizer):
         species = []
         for ss in bondstr.split(self.token):
             try:
-                species.append(Specie.from_string(ss))
-            except ValueError:
+                species.append(Specie.from_str(ss))
+            # pymatgen deprecated from_string in favour of from_str, if it is missing then fallback to from_dict
+            except (ValueError, AttributeError):  
                 d = {"element": ss, "oxidation_state": 0}
                 species.append(Specie.from_dict(d))
         return tuple(species)
