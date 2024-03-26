@@ -1,5 +1,7 @@
 import math
 import unittest
+import pandas as pd
+from pymatgen.core import Composition
 
 from matminer.featurizers.composition.composite import ElementProperty, Meredig
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
@@ -22,6 +24,20 @@ class CompositeFeaturesTest(CompositionFeaturesTest):
         self.assertAlmostEqual(df_elem_deml["DemlData range atom_num"][0], 18)
         self.assertAlmostEqual(df_elem_deml["DemlData mean atom_num"][0], 15.2)
         self.assertAlmostEqual(df_elem_deml["DemlData std_dev atom_num"][0], 12.7279, 4)
+
+        df_for_RE = pd.DataFrame(
+            {
+                "composition": [
+                    Composition("Mg99.21Zn0.18Mn0.02Ce0.48Si0.01La0.1"),
+                ]
+            }
+        )
+        df_elem_deml_for_RE = ElementProperty.from_preset("deml").featurize_dataframe(df_for_RE, col_id="composition")
+        self.assertAlmostEqual(df_elem_deml_for_RE["DemlData minimum heat_cap"][0], 19.789)
+        self.assertAlmostEqual(df_elem_deml_for_RE["DemlData maximum heat_cap"][0], 27.11)
+        self.assertAlmostEqual(df_elem_deml_for_RE["DemlData range heat_cap"][0], 7.32099999999999)
+        self.assertAlmostEqual(df_elem_deml_for_RE["DemlData mean heat_cap"][0], 24.8819017999999)
+        self.assertAlmostEqual(df_elem_deml_for_RE["DemlData std_dev heat_cap"][0], 1.35708660591194)
 
     def test_elem_matminer(self):
         df_elem = ElementProperty.from_preset("matminer").featurize_dataframe(self.df, col_id="composition")
