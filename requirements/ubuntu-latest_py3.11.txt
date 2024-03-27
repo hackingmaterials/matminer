@@ -299,6 +299,8 @@ tqdm==4.66.2
     #   matminer (setup.py)
     #   mdf-forge
     #   pymatgen
+tzdata==2024.1
+    # via pandas
 ujson==5.9.0
     # via matminer (setup.py)
 uncertainties==3.1.7
