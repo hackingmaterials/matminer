@@ -159,7 +159,7 @@ packaging==24.0
     #   sphinx
 palettable==3.3.3
     # via pymatgen
-pandas==2.1.0
+pandas==2.2.1
     # via
     #   matminer (setup.py)
     #   pymatgen
