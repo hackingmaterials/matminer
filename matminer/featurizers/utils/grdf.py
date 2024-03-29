@@ -88,7 +88,6 @@ class Histogram(AbstractPairwise):
         return np.logical_and(
             np.greater_equal(r_ij, self.start),
             np.less(r_ij, self.start + self.width),
-            dtype=np.float64,
         )
 
     def volume(self, cutoff):

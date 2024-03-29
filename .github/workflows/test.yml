@@ -3,20 +3,14 @@
 # The ext package is also only tested in this workflow. Coverage is also computed based on this platform.
 name: Testing
 
+env:
+  PYTEST_ADDOPTS: "--color=yes"
+
 on:
   push:
     branches:
       - main
-    paths:
-      - matminer/**
-      - requirements/**
-
   pull_request:
-    branches:
-      - main
-    paths:
-      - matminer/**
-      - requirements/**
 
   workflow_dispatch:
     inputs:
@@ -31,8 +25,9 @@ jobs:
   test:
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10", "3.11"]
         mongodb-version: ['4.0']
+      fail-fast: false
 
     runs-on: ubuntu-latest
 
@@ -64,7 +59,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools setuptools setuptools_scm
-        python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}_extras.txt
+        python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}.txt
         # Using non-editable install for testing building of MANIFEST files
         python${{ matrix.python-version }} -m pip install --no-deps .
         python${{ matrix.python-version }} -m pip install pre-commit

@@ -334,6 +334,8 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         # Check names to avoid overwriting the current columns
         # ConversionFeaturizer have attribute called _overwrite_data which
         # determines whether an Error is thrown
+        if not isinstance(labels, list):
+            labels = labels.tolist()
         overwrite = getattr(self, "_overwrite_data", False)
         if not overwrite:
             for col in df.columns.values:

@@ -123,7 +123,7 @@ class SOAP(BaseFeaturizer):
         """
         valid_presets = ["formation_energy"]
         if preset == "formation_energy":
-            return cls(6, 8, 8, 0.4, True, "gto", True)
+            return cls(rcut=6, nmax=8, lmax=8, sigma=0.4, periodic=True, rbf="gto", crossover=True, compression=False)
         else:
             raise ValueError(f"'{preset}' is not a valid preset. Choose from {valid_presets}")
 
