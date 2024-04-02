@@ -122,7 +122,7 @@ mdf-forge==0.8.0
     # via matminer (setup.py)
 mdf-toolbox==0.7.1
     # via mdf-forge
-monty==2024.2.26
+monty==2024.3.31
     # via
     #   matminer (setup.py)
     #   pymatgen
@@ -175,13 +175,13 @@ plotly==5.20.0
     # via pymatgen
 pluggy==1.4.0
     # via pytest
-pybind11==2.11.1
+pybind11==2.12.0
     # via dscribe
 pybtex==0.24.0
     # via pymatgen
 pycodestyle==2.11.1
     # via flake8
-pycparser==2.21
+pycparser==2.22
     # via cffi
 pyflakes==3.2.0
     # via flake8
@@ -193,7 +193,7 @@ pylint==3.1.0
     # via matminer (setup.py)
 pymatgen==2024.3.1
     # via matminer (setup.py)
-pymongo==4.6.2
+pymongo==4.6.3
     # via matminer (setup.py)
 pyparsing==3.1.2
     # via
