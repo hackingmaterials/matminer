@@ -3,6 +3,7 @@ Composition featurizers for determining packing characteristics.
 """
 
 import itertools
+import warnings
 from functools import lru_cache
 
 import numpy as np
@@ -49,7 +50,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         for bulk metallic glasses, Nat. Commun. 6 (2015) 8123. doi:10.1038/ncomms9123.
     """
 
-    def __init__(self, threshold=0.01, n_nearest=(1, 3, 5), max_types=6):
+    def __init__(self, threshold=0.01, n_nearest=(1, 3, 5), max_types=6, impute_nan=False):
         """
         Initialize the featurizer
 
@@ -74,7 +75,18 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         self._n_elems = len(self._el_frac.featurize(Composition("H")))
 
         # Tool for looking up radii
-        self._data_source = MagpieData(impute_nan=True)
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(
+                f"""{self.__class__.__name__}(impute_nan=False):
+                    In a future release, impute_nan will be set to True by default.
+                    This means that features that are missing or are NaNs for elements
+                    from the data source will be replaced by the average of that value
+                    over the available elements.
+                    This avoids NaNs after featurization that are often replaced by
+                    dataset-dependent averages."""
+            )
+        self._data_source = MagpieData(impute_nan=impute_nan)
 
         # Lookup table of ideal radius ratios
         self.ideal_ratio = dict(

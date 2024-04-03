@@ -2,6 +2,8 @@
 Site featurizers based on local chemical information, rather than geometry alone.
 """
 
+import warnings
+
 import numpy as np
 import pymatgen.analysis.local_env
 from pymatgen.analysis.ewald import EwaldSummation
@@ -310,7 +312,8 @@ class LocalPropertyDifference(BaseFeaturizer):
 
     def __init__(
         self,
-        data_source=MagpieData(impute_nan=True),
+        data_source=None,
+        impute_nan=False,
         weight="area",
         properties=("Electronegativity",),
         signed=False,
@@ -318,7 +321,7 @@ class LocalPropertyDifference(BaseFeaturizer):
         """Initialize the featurizer
 
         Args:
-            data_source (AbstractData) - Class from which to retrieve
+            data_source (AbstractData or None) - Class from which to retrieve
                 elemental properties
             weight (str) - What aspect of each voronoi facet to use to
                 weigh each neighbor (see VoronoiNN)
@@ -326,13 +329,24 @@ class LocalPropertyDifference(BaseFeaturizer):
             signed (bool) - whether to return absolute difference or signed difference of
                             properties(default=False (absolute difference))
         """
-        self.data_source = data_source
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(
+                f"""{self.__class__.__name__}(impute_nan=False):
+                    In a future release, impute_nan will be set to True by default.
+                    This means that features that are missing or are NaNs for elements
+                    from the data source will be replaced by the average of that value
+                    over the available elements.
+                    This avoids NaNs after featurization that are often replaced by
+                    dataset-dependent averages."""
+            )
+        self.data_source = data_source or MagpieData(impute_nan=self.impute_nan)
         self.properties = properties
         self.weight = weight
         self.signed = signed
 
     @staticmethod
-    def from_preset(preset):
+    def from_preset(preset, impute_nan=False):
         """
         Create a new LocalPropertyDifference class according to a preset
 
@@ -342,7 +356,7 @@ class LocalPropertyDifference(BaseFeaturizer):
 
         if preset == "ward-prb-2017":
             return LocalPropertyDifference(
-                data_source=MagpieData(impute_nan=True),
+                data_source=MagpieData(impute_nan=impute_nan),
                 properties=[
                     "Number",
                     "MendeleevNumber",
@@ -441,14 +455,25 @@ class SiteElementalProperty(BaseFeaturizer):
         `Schmidt et al., _Chem Mater_. (2017) <http://dx.doi.org/10.1021/acs.chemmater.7b00156>`_
     """
 
-    def __init__(self, data_source=None, properties=("Number",)):
+    def __init__(self, data_source=None, properties=("Number",), impute_nan=False):
         """Initialize the featurizer
 
         Args:
             data_source (AbstractData): Tool used to look up elemental properties
             properties ([string]): List of properties to use for features
         """
-        self.data_source = data_source or MagpieData(impute_nan=True)
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(
+                f"""{self.__class__.__name__}(impute_nan=False):
+                    In a future release, impute_nan will be set to True by default.
+                    This means that features that are missing or are NaNs for elements
+                    from the data source will be replaced by the average of that value
+                    over the available elements.
+                    This avoids NaNs after featurization that are often replaced by
+                    dataset-dependent averages."""
+            )
+        self.data_source = data_source or MagpieData(impute_nan=self.impute_nan)
         self.properties = properties
         self._preset_citations = []
 
@@ -472,7 +497,7 @@ class SiteElementalProperty(BaseFeaturizer):
         return ["Logan Ward"]
 
     @staticmethod
-    def from_preset(preset):
+    def from_preset(preset, impute_nan=False):
         """Create the class with pre-defined settings
 
         Args:
@@ -483,7 +508,7 @@ class SiteElementalProperty(BaseFeaturizer):
 
         if preset == "seko-prb-2017":
             output = SiteElementalProperty(
-                data_source=MagpieData(impute_nan=True),
+                data_source=MagpieData(impute_nan=impute_nan),
                 properties=[
                     "Number",
                     "AtomicWeight",

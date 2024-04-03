@@ -4,6 +4,7 @@ Composition featurizers specialized for use with alloys.
 
 import collections
 import os
+import warnings
 from functools import reduce
 
 import numpy as np
@@ -68,7 +69,7 @@ class Miedema(BaseFeaturizer):
             -Miedema_deltaH_amor: for amorphous phase
     """
 
-    def __init__(self, struct_types="all", ss_types="min", data_source="Miedema", impute_nan=True):
+    def __init__(self, struct_types="all", ss_types="min", data_source="Miedema", impute_nan=False):
         if isinstance(struct_types, list):
             self.struct_types = struct_types
         else:
@@ -106,6 +107,16 @@ class Miedema(BaseFeaturizer):
                     df_missing[col] = np.mean(self.df_dataset[col])
             self.df_dataset = pd.concat([self.df_dataset, df_missing])
             self.df_dataset.fillna(self.df_dataset.mean(), inplace=True)
+        else:
+            warnings.warn(
+                f"""{self.__class__.__name__}(impute_nan=False):
+                In a future release, impute_nan will be set to True by default.
+                This means that features that are missing or are NaNs for elements
+                from the data source will be replaced by the average of that value
+                over the available elements.
+                This avoids NaNs after featurization that are often replaced by
+                dataset-dependent averages."""
+            )
 
         self.element_list = [Element(estr) for estr in self.df_dataset.index]
 
@@ -113,7 +124,7 @@ class Miedema(BaseFeaturizer):
         """
         Precheck a single entry. Miedema does not work for compositions
         containing any elements for which the Miedema model has no parameters.
-        To precheck an entire dataframe (qnd automatically gather
+        To precheck an entire dataframe (and automatically gather
         the fraction of structures that will pass the precheck), please use
         precheck_dataframe.
 
@@ -491,8 +502,18 @@ class YangSolidSolution(BaseFeaturizer):
         .. Yang and Zhang (2012) `https://linkinghub.elsevier.com/retrieve/pii/S0254058411009357`.
     """
 
-    def __init__(self, impute_nan=True):
+    def __init__(self, impute_nan=False):
         self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(
+                f"""{self.__class__.__name__}(impute_nan=False):
+                    In a future release, impute_nan will be set to True by default.
+                    This means that features that are missing or are NaNs for elements
+                    from the data source will be replaced by the average of that value
+                    over the available elements.
+                    This avoids NaNs after featurization that are often replaced by
+                    dataset-dependent averages."""
+            )
         # Load in the mixing enthalpy data
         #  Creates a lookup table of the liquid mixing enthalpies
         self.dhf_mix = MixingEnthalpy(impute_nan=self.impute_nan)
@@ -507,7 +528,7 @@ class YangSolidSolution(BaseFeaturizer):
         parameters. We can nearly equivalently approximate this by checking
         against the unary element list.
 
-        To precheck an entire dataframe (qnd automatically gather
+        To precheck an entire dataframe (and automatically gather
         the fraction of structures that will pass the precheck), please use
         precheck_dataframe.
 
@@ -653,9 +674,19 @@ class WenAlloys(BaseFeaturizer):
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=True):
+    def __init__(self, impute_nan=False):
         # Use of Miedema to retrieve the shear modulus
         self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(
+                f"""{self.__class__.__name__}(impute_nan=False):
+                    In a future release, impute_nan will be set to True by default.
+                    This means that features that are missing or are NaNs for elements
+                    from the data source will be replaced by the average of that value
+                    over the available elements.
+                    This avoids NaNs after featurization that are often replaced by
+                    dataset-dependent averages."""
+            )
         self.data_source_miedema = Miedema(data_source="Miedema", impute_nan=self.impute_nan)
         self.data_source_magpie = MagpieData(impute_nan=self.impute_nan).all_elemental_props
         self.data_source_cohesive_energy = CohesiveEnergyData(impute_nan=self.impute_nan)

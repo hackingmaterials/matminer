@@ -108,8 +108,18 @@ class ValenceOrbital(BaseFeaturizer):
             average of each features over the available elements.
     """
 
-    def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac"), impute_nan=True):
+    def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac"), impute_nan=False):
         self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warn(
+                f"""{self.__class__.__name__}(impute_nan=False):
+                    In a future release, impute_nan will be set to True by default.
+                    This means that features that are missing or are NaNs for elements
+                    from the data source will be replaced by the average of that value
+                    over the available elements.
+                    This avoids NaNs after featurization that are often replaced by
+                    dataset-dependent averages."""
+            )
         self.data_source = MagpieData(impute_nan=self.impute_nan)
         self.orbitals = orbitals
         self.props = props

@@ -2,6 +2,8 @@
 Composition featurizers for composite features containing more than 1 category of general-purpose data.
 """
 
+import warnings
+
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.composition.element import ElementFraction
 from matminer.featurizers.composition.orbital import ValenceOrbital
@@ -50,8 +52,18 @@ class ElementProperty(BaseFeaturizer):
             average of each features over the available elements.
     """
 
-    def __init__(self, data_source, features, stats, impute_nan=True):
+    def __init__(self, data_source, features, stats, impute_nan=False):
         self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(
+                f"""{self.__class__.__name__}(impute_nan=False):
+                    In a future release, impute_nan will be set to True by default.
+                    This means that features that are missing or are NaNs for elements
+                    from the data source will be replaced by the average of that value
+                    over the available elements.
+                    This avoids NaNs after featurization that are often replaced by
+                    dataset-dependent averages."""
+            )
         if data_source == "pymatgen":
             self.data_source = PymatgenData(impute_nan=self.impute_nan)
         elif data_source == "magpie":
@@ -75,7 +87,7 @@ class ElementProperty(BaseFeaturizer):
         self.pstats = PropertyStats()
 
     @classmethod
-    def from_preset(cls, preset_name, impute_nan=True):
+    def from_preset(cls, preset_name, impute_nan=False):
         """
         Return ElementProperty from a preset string
         Args:
@@ -319,8 +331,18 @@ class Meredig(BaseFeaturizer):
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=True):
+    def __init__(self, impute_nan=False):
         self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(
+                f"""{self.__class__.__name__}(impute_nan=False):
+                    In a future release, impute_nan will be set to True by default.
+                    This means that features that are missing or are NaNs for elements
+                    from the data source will be replaced by the average of that value
+                    over the available elements.
+                    This avoids NaNs after featurization that are often replaced by
+                    dataset-dependent averages."""
+            )
         self.data_source = MagpieData(impute_nan=self.impute_nan)
 
         # The labels for statistics on element properties

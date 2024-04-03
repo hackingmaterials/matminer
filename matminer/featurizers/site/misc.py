@@ -50,7 +50,7 @@ class IntersticeDistribution(BaseFeaturizer):
         radius_type (str): source of radius estimate. (default: "MiracleRadius")
     """
 
-    def __init__(self, cutoff=6.5, interstice_types=None, stats=None, radius_type="MiracleRadius"):
+    def __init__(self, cutoff=6.5, interstice_types=None, stats=None, radius_type="MiracleRadius", impute_nan=False):
         self.cutoff = cutoff
         self.interstice_types = ["dist", "area", "vol"] if interstice_types is None else interstice_types
         if isinstance(self.interstice_types, str):
@@ -59,7 +59,7 @@ class IntersticeDistribution(BaseFeaturizer):
             raise ValueError("interstice_types only support sub-list of " "['dist', 'area', 'vol']")
         self.stats = ["mean", "std_dev", "minimum", "maximum"] if stats is None else stats
         self.radius_type = radius_type
-        self.data_source = MagpieData(impute_nan=True)
+        self.data_source = MagpieData(impute_nan=impute_nan)
 
     def featurize(self, struct, idx):
         """
