@@ -29,7 +29,7 @@ class ElementFraction(BaseFeaturizer):
             vector (list of floats): fraction of each element in a composition
         """
 
-        vector = [0] * len(Element)
+        vector = [0] * 118
         el_list = list(comp.element_composition.fractional_composition.items())
         for el in el_list:
             obj = el
@@ -39,7 +39,7 @@ class ElementFraction(BaseFeaturizer):
 
     def feature_labels(self):
         labels = []
-        for i in range(1, len(Element) + 1):
+        for i in range(1, 119):
             labels.append(Element.from_Z(i).symbol)
         return labels
 
