@@ -17,6 +17,15 @@ class CompositionFeaturesTest(PymatgenTest):
             }
         )
 
+        self.df_nans = pd.DataFrame(
+            {
+                "composition": [
+                    # Composition("U2Og3"),
+                    Composition({Specie("U", 3): 2, Specie("Og", -2): 3}),
+                ]
+            }
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

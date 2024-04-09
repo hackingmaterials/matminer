@@ -15,6 +15,7 @@ from sklearn.utils.validation import check_is_fitted
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.utils.caching import get_nearest_neighbors
 from matminer.utils.data import MagpieData
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class ChemicalSRO(BaseFeaturizer):
@@ -331,15 +332,7 @@ class LocalPropertyDifference(BaseFeaturizer):
         """
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = data_source or MagpieData(impute_nan=self.impute_nan)
         self.properties = properties
         self.weight = weight
@@ -461,18 +454,13 @@ class SiteElementalProperty(BaseFeaturizer):
         Args:
             data_source (AbstractData): Tool used to look up elemental properties
             properties ([string]): List of properties to use for features
+            impute_nan (bool): if True, the features for the elements
+                that are missing from the data_source or are NaNs are replaced by the
+                average of each features over the available elements.
         """
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = data_source or MagpieData(impute_nan=self.impute_nan)
         self.properties = properties
         self._preset_citations = []

@@ -8,6 +8,7 @@ from pymatgen.core import Element
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.utils.data import DemlData, MagpieData
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class ElementFraction(BaseFeaturizer):
@@ -212,15 +213,7 @@ class BandCenter(BaseFeaturizer):
     def __init__(self, impute_nan=False):
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.magpie_data = MagpieData(impute_nan=self.impute_nan)
         self.deml_data = DemlData(impute_nan=self.impute_nan)
 

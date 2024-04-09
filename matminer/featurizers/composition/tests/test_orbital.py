@@ -8,7 +8,7 @@ from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 
 class OrbitalFeaturesTest(CompositionFeaturesTest):
     def test_valence(self):
-        df_val = ValenceOrbital().featurize_dataframe(self.df, col_id="composition")
+        df_val = ValenceOrbital(impute_nan=False).featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_val["avg s valence electrons"][0], 2.0)
         self.assertAlmostEqual(df_val["avg p valence electrons"][0], 2.4)
         self.assertAlmostEqual(df_val["avg d valence electrons"][0], 2.4)
@@ -17,6 +17,23 @@ class OrbitalFeaturesTest(CompositionFeaturesTest):
         self.assertAlmostEqual(df_val["frac d valence electrons"][0], 0.352941176)
         self.assertAlmostEqual(df_val["frac p valence electrons"][0], 0.352941176)
         self.assertAlmostEqual(df_val["frac f valence electrons"][0], 0)
+
+        df_val = ValenceOrbital(impute_nan=False).featurize_dataframe(self.df_nans, col_id="composition")
+        self.assertEqual(df_val.isna().sum().sum(), 8)
+
+        df_val = ValenceOrbital(impute_nan=True).featurize_dataframe(self.df, col_id="composition")
+        self.assertAlmostEqual(df_val["avg s valence electrons"][0], 2.0)
+        self.assertAlmostEqual(df_val["avg p valence electrons"][0], 2.4)
+        self.assertAlmostEqual(df_val["avg d valence electrons"][0], 2.4)
+        self.assertAlmostEqual(df_val["avg f valence electrons"][0], 0.0)
+        self.assertAlmostEqual(df_val["frac s valence electrons"][0], 0.294117647)
+        self.assertAlmostEqual(df_val["frac d valence electrons"][0], 0.352941176)
+        self.assertAlmostEqual(df_val["frac p valence electrons"][0], 0.352941176)
+        self.assertAlmostEqual(df_val["frac f valence electrons"][0], 0)
+
+        df_val = ValenceOrbital(impute_nan=True).featurize_dataframe(self.df_nans, col_id="composition")
+        self.assertEqual(df_val.isna().sum().sum(), 0)
+        self.assertAlmostEqual(df_val.drop(columns="composition").sum().sum(), 10.342857, 6)
 
     def test_atomic_orbitals(self):
         df_atomic_orbitals = AtomicOrbitals().featurize_dataframe(self.df, col_id="composition")

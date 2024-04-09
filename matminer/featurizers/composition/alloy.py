@@ -17,6 +17,7 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.composition.packing import AtomicPackingEfficiency
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import CohesiveEnergyData, MagpieData, MixingEnthalpy
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(module_dir, "..", "..", "utils", "data_files")
@@ -108,15 +109,7 @@ class Miedema(BaseFeaturizer):
             self.df_dataset = pd.concat([self.df_dataset, df_missing])
             self.df_dataset.fillna(self.df_dataset.mean(), inplace=True)
         else:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
         self.element_list = [Element(estr) for estr in self.df_dataset.index]
 
@@ -505,15 +498,7 @@ class YangSolidSolution(BaseFeaturizer):
     def __init__(self, impute_nan=False):
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         # Load in the mixing enthalpy data
         #  Creates a lookup table of the liquid mixing enthalpies
         self.dhf_mix = MixingEnthalpy(impute_nan=self.impute_nan)
@@ -678,15 +663,7 @@ class WenAlloys(BaseFeaturizer):
         # Use of Miedema to retrieve the shear modulus
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source_miedema = Miedema(data_source="Miedema", impute_nan=self.impute_nan)
         self.data_source_magpie = MagpieData(impute_nan=self.impute_nan).all_elemental_props
         self.data_source_cohesive_energy = CohesiveEnergyData(impute_nan=self.impute_nan)

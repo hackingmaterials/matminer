@@ -11,6 +11,7 @@ from pymatgen.core.molecular_orbitals import MolecularOrbitals
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import MagpieData
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class AtomicOrbitals(BaseFeaturizer):
@@ -111,15 +112,7 @@ class ValenceOrbital(BaseFeaturizer):
     def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac"), impute_nan=False):
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = MagpieData(impute_nan=self.impute_nan)
         self.orbitals = orbitals
         self.props = props

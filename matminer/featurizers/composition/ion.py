@@ -11,6 +11,7 @@ from matminer.featurizers.composition.composite import ElementProperty
 from matminer.featurizers.utils.oxidation import has_oxidation_states
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, PymatgenData
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class CationProperty(ElementProperty):
@@ -51,15 +52,7 @@ class CationProperty(ElementProperty):
             raise ValueError('Preset "%s" not found' % preset_name)
 
         if not impute_nan:
-            warnings.warn(
-                """CationProperty(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn("CationProperty(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         return cls(data_source, features, stats, impute_nan=impute_nan)
 
     def feature_labels(self):
@@ -165,15 +158,7 @@ class IonProperty(BaseFeaturizer):
         """
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = data_source or PymatgenData(impute_nan=self.impute_nan)
         self.fast = fast
 
@@ -269,15 +254,7 @@ class ElectronAffinity(BaseFeaturizer):
     def __init__(self, impute_nan=False):
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = DemlData(impute_nan=self.impute_nan)
 
     def featurize(self, comp):

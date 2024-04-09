@@ -35,9 +35,23 @@ class ElementFeaturesTest(CompositionFeaturesTest):
         self.assertAlmostEqual(df_tm_frac["transition metal fraction"][0], 0.4)
 
     def test_band_center(self):
-        df_band_center = BandCenter().featurize_dataframe(self.df, col_id="composition")
+        df_band_center = BandCenter(impute_nan=False).featurize_dataframe(self.df, col_id="composition")
         self.assertAlmostEqual(df_band_center["band center"][0], 5.870418816395603)
-        self.assertAlmostEqual(BandCenter().featurize(Composition("Ag33O500V200"))[0], 6.033480099340539)
+        self.assertAlmostEqual(
+            BandCenter(impute_nan=False).featurize(Composition("Ag33O500V200"))[0], 6.033480099340539
+        )
+
+        df_band_center = BandCenter(impute_nan=False).featurize_dataframe(
+            self.df_nans, col_id="composition", ignore_errors=True
+        )
+        self.assertEqual(df_band_center.isna().sum().sum(), 1, 10)
+
+        df_band_center = BandCenter(impute_nan=True).featurize_dataframe(self.df, col_id="composition")
+        self.assertAlmostEqual(df_band_center["band center"][0], 5.870418816395603)
+        self.assertAlmostEqual(BandCenter(impute_nan=True).featurize(Composition("Ag33O500V200"))[0], 6.033480099340539)
+
+        df_band_center = BandCenter(impute_nan=True).featurize_dataframe(self.df_nans, col_id="composition")
+        self.assertAlmostEqual(df_band_center["band center"][0], 4.598904, 6)
 
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@ class MiscSiteTests(SiteFeaturizerTest):
         )
         df_bcc_li = pd.DataFrame({"struct": [bcc_li], "site": [1]})
 
-        interstice_distribution = IntersticeDistribution()
+        interstice_distribution = IntersticeDistribution(impute_nan=False)
         intersticefp = interstice_distribution.featurize_dataframe(df_bcc_li, ["struct", "site"])
 
         self.assertAlmostEqual(intersticefp["Interstice_vol_mean"][0], 0.32, 2)
@@ -32,6 +32,36 @@ class MiscSiteTests(SiteFeaturizerTest):
         self.assertAlmostEqual(intersticefp["Interstice_dist_std_dev"][0], 0.07655, 5)
         self.assertAlmostEqual(intersticefp["Interstice_dist_minimum"][0], 0, 3)
         self.assertAlmostEqual(intersticefp["Interstice_dist_maximum"][0], 0.15461, 5)
+
+        bcc_og = Structure(
+            Lattice([[3.51, 0, 0], [0, 3.51, 0], [0, 0, 3.51]]),
+            ["Og"] * 2,
+            [[0, 0, 0], [0.5, 0.5, 0.5]],
+        )
+        df_bcc_og = pd.DataFrame({"struct": [bcc_og], "site": [1]})
+
+        intersticefp = interstice_distribution.featurize_dataframe(df_bcc_og, ["struct", "site"])
+        self.assertEqual(intersticefp.isna().sum().sum(), 4)
+        self.assertEqual(intersticefp.drop(columns="struct").sum().sum(), 1)
+
+        interstice_distribution = IntersticeDistribution(impute_nan=True)
+        intersticefp = interstice_distribution.featurize_dataframe(df_bcc_li, ["struct", "site"])
+
+        self.assertAlmostEqual(intersticefp["Interstice_vol_mean"][0], 0.32, 2)
+        self.assertAlmostEqual(intersticefp["Interstice_vol_std_dev"][0], 0)
+        self.assertAlmostEqual(intersticefp["Interstice_vol_minimum"][0], 0.32, 2)
+        self.assertAlmostEqual(intersticefp["Interstice_vol_maximum"][0], 0.32, 2)
+        self.assertAlmostEqual(intersticefp["Interstice_area_mean"][0], 0.16682, 5)
+        self.assertAlmostEqual(intersticefp["Interstice_area_std_dev"][0], 0)
+        self.assertAlmostEqual(intersticefp["Interstice_area_minimum"][0], 0.16682, 5)
+        self.assertAlmostEqual(intersticefp["Interstice_area_maximum"][0], 0.16682, 5)
+        self.assertAlmostEqual(intersticefp["Interstice_dist_mean"][0], 0.06621, 5)
+        self.assertAlmostEqual(intersticefp["Interstice_dist_std_dev"][0], 0.07655, 5)
+        self.assertAlmostEqual(intersticefp["Interstice_dist_minimum"][0], 0, 3)
+        self.assertAlmostEqual(intersticefp["Interstice_dist_maximum"][0], 0.15461, 5)
+        intersticefp = interstice_distribution.featurize_dataframe(df_bcc_og, ["struct", "site"])
+        self.assertEqual(intersticefp.isna().sum().sum(), 0)
+        self.assertAlmostEqual(intersticefp.drop(columns="struct").sum().sum(), 2.581817, 6)
 
     def test_interstice_distribution_of_glass(self):
         cuzr_glass = Structure(
@@ -72,7 +102,7 @@ class MiscSiteTests(SiteFeaturizerTest):
         )
         df_glass = pd.DataFrame({"struct": [cuzr_glass], "site": [0]})
 
-        interstice_distribution = IntersticeDistribution()
+        interstice_distribution = IntersticeDistribution(impute_nan=False)
         intersticefp = interstice_distribution.featurize_dataframe(df_glass, ["struct", "site"])
 
         self.assertAlmostEqual(intersticefp["Interstice_vol_mean"][0], 0.28905, 5)

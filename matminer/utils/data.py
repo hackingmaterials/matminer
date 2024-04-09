@@ -9,6 +9,7 @@ import json
 import os
 import tarfile
 import warnings
+from copy import deepcopy
 from glob import glob
 
 import numpy as np
@@ -20,6 +21,7 @@ from scipy import stats
 from scipy.interpolate import interp1d
 
 from matminer.utils.utils import get_elem_in_data, get_pseudo_inverse
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 __author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"
 
@@ -128,15 +130,7 @@ class CohesiveEnergyData(AbstractData):
                     self.cohesive_energy_data[e.symbol] = avg_cohesive_energy
 
         else:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_elemental_property(self, elem, property_name="cohesive energy"):
         """
@@ -170,7 +164,7 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
     def __init__(self, impute_nan=False):
         from matminer.utils.data_files.deml_elementdata import properties
 
-        self.all_props = properties
+        self.all_props = deepcopy(properties)
         self.available_props = list(self.all_props.keys()) + [
             "formal_charge",
             "valence_s",
@@ -216,19 +210,12 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
                     "electric_pol",
                     "GGAU_Etot",
                     "mus_fere",
+                    "electron_affin",
                 ]:
                     if e.symbol not in self.all_props[key] or np.isnan(self.all_props[key][e.symbol]):
                         self.all_props[key][e.symbol] = np.nanmean(list(self.all_props[key].values()))
         else:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
         # Compute the FERE correction energy
         fere_corr = {}
@@ -250,13 +237,18 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
             return self.all_props[property_name].get(elem.symbol, float("NaN"))
 
     def get_oxidation_states(self, elem):
-        return self.all_props["charge_states"][elem.symbol]
+        if not self.impute_nan:
+            return self.all_props["charge_states"][elem.symbol]
+        else:
+            return self.all_props["charge_states"].get(elem.symbol, [0])
 
     def get_charge_dependent_property(self, element, charge, property_name):
         if property_name == "total_ioniz":
             if charge < 0:
                 raise ValueError("total ionization energy only defined for charge > 0")
             return sum(self.all_props["ionization_en"][element.symbol][:charge])
+        elif self.impute_nan:
+            return self.all_props[property_name].get(element.symbol, {}).get(charge, 0)
         else:
             return self.all_props[property_name].get(element.symbol, {}).get(charge, np.nan)
 
@@ -331,15 +323,7 @@ class MagpieData(AbstractData, OxidationStatesMixin):
                         ):
                             self.all_elemental_props[prop][e.symbol] = avg_prop
         else:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_elemental_property(self, elem, property_name):
         return self.all_elemental_props[property_name][elem.symbol]
@@ -375,7 +359,7 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
         else:
             value = getattr(elem, property_name)
             if self.impute_nan:
-                if value:
+                if value and not pd.isnull(value):
                     return value
                 else:
                     if property_name == "ionic_radii":
@@ -388,15 +372,7 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
                         value_avg = np.nanmean(all_values)
                     return value_avg
             else:
-                warnings.warn(
-                    f"""{self.__class__.__name__}(impute_nan=False):
-                        In a future release, impute_nan will be set to True by default.
-                        This means that features that are missing or are NaNs for elements
-                        from the data source will be replaced by the average of that value
-                        over the available elements.
-                        This avoids NaNs after featurization that are often replaced by
-                        dataset-dependent averages."""
-                )
+                warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
                 return np.nan if value is None else value
 
     def get_oxidation_states(self, elem):
@@ -412,7 +388,13 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
         return elem.common_oxidation_states if self.use_common_oxi_states else elem.oxidation_states
 
     def get_charge_dependent_property(self, element, charge, property_name):
-        return getattr(element, property_name)[charge]
+        if self.impute_nan:
+            if property_name == "ionic_radii":
+                return self.get_elemental_property(element, property_name)[charge]
+            elif property_name in ["common_oxidation_states", "icsd_oxidation_states"]:
+                return self.get_elemental_property(element, property_name)[charge]
+        else:
+            return getattr(element, property_name)[charge]
 
 
 class MixingEnthalpy:
@@ -439,7 +421,7 @@ class MixingEnthalpy:
     def __init__(self, impute_nan=False):
         mixing_dataset = pd.read_csv(
             os.path.join(module_dir, "data_files", "MiedemaLiquidDeltaHf.tsv"),
-            delim_whitespace=True,
+            sep=r"\s+",
         )
         self.mixing_data = {}
         for a, b, dHf in mixing_dataset.itertuples(index=False):
@@ -534,15 +516,7 @@ class MixingEnthalpy:
                         self.mixing_data[key] = avg_value
             self.valid_element_list = list(Element)
         else:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_mixing_enthalpy(self, elemA, elemB):
         """
@@ -602,15 +576,7 @@ class MatscholarElementData(AbstractData):
                     ):
                         self.all_element_data[e.symbol][embedding] = avg_value
         else:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_elemental_property(self, elem, property_name):
         return self.all_element_data[str(elem)][property_name]
@@ -672,15 +638,7 @@ class MEGNetElementData(AbstractData):
                     ):
                         self.all_element_data[e.symbol][embedding] = avg_value
         else:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_elemental_property(self, elem, property_name):
         estr = str(elem)
@@ -928,15 +886,7 @@ class OpticalData(AbstractData):
         if self.impute_nan:
             self.all_element_data.fillna(self.all_element_data.mean(), inplace=True)
         else:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def _get_element_props(self):
         """
@@ -1321,15 +1271,7 @@ class TransportData(AbstractData):
         if self.impute_nan:
             self.all_element_data.fillna(self.all_element_data.mean(), inplace=True)
         else:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                In a future release, impute_nan will be set to True by default.
-                This means that features that are missing or are NaNs for elements
-                from the data source will be replaced by the average of that value
-                over the available elements.
-                This avoids NaNs after featurization that are often replaced by
-                dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def _get_element_props(self):
         #

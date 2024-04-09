@@ -1,6 +1,8 @@
 """
 Miscellaneous site featurizers.
 """
+import warnings
+
 import numpy as np
 import pymatgen.analysis.local_env
 from pymatgen.analysis.local_env import VoronoiNN, solid_angle, vol_tetra
@@ -10,6 +12,7 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_nearest_neighbors
 from matminer.utils.data import MagpieData
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class IntersticeDistribution(BaseFeaturizer):
@@ -48,6 +51,9 @@ class IntersticeDistribution(BaseFeaturizer):
             support sub-list of ['dist', 'area', 'vol'].
         stats ([str]): statistics of distance/area/volume interstices.
         radius_type (str): source of radius estimate. (default: "MiracleRadius")
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
     def __init__(self, cutoff=6.5, interstice_types=None, stats=None, radius_type="MiracleRadius", impute_nan=False):
@@ -59,6 +65,9 @@ class IntersticeDistribution(BaseFeaturizer):
             raise ValueError("interstice_types only support sub-list of " "['dist', 'area', 'vol']")
         self.stats = ["mean", "std_dev", "minimum", "maximum"] if stats is None else stats
         self.radius_type = radius_type
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = MagpieData(impute_nan=impute_nan)
 
     def featurize(self, struct, idx):

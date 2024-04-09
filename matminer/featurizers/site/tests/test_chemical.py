@@ -95,11 +95,15 @@ class ChemicalSiteTests(SiteFeaturizerTest):
         np.testing.assert_array_almost_equal(ewald.featurize(self.sc, 0), [0])
 
     def test_local_prop_diff(self):
-        f = LocalPropertyDifference()
+        f = LocalPropertyDifference(impute_nan=False)
 
         # Test for Al, all features should be zero
         features = f.featurize(self.sc, 0)
         np.testing.assert_array_almost_equal(features, [0])
+
+        # Test for fictive structure that leads to NaNs
+        features = f.featurize(self.nans, 0)
+        assert np.isnan(features[0])
 
         # Change the property to Number, compute for B1
         f.set_params(properties=["Number"])
@@ -107,21 +111,57 @@ class ChemicalSiteTests(SiteFeaturizerTest):
             features = f.featurize(self.b1, i)
             np.testing.assert_array_almost_equal(features, [1])
 
+        for i in range(2):
+            features = f.featurize(self.nans, i)
+            assert np.isnan(features[0])
+
+        f = LocalPropertyDifference(impute_nan=True)
+
+        # Test for Al, all features should be zero
+        features = f.featurize(self.sc, 0)
+        np.testing.assert_array_almost_equal(features, [0])
+
+        # Test for fictive structure that leads to NaNs
+        features = f.featurize(self.nans, 0)
+        np.testing.assert_array_almost_equal(features, [0.26003609])
+
+        # Change the property to Number, compute for B1
+        f.set_params(properties=["Number"])
+        for i in range(2):
+            features = f.featurize(self.b1, i)
+            np.testing.assert_array_almost_equal(features, [1])
+
+        for i in range(2):
+            features = f.featurize(self.nans, i)
+            np.testing.assert_array_almost_equal(features, [27.54767206])
+
     def test_site_elem_prop(self):
-        f = SiteElementalProperty.from_preset("seko-prb-2017")
+        f = SiteElementalProperty.from_preset("seko-prb-2017", impute_nan=False)
 
         # Make sure it does the B1 structure correctly
         feat_labels = f.feature_labels()
         feats = f.featurize(self.b1, 0)
         self.assertAlmostEqual(1, feats[feat_labels.index("site Number")])
+        assert np.isnan(feats[feat_labels.index("site SecondIonizationEnergy")])
 
         feats = f.featurize(self.b1, 1)
         self.assertAlmostEqual(2, feats[feat_labels.index("site Number")])
+        assert np.isnan(feats[feat_labels.index("site Electronegativity")])
 
         # Test the citations
         citations = f.citations()
         self.assertEqual(1, len(citations))
         self.assertIn("Seko2017", citations[0])
+
+        f = SiteElementalProperty.from_preset("seko-prb-2017", impute_nan=True)
+        feat_labels = f.feature_labels()
+        feats = f.featurize(self.b1, 0)
+        self.assertAlmostEqual(1, feats[feat_labels.index("site Number")])
+        self.assertAlmostEqual(feats[feat_labels.index("site SecondIonizationEnergy")], 18.781681, 6)
+
+        feats = f.featurize(self.b1, 1)
+        self.assertAlmostEqual(2, feats[feat_labels.index("site Number")])
+        self.assertAlmostEqual(feats[feat_labels.index("site Electronegativity")], 1.715102, 6)
 
 
 if __name__ == "__main__":

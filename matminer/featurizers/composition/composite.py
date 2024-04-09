@@ -80,6 +80,12 @@ class ElementProperty(BaseFeaturizer):
             self.data_source = TransportData(impute_nan=self.impute_nan)
         else:
             self.data_source = data_source
+            if self.impute_nan:
+                warnings.warn(
+                    """The data_source has been specified externally and impute_nan is set to True.
+                    Please make sure that the NaNs imputation has been done correctly
+                    in the provided data_source to proceed."""
+                )
 
         self.features = features
         self.stats = stats
