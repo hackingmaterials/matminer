@@ -343,7 +343,7 @@ class CompositeFeaturesTest(CompositionFeaturesTest):
         df_elem = ElementProperty.from_preset("mp_transport", impute_nan=True).featurize_dataframe(
             self.df_nans, col_id="composition"
         )
-        self.assertAlmostEqual(df_elem.drop(columns="composition").sum().sum(), 10029874.1567, 4)
+        self.assertAlmostEqual(df_elem.drop(columns="composition").sum().sum(), 9798095.622017656, 4)
 
 
 if __name__ == "__main__":

@@ -308,7 +308,7 @@ class TestTransportData(TestCase):
         cu_kappan = self.data_source_imputed.get_elemental_property(elem="Cu", property_name="kappa_n")
         self.assertAlmostEqual(cu_kappan, 1814544.75663, places=5)
         og_mn = self.data_source_imputed.get_elemental_property(elem="Og", property_name="m_n")
-        self.assertAlmostEqual(og_mn, 0.03293018092682478)
+        self.assertAlmostEqual(og_mn, 0.03237036761677134)
 
 
 if __name__ == "__main__":

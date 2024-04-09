@@ -948,7 +948,6 @@ class OpticalData(AbstractData):
             DataFrame with the data
         """
 
-        db_dir = os.path.join(module_dir, "data_files/optical_polyanskiy/database/")
         db_dir = os.path.join(self.saving_dir, "database")
         # The database has been compressed, it needs to be untarred if it is not already the case.
         if not os.listdir(db_dir):
@@ -1246,8 +1245,12 @@ class TransportData(AbstractData):
         self.method = method
         self.alpha = alpha
 
-        # Read the database as a csv file
+        # Read the database as a compressed or csv file
         dfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_database.csv")
+        dfile_tarred = os.path.join(module_dir, "data_files/mp_transport/", "transport_database.tar.xz")
+        if not os.path.isfile(dfile) and os.path.isfile(dfile_tarred):
+            with tarfile.open(dfile_tarred, mode="r:xz") as tar:
+                tar.extractall(os.path.join(module_dir, "data_files/mp_transport/"))
         data = pd.read_csv(dfile).drop(columns=["mp_id"])
         data.rename(columns={"pretty_formula": "Compound"}, inplace=True)
         data.set_index("Compound", inplace=True)
