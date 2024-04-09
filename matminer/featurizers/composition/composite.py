@@ -17,6 +17,7 @@ from matminer.utils.data import (
     PymatgenData,
     TransportData,
 )
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class ElementProperty(BaseFeaturizer):
@@ -55,15 +56,7 @@ class ElementProperty(BaseFeaturizer):
     def __init__(self, data_source, features, stats, impute_nan=False):
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         if data_source == "pymatgen":
             self.data_source = PymatgenData(impute_nan=self.impute_nan)
         elif data_source == "magpie":
@@ -340,15 +333,7 @@ class Meredig(BaseFeaturizer):
     def __init__(self, impute_nan=False):
         self.impute_nan = impute_nan
         if not self.impute_nan:
-            warnings.warn(
-                f"""{self.__class__.__name__}(impute_nan=False):
-                    In a future release, impute_nan will be set to True by default.
-                    This means that features that are missing or are NaNs for elements
-                    from the data source will be replaced by the average of that value
-                    over the available elements.
-                    This avoids NaNs after featurization that are often replaced by
-                    dataset-dependent averages."""
-            )
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = MagpieData(impute_nan=self.impute_nan)
 
         # The labels for statistics on element properties
