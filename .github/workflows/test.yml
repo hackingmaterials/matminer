@@ -79,7 +79,7 @@ jobs:
         python${{ matrix.python-version }} -m build
 
     - name: Publish distribution 📦s to Test PyPI
-      if: matrix.python-version == 3.9
+      if: matrix.python-version == 3.9 && github.repository == 'hackingmaterials/matminer'
       uses: pypa/gh-action-pypi-publish@release/v1.5
       with:
         skip_existing: true
