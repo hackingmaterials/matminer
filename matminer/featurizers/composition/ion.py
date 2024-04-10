@@ -2,6 +2,7 @@
 Composition featurizers for compositions with ionic data.
 """
 import itertools
+import warnings
 
 import numpy as np
 
@@ -10,6 +11,7 @@ from matminer.featurizers.composition.composite import ElementProperty
 from matminer.featurizers.utils.oxidation import has_oxidation_states
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, PymatgenData
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class CationProperty(ElementProperty):
@@ -35,7 +37,7 @@ class CationProperty(ElementProperty):
     """
 
     @classmethod
-    def from_preset(cls, preset_name):
+    def from_preset(cls, preset_name, impute_nan=False):
         if preset_name == "deml":
             data_source = "deml"
             features = [
@@ -48,7 +50,10 @@ class CationProperty(ElementProperty):
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
         else:
             raise ValueError('Preset "%s" not found' % preset_name)
-        return cls(data_source, features, stats)
+
+        if not impute_nan:
+            warnings.warn("CationProperty(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
+        return cls(data_source, features, stats, impute_nan=impute_nan)
 
     def feature_labels(self):
         return [f + " of cations" for f in super().feature_labels()]
@@ -141,7 +146,7 @@ class IonProperty(BaseFeaturizer):
     Ionic property attributes. Similar to ElementProperty.
     """
 
-    def __init__(self, data_source=PymatgenData(), fast=False):
+    def __init__(self, data_source=None, impute_nan=False, fast=False):
         """
 
         Args:
@@ -151,7 +156,10 @@ class IonProperty(BaseFeaturizer):
                 which can dramatically accelerate the calculation of whether an ionic compound
                 is possible, but will miss heterovalent compounds like Fe3O4.
         """
-        self.data_source = data_source
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
+        self.data_source = data_source or PymatgenData(impute_nan=self.impute_nan)
         self.fast = fast
 
     def featurize(self, comp):
@@ -236,10 +244,18 @@ class ElectronAffinity(BaseFeaturizer):
     Calculate average electron affinity times formal charge of anion elements.
     Note: The formal charges must already be computed before calling `featurize`.
     Generates average (electron affinity*formal charge) of anions.
+
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
-        self.data_source = DemlData()
+    def __init__(self, impute_nan=False):
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
+        self.data_source = DemlData(impute_nan=self.impute_nan)
 
     def featurize(self, comp):
         """

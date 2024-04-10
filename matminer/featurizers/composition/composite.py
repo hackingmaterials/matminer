@@ -2,6 +2,8 @@
 Composition featurizers for composite features containing more than 1 category of general-purpose data.
 """
 
+import warnings
+
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.composition.element import ElementFraction
 from matminer.featurizers.composition.orbital import ValenceOrbital
@@ -11,8 +13,11 @@ from matminer.utils.data import (
     MagpieData,
     MatscholarElementData,
     MEGNetElementData,
+    OpticalData,
     PymatgenData,
+    TransportData,
 )
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class ElementProperty(BaseFeaturizer):
@@ -43,21 +48,37 @@ class ElementProperty(BaseFeaturizer):
             (these must be supported by data_source)
         stats (list of strings): a list of weighted statistics to compute to for each
             property (see PropertyStats for available stats)
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self, data_source, features, stats):
+    def __init__(self, data_source, features, stats, impute_nan=False):
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         if data_source == "pymatgen":
-            self.data_source = PymatgenData()
+            self.data_source = PymatgenData(impute_nan=self.impute_nan)
         elif data_source == "magpie":
-            self.data_source = MagpieData()
+            self.data_source = MagpieData(impute_nan=self.impute_nan)
         elif data_source == "deml":
-            self.data_source = DemlData()
+            self.data_source = DemlData(impute_nan=self.impute_nan)
         elif data_source == "matscholar_el":
-            self.data_source = MatscholarElementData()
+            self.data_source = MatscholarElementData(impute_nan=self.impute_nan)
         elif data_source == "megnet_el":
-            self.data_source = MEGNetElementData()
+            self.data_source = MEGNetElementData(impute_nan=self.impute_nan)
+        elif data_source == "optical":
+            self.data_source = OpticalData(impute_nan=self.impute_nan)
+        elif data_source == "mp_transport":
+            self.data_source = TransportData(impute_nan=self.impute_nan)
         else:
             self.data_source = data_source
+            if self.impute_nan:
+                warnings.warn(
+                    """The data_source has been specified externally and impute_nan is set to True.
+                    Please make sure that the NaNs imputation has been done correctly
+                    in the provided data_source to proceed."""
+                )
 
         self.features = features
         self.stats = stats
@@ -65,12 +86,15 @@ class ElementProperty(BaseFeaturizer):
         self.pstats = PropertyStats()
 
     @classmethod
-    def from_preset(cls, preset_name):
+    def from_preset(cls, preset_name, impute_nan=False):
         """
         Return ElementProperty from a preset string
         Args:
             preset_name: (str) can be one of "magpie", "deml", "matminer",
                 "matscholar_el", or "megnet_el".
+            impute_nan (bool): if True, the features for the elements
+                that are missing from the data_source or are NaNs are replaced by the
+                average of each features over the available elements.
 
         Returns:
             ElementProperty based on the preset name.
@@ -147,17 +171,27 @@ class ElementProperty(BaseFeaturizer):
         elif preset_name == "matscholar_el":
             data_source = "matscholar_el"
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
-            features = MatscholarElementData().prop_names
+            features = MatscholarElementData(impute_nan=impute_nan).prop_names
 
         elif preset_name == "megnet_el":
             data_source = "megnet_el"
             stats = ["minimum", "maximum", "range", "mean", "std_dev"]
-            features = MEGNetElementData().prop_names
+            features = MEGNetElementData(impute_nan=impute_nan).prop_names
+
+        elif preset_name == "optical":
+            data_source = "optical"
+            stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
+            features = OpticalData(impute_nan=impute_nan).prop_names
+
+        elif preset_name == "mp_transport":
+            data_source = "mp_transport"
+            stats = ["minimum", "maximum", "range", "mean", "std_dev", "mode"]
+            features = TransportData(impute_nan=impute_nan).prop_names
 
         else:
             raise ValueError("Invalid preset_name specified!")
 
-        return cls(data_source, features, stats)
+        return cls(data_source, features, stats, impute_nan=impute_nan)
 
     def featurize(self, comp):
         """
@@ -236,12 +270,43 @@ class ElementProperty(BaseFeaturizer):
                 r"adsurl = {https://ui.adsabs.harvard.edu/\#abs/2018arXiv181205055C},"
                 "adsnote = {Provided by the SAO/NASA Astrophysics Data System}}"
             ]
+        elif self.data_source.__class__.__name__ == "OpticalData":
+            citation = [
+                "@misc{mtgx,"
+                "author = {Guillaume Brunin, Guido Petretto, David Waroquiers (Matgenix)},"
+                "year = {2022}"
+            ]
+            citation += [
+                "@misc{rii,"
+                "author = {Mikhail N. Polyanskiy},"
+                "title = {Refractive index database},"
+                "howpublished = {https://refractiveindex.info},"
+                "note = {Accessed on 2022-06-30}}"
+            ]
+        elif self.data_source.__class__.__name__ == "TransportData":
+            citation = [
+                "@misc{mtgx,"
+                "author = {Guillaume Brunin, Guido Petretto, David Waroquiers (Matgenix)},"
+                "year = {2022}"
+            ]
+            citation += [
+                "@article{ricci2017ab,"
+                "title={An ab initio electronic transport database for inorganic materials},"
+                "author={Ricci, Francesco and Chen, Wei and Aydemir, Umut and Snyder, G Jeffrey"
+                "and Rignanese, Gian-Marco and Jain, Anubhav and Hautier, Geoffroy},"
+                "journal={Scientific data},"
+                "volume={4},"
+                "number={1},"
+                "pages={1--13},"
+                "year={2017},"
+                "publisher={Nature Publishing Group}}"
+            ]
         else:
             citation = []
         return citation
 
     def implementors(self):
-        return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn"]
+        return ["Jiming Chen", "Logan Ward", "Anubhav Jain", "Alex Dunn", "Guillaume Brunin (Matgenix)"]
 
 
 class Meredig(BaseFeaturizer):
@@ -259,10 +324,17 @@ class Meredig(BaseFeaturizer):
             Mean number of valence electrons in each orbital
             Fraction of total valence electrons in each orbital
 
+    Args:
+        impute_nan (bool): if True, the features for the elements
+            that are missing from the data_source or are NaNs are replaced by the
+            average of each features over the available elements.
     """
 
-    def __init__(self):
-        self.data_source = MagpieData()
+    def __init__(self, impute_nan=False):
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
+        self.data_source = MagpieData(impute_nan=self.impute_nan)
 
         # The labels for statistics on element properties
         self._element_property_feature_labels = [
@@ -305,14 +377,16 @@ class Meredig(BaseFeaturizer):
             element_property_features[i] = self.pstats.calc_stat(elem_data, stat, fractions)
 
         # Final 8 features are statistics on valence orbitals, available from the ValenceOrbital featurizer
-        valence_orbital_features = ValenceOrbital(orbitals=("s", "p", "d", "f"), props=("avg", "frac")).featurize(comp)
+        valence_orbital_features = ValenceOrbital(
+            orbitals=("s", "p", "d", "f"), props=("avg", "frac"), impute_nan=self.impute_nan
+        ).featurize(comp)
 
         return element_fraction_features + element_property_features + valence_orbital_features
 
     def feature_labels(self):
         # Since we have more features than just element fractions, append 'fraction' to element symbols for clarity
         element_fraction_features = [e + " fraction" for e in ElementFraction().feature_labels()]
-        valence_orbital_features = ValenceOrbital().feature_labels()
+        valence_orbital_features = ValenceOrbital(impute_nan=self.impute_nan).feature_labels()
         return element_fraction_features + self._element_property_feature_labels + valence_orbital_features
 
     def citations(self):

@@ -51,3 +51,4 @@ dataset_prep.log
 
 # Datasets
 matminer/datasets/*.json.gz
+matminer/utils/data_files/mp_transport/transport_database.csv

@@ -3,6 +3,7 @@ Composition featurizers for determining packing characteristics.
 """
 
 import itertools
+import warnings
 from functools import lru_cache
 
 import numpy as np
@@ -13,6 +14,7 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.composition.element import ElementFraction
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import MagpieData
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class AtomicPackingEfficiency(BaseFeaturizer):
@@ -49,7 +51,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         for bulk metallic glasses, Nat. Commun. 6 (2015) 8123. doi:10.1038/ncomms9123.
     """
 
-    def __init__(self, threshold=0.01, n_nearest=(1, 3, 5), max_types=6):
+    def __init__(self, threshold=0.01, n_nearest=(1, 3, 5), max_types=6, impute_nan=False):
         """
         Initialize the featurizer
 
@@ -60,6 +62,9 @@ class AtomicPackingEfficiency(BaseFeaturizer):
             max_types (int): Maximum number of atom types to consider when
                 looking for efficient clusters. The process for finding
                 efficient clusters very expensive for large numbers of types
+            impute_nan (bool): if True, the features for the elements
+                that are missing from the data_source or are NaNs are replaced by the
+                average of each features over the available elements.
         """
 
         # Store the options
@@ -74,7 +79,10 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         self._n_elems = len(self._el_frac.featurize(Composition("H")))
 
         # Tool for looking up radii
-        self._data_source = MagpieData()
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
+        self._data_source = MagpieData(impute_nan=impute_nan)
 
         # Lookup table of ideal radius ratios
         self.ideal_ratio = dict(

@@ -60,6 +60,14 @@ class SiteFeaturizerTest(PymatgenTest):
             coords_are_cartesian=False,
             site_properties=None,
         )
+        self.nans = Structure(
+            Lattice([[3.52, 0, 0], [0, 3.52, 0], [0, 0, 3.52]]),
+            ["Og", "U"],
+            [[0, 0, 0], [0.5, 0.5, 0.5]],
+            validate_proximity=False,
+            to_unit_cell=False,
+            coords_are_cartesian=False,
+        )
 
     def tearDown(self):
         del self.sc

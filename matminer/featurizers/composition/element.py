@@ -2,10 +2,13 @@
 Composition featurizers for elemental data and stoichiometry.
 """
 
+import warnings
+
 from pymatgen.core import Element
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.utils.data import DemlData, MagpieData
+from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class ElementFraction(BaseFeaturizer):
@@ -27,7 +30,7 @@ class ElementFraction(BaseFeaturizer):
             vector (list of floats): fraction of each element in a composition
         """
 
-        vector = [0] * 103
+        vector = [0] * 118
         el_list = list(comp.element_composition.fractional_composition.items())
         for el in el_list:
             obj = el
@@ -37,7 +40,7 @@ class ElementFraction(BaseFeaturizer):
 
     def feature_labels(self):
         labels = []
-        for i in range(1, 104):
+        for i in range(1, 119):
             labels.append(Element.from_Z(i).symbol)
         return labels
 
@@ -207,12 +210,16 @@ class BandCenter(BaseFeaturizer):
         - Band center
     """
 
-    magpie_data = MagpieData()
-    deml_data = DemlData()
+    def __init__(self, impute_nan=False):
+        self.impute_nan = impute_nan
+        if not self.impute_nan:
+            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
+        self.magpie_data = MagpieData(impute_nan=self.impute_nan)
+        self.deml_data = DemlData(impute_nan=self.impute_nan)
 
     def featurize(self, comp):
         """
-        (Rough) estimation of absolution position of band center using
+        (Rough) estimation of absolute position of band center using
         geometric mean of electronegativity.
 
         Args:
