@@ -23,7 +23,7 @@ babel==2.14.0
     # via sphinx
 beautifulsoup4==4.12.3
     # via aflow
-black==24.3.0
+black==24.4.0
     # via matminer (setup.py)
 certifi==2024.2.2
     # via requests
@@ -77,7 +77,7 @@ globus-sdk==3.39.0
     #   mdf-toolbox
 httplib2==0.22.0
     # via matminer (setup.py)
-idna==3.6
+idna==3.7
     # via requests
 imagesize==1.4.1
     # via sphinx
@@ -91,7 +91,7 @@ jinja2==3.1.3
     #   sphinx
 jmespath==1.0.1
     # via matminer (setup.py)
-joblib==1.3.2
+joblib==1.4.0
     # via
     #   dscribe
     #   pymatgen
@@ -159,7 +159,7 @@ packaging==24.0
     #   sphinx
 palettable==3.3.3
     # via pymatgen
-pandas==2.2.1
+pandas==2.2.2
     # via
     #   matminer (setup.py)
     #   pymatgen
@@ -191,7 +191,7 @@ pyjwt[crypto]==2.8.0
     # via globus-sdk
 pylint==3.1.0
     # via matminer (setup.py)
-pymatgen==2024.3.1
+pymatgen==2024.4.13
     # via matminer (setup.py)
 pymongo==4.6.3
     # via matminer (setup.py)
@@ -242,7 +242,7 @@ ruamel-yaml==0.18.6
     # via pymatgen
 ruamel-yaml-clib==0.2.8
     # via ruamel-yaml
-scikit-learn==1.4.1.post1
+scikit-learn==1.4.2
     # via
     #   dscribe
     #   matminer (setup.py)
@@ -266,7 +266,7 @@ soupsieve==2.5
     # via beautifulsoup4
 sparse==0.15.1
     # via dscribe
-spglib==2.3.1
+spglib==2.4.0
     # via pymatgen
 sphinx==7.2.6
     # via matminer (setup.py)
