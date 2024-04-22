@@ -56,7 +56,7 @@ dnspython==2.6.1
     # via pymongo
 docopt==0.6.2
     # via coveralls
-docutils==0.20.1
+docutils==0.21.1
     # via sphinx
 dscribe==2.1.0
     # via matminer (setup.py)
@@ -68,7 +68,7 @@ fonttools==4.51.0
     # via matplotlib
 future==1.0.0
     # via uncertainties
-globus-sdk==3.39.0
+globus-sdk==3.40.0
     # via
     #   fair-research-login
     #   mdf-forge
@@ -120,7 +120,7 @@ mdf-forge==0.8.0
     # via matminer (setup.py)
 mdf-toolbox==0.7.1
     # via mdf-forge
-monty==2024.3.31
+monty==2024.4.17
     # via
     #   matminer (setup.py)
     #   pymatgen
@@ -169,9 +169,9 @@ platformdirs==4.2.0
     # via
     #   black
     #   pylint
-plotly==5.20.0
+plotly==5.21.0
     # via pymatgen
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
 pybind11==2.12.0
     # via dscribe
@@ -266,7 +266,7 @@ sparse==0.15.1
     # via dscribe
 spglib==2.4.0
     # via pymatgen
-sphinx==7.2.6
+sphinx==7.3.7
     # via matminer (setup.py)
 sphinxcontrib-applehelp==1.0.8
     # via sphinx
