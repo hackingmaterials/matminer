@@ -357,7 +357,12 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
             block_key = {"s": 1.0, "p": 2.0, "d": 3.0, "f": 3.0}
             return block_key[getattr(elem, property_name)]
         else:
-            value = getattr(elem, property_name)
+            # Suppress pymatgen warnings for missing properties if we are going to impute anyway
+            with warnings.catch_warnings():
+                if self.impute_nan:
+                    warnings.simplefilter("ignore", category=UserWarning)
+                value = getattr(elem, property_name)
+
             if self.impute_nan:
                 if value and not pd.isnull(value):
                     return value
