@@ -719,7 +719,7 @@ class WenAlloys(BaseFeaturizer):
         atomic_fraction = self.compute_atomic_fraction(elements, comp)
         yang_delta = self.yss.compute_delta(comp)
         yang_omega = self.yss.compute_omega(comp)
-        ape = AtomicPackingEfficiency().compute_simultaneous_packing_efficiency(comp)[0]
+        ape = AtomicPackingEfficiency(impute_nan=self.impute_nan).compute_simultaneous_packing_efficiency(comp)[0]
         radii_local_mismatch = self.compute_local_mismatch(miracle_radius_stats["array"], fractions)
         radii_gamma = self.compute_gamma_radii(miracle_radius_stats)
         S_config = self.compute_configuration_entropy(fractions)

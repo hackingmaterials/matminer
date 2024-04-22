@@ -82,7 +82,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         self.impute_nan = impute_nan
         if not self.impute_nan:
             warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
-        self._data_source = MagpieData(impute_nan=impute_nan)
+        self._data_source = MagpieData(impute_nan=self.impute_nan)
 
         # Lookup table of ideal radius ratios
         self.ideal_ratio = dict(
