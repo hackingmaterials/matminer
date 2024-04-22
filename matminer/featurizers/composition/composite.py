@@ -55,8 +55,6 @@ class ElementProperty(BaseFeaturizer):
 
     def __init__(self, data_source, features, stats, impute_nan=False):
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         if data_source == "pymatgen":
             self.data_source = PymatgenData(impute_nan=self.impute_nan)
         elif data_source == "magpie":
