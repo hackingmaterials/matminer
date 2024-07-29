@@ -91,9 +91,9 @@ jobs:
     needs:
       - test
     runs-on: ubuntu-latest
+    if: github.repository == 'hackingmaterials/matminer'
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PAT: ${{ secrets.PAT }}
+      GITHUB_TOKEN: ${{ secrets.PAT }}
     steps:
       - uses: rymndhng/release-on-push-action@v0.25.0
         with:
