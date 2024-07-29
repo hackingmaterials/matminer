@@ -92,7 +92,8 @@ jobs:
       - test
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.PAT }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAT: ${{ secrets.PAT }}
     steps:
       - uses: rymndhng/release-on-push-action@v0.25.0
         with:
