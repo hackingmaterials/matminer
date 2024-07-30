@@ -91,6 +91,7 @@ jobs:
     needs:
       - test
     runs-on: ubuntu-latest
+    if: github.repository == 'hackingmaterials/matminer'
     env:
       GITHUB_TOKEN: ${{ secrets.PAT }}
     steps:
