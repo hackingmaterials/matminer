@@ -8,14 +8,14 @@ aflow==0.0.11
     # via matminer (setup.py)
 alabaster==0.7.16
     # via sphinx
-ase==3.22.1
+ase==3.23.0
     # via
     #   aflow
     #   dscribe
     #   matminer (setup.py)
-astroid==3.2.2
+astroid==3.2.4
     # via pylint
-attrs==23.2.0
+attrs==24.1.0
     # via
     #   jsonschema
     #   referencing
@@ -23,9 +23,9 @@ babel==2.15.0
     # via sphinx
 beautifulsoup4==4.12.3
     # via aflow
-black==24.4.2
+black==24.8.0
     # via matminer (setup.py)
-certifi==2024.2.2
+certifi==2024.7.4
     # via requests
 cffi==1.16.0
     # via cryptography
@@ -37,14 +37,14 @@ click==8.1.7
     # via black
 contourpy==1.2.1
     # via matplotlib
-coverage[toml]==7.5.2
+coverage[toml]==7.6.1
     # via
     #   coveralls
     #   matminer (setup.py)
     #   pytest-cov
 coveralls==4.0.1
     # via matminer (setup.py)
-cryptography==42.0.7
+cryptography==43.0.0
     # via
     #   globus-sdk
     #   pyjwt
@@ -58,19 +58,17 @@ docopt==0.6.2
     # via coveralls
 docutils==0.21.2
     # via sphinx
-dscribe==2.1.0
+dscribe==2.1.1
     # via matminer (setup.py)
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via pytest
 fair-research-login==0.3.1
     # via mdf-toolbox
-flake8==7.0.0
+flake8==7.1.1
     # via matminer (setup.py)
-fonttools==4.52.1
+fonttools==4.53.1
     # via matplotlib
-future==1.0.0
-    # via uncertainties
-globus-sdk==3.41.0
+globus-sdk==3.44.0
     # via
     #   fair-research-login
     #   mdf-forge
@@ -81,7 +79,7 @@ idna==3.7
     # via requests
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==7.1.0
+importlib-metadata==8.2.0
     # via sphinx
 importlib-resources==6.4.0
     # via
@@ -102,7 +100,7 @@ joblib==1.4.2
     #   dscribe
     #   pymatgen
     #   scikit-learn
-jsonschema==4.22.0
+jsonschema==4.23.0
     # via
     #   matminer (setup.py)
     #   mdf-toolbox
@@ -112,7 +110,7 @@ kiwisolver==1.4.5
     # via matplotlib
 latexcodec==3.0.0
     # via pybtex
-llvmlite==0.42.0
+llvmlite==0.43.0
     # via numba
 markupsafe==2.1.5
     # via jinja2
@@ -128,7 +126,7 @@ mdf-forge==0.8.0
     # via matminer (setup.py)
 mdf-toolbox==0.7.1
     # via mdf-forge
-monty==2024.5.24
+monty==2024.7.30
     # via
     #   matminer (setup.py)
     #   pymatgen
@@ -138,7 +136,7 @@ mypy-extensions==1.0.0
     # via black
 networkx==3.2.1
     # via pymatgen
-numba==0.59.1
+numba==0.60.0
     # via sparse
 numpy==1.26.4
     # via
@@ -156,7 +154,7 @@ numpy==1.26.4
     #   scipy
     #   sparse
     #   spglib
-packaging==24.0
+packaging==24.1
     # via
     #   black
     #   matplotlib
@@ -171,21 +169,19 @@ pandas==2.2.2
     #   pymatgen
 pathspec==0.12.1
     # via black
-pillow==10.3.0
+pillow==10.4.0
     # via matplotlib
 platformdirs==4.2.2
     # via
     #   black
     #   pylint
-plotly==5.22.0
+plotly==5.23.0
     # via pymatgen
 pluggy==1.5.0
     # via pytest
-pybind11==2.12.0
-    # via dscribe
 pybtex==0.24.0
     # via pymatgen
-pycodestyle==2.11.1
+pycodestyle==2.12.1
     # via flake8
 pycparser==2.22
     # via cffi
@@ -193,13 +189,13 @@ pyflakes==3.2.0
     # via flake8
 pygments==2.18.0
     # via sphinx
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.9.0
     # via globus-sdk
-pylint==3.2.2
+pylint==3.2.6
     # via matminer (setup.py)
-pymatgen==2024.5.1
+pymatgen==2024.7.18
     # via matminer (setup.py)
-pymongo==4.7.2
+pymongo==4.8.0
     # via matminer (setup.py)
 pyparsing==3.1.2
     # via
@@ -207,7 +203,7 @@ pyparsing==3.1.2
     #   matplotlib
 pypif==2.1.2
     # via citrination-client
-pytest==8.2.1
+pytest==8.3.2
     # via
     #   matminer (setup.py)
     #   pytest-cov
@@ -230,7 +226,7 @@ referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.2
+requests==2.32.3
     # via
     #   citrination-client
     #   coveralls
@@ -240,7 +236,7 @@ requests==2.32.2
     #   mdf-toolbox
     #   pymatgen
     #   sphinx
-rpds-py==0.18.1
+rpds-py==0.19.1
     # via
     #   jsonschema
     #   referencing
@@ -248,7 +244,7 @@ ruamel-yaml==0.18.6
     # via pymatgen
 ruamel-yaml-clib==0.2.8
     # via ruamel-yaml
-scikit-learn==1.5.0
+scikit-learn==1.5.1
     # via
     #   dscribe
     #   matminer (setup.py)
@@ -272,29 +268,29 @@ soupsieve==2.5
     # via beautifulsoup4
 sparse==0.15.4
     # via dscribe
-spglib==2.4.0
+spglib==2.5.0
     # via pymatgen
-sphinx==7.3.7
+sphinx==7.4.7
     # via matminer (setup.py)
-sphinxcontrib-applehelp==1.0.8
+sphinxcontrib-applehelp==2.0.0
     # via sphinx
-sphinxcontrib-devhelp==1.0.6
+sphinxcontrib-devhelp==2.0.0
     # via sphinx
-sphinxcontrib-htmlhelp==2.0.5
+sphinxcontrib-htmlhelp==2.1.0
     # via sphinx
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.7
+sphinxcontrib-qthelp==2.0.0
     # via sphinx
-sphinxcontrib-serializinghtml==1.1.10
+sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-sympy==1.12
+sympy==1.13.1
     # via
     #   matminer (setup.py)
     #   pymatgen
 tabulate==0.9.0
     # via pymatgen
-tenacity==8.3.0
+tenacity==9.0.0
     # via plotly
 termcolor==2.4.0
     # via aflow
@@ -307,28 +303,29 @@ tomli==2.0.1
     #   pylint
     #   pytest
     #   sphinx
-tomlkit==0.12.5
+tomlkit==0.13.0
     # via pylint
-tqdm==4.66.4
+tqdm==4.66.5
     # via
     #   matminer (setup.py)
     #   mdf-forge
     #   pymatgen
-typing-extensions==4.12.0
+typing-extensions==4.12.2
     # via
     #   astroid
     #   black
     #   globus-sdk
     #   pylint
+    #   spglib
 tzdata==2024.1
     # via pandas
 ujson==5.10.0
     # via matminer (setup.py)
-uncertainties==3.1.7
+uncertainties==3.2.2
     # via pymatgen
-urllib3==2.2.1
+urllib3==2.2.2
     # via requests
-zipp==3.19.0
+zipp==3.19.2
     # via
     #   importlib-metadata
     #   importlib-resources
