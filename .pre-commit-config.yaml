@@ -46,7 +46,10 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies:
-            - types-paramiko
+          - types-setuptools
+          - types-paramiko
+          - types-requests
+          - types-ujson
 
 #  - repo: local
 #    hooks:
