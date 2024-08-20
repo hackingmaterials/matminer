@@ -45,7 +45,8 @@ repos:
     rev: v1.5.1
     hooks:
       - id: mypy
-        additional_dependencies: [types-all]
+        additional_dependencies:
+            - types-paramiko
 
 #  - repo: local
 #    hooks:
