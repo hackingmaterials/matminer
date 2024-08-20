@@ -66,7 +66,7 @@ def get_elem_in_data(df, as_pure=False):
     else:
         for elem in Element:
             for compound in df.index.to_list():
-                if elem.name in compound and elem.name not in elems_in_df:
+                if elem in Composition(compound) and elem.name not in elems_in_df:
                     elems_in_df.append(elem.name)
 
     # Find the elements not in the data
