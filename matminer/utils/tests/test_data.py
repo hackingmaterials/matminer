@@ -283,7 +283,7 @@ class TestOpticalData(TestCase):
         c_k = self.data_source_imputed.get_elemental_property(elem="C", property_name="k_760.0")
         self.assertAlmostEqual(c_k, 0.7462931865379264)
         og_r = self.data_source_imputed.get_elemental_property(elem="Og", property_name="R_400.0")
-        self.assertAlmostEqual(og_r, 0.4624005395190695)
+        self.assertAlmostEqual(og_r, 0.46962554794905487)
 
 
 class TestTransportData(TestCase):
@@ -308,7 +308,7 @@ class TestTransportData(TestCase):
         cu_kappan = self.data_source_imputed.get_elemental_property(elem="Cu", property_name="kappa_n")
         self.assertAlmostEqual(cu_kappan, 1814544.75663, places=5)
         og_mn = self.data_source_imputed.get_elemental_property(elem="Og", property_name="m_n")
-        self.assertAlmostEqual(og_mn, 0.03237036761677134)
+        self.assertAlmostEqual(og_mn, 0.03293018092682478)
 
 
 if __name__ == "__main__":

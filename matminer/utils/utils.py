@@ -66,7 +66,7 @@ def get_elem_in_data(df, as_pure=False):
     else:
         for elem in Element:
             for compound in df.index.to_list():
-                if elem.name in compound and elem.name not in elems_in_df:
+                if elem in Composition(compound) and elem.name not in elems_in_df:
                     elems_in_df.append(elem.name)
 
     # Find the elements not in the data
@@ -137,5 +137,11 @@ def get_pseudo_inverse(df_init, cols=None):
     res_pi = np.vstack([res_pi, np.nan * np.ones([len(elems_not_in_df), len(df.T) - 1])])
 
     df_pi = pd.DataFrame(res_pi, columns=cols, index=pd.Index(elems_in_df + elems_not_in_df))
+    # Handle the case of hydrogen, deuterium, and tritium
+    # If all are present, there contributions are summed
+    # and given to hydrogen only. Others are removed.
+    if all(e in df_pi.index for e in ["H", "D", "T"]):
+        df_pi.loc["H"] = df_pi.loc["H"] + df_pi.loc["D"] + df_pi.loc["T"]
+        df_pi.drop(index=["T", "D"], inplace=True)
 
     return df_pi
