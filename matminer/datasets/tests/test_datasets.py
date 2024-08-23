@@ -1,5 +1,6 @@
 import os
 import unittest
+from time import sleep
 
 import numpy as np
 import requests
@@ -20,6 +21,7 @@ class DataSetsTest(DatasetTest):
         numeric_headers=None,
         bool_headers=None,
         test_func=None,
+        max_connect_attempts: int = 5,
     ):
         # "Hard" integrity checks that take a long time.
         # These tests only run if the MATMINER_DATASET_FULL_TEST
@@ -75,7 +77,14 @@ class DataSetsTest(DatasetTest):
         # This runs when on a system with the CI environment var present
         # (e.g. when running a continuous integration VCS system)
         else:
-            download_page = requests.head(self.dataset_dict[dataset_name]["url"])
+            # try to be lenient in connecting to DB, in case a request fails once
+            for iconnect in range(max_connect_attempts):
+                download_page = requests.head(self.dataset_dict[dataset_name]["url"])
+                if download_page.ok:
+                    break
+                if iconnect < max_connect_attempts-1:
+                    sleep(5)
+                    
             self.assertTrue(download_page.ok)
 
 
