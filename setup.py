@@ -63,6 +63,7 @@ if __name__ == "__main__":
             "sympy ~= 1.11",
             "monty >= 2023",
             "pymatgen >= 2023",
+            "spglib>=2.5.0",
         ],
         extras_require=extras_require,
         classifiers=[
