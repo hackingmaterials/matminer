@@ -82,9 +82,9 @@ class DataSetsTest(DatasetTest):
                 download_page = requests.head(self.dataset_dict[dataset_name]["url"])
                 if download_page.ok:
                     break
-                if iconnect < max_connect_attempts-1:
+                if iconnect < max_connect_attempts - 1:
                     sleep(5)
-                    
+
             self.assertTrue(download_page.ok)
 
 
