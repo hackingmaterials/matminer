@@ -21,6 +21,7 @@ class ThermoFeaturesTest(CompositionFeaturesTest):
         self.assertAlmostEqual(df_cohesive_energy["cohesive energy"][0], 5.179358342, 2)
 
     def test_cohesive_energy_mp(self):
+        raise SkipTest("Unable to debug issues with this test without a legacy MP key. Skipping for now.")
         try:
             mpr = MPRester()
         except (ValueError, MPRestError):
