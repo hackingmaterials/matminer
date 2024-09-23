@@ -1,7 +1,7 @@
 import unittest
 from unittest import SkipTest
 
-from pymatgen.ext.matproj import MPRester
+from pymatgen.ext.matproj import MPRester, MPRestError
 
 from matminer.featurizers.composition.tests.base import CompositionFeaturesTest
 from matminer.featurizers.composition.thermo import CohesiveEnergy, CohesiveEnergyMP
@@ -11,7 +11,7 @@ class ThermoFeaturesTest(CompositionFeaturesTest):
     def test_cohesive_energy(self):
         try:
             mpr = MPRester()
-        except ValueError:
+        except (ValueError, MPRestError):
             raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
 
         if not mpr.api_key:
@@ -23,7 +23,7 @@ class ThermoFeaturesTest(CompositionFeaturesTest):
     def test_cohesive_energy_mp(self):
         try:
             mpr = MPRester()
-        except ValueError:
+        except (ValueError, MPRestError):
             raise SkipTest("Materials Project API key not set; Skipping cohesive energy test")
 
         if not mpr.api_key:
