@@ -805,8 +805,8 @@ class GlobalInstabilityIndex(BaseFeaturizer):
         sga = SpacegroupAnalyzer(s, symprec=0.01)
         sg = sga.get_space_group_operations
         sym_data = sga.get_symmetry_dataset()
-        equiv_atoms = getattr(sym_data,"equivalent_atoms",sym_data["equivalent_atoms"])
-        wyckoffs = getattr(sym_data,"wyckoffs",sym_data["wyckoffs"])
+        equiv_atoms = getattr(sym_data, "equivalent_atoms", sym_data["equivalent_atoms"])
+        wyckoffs = getattr(sym_data, "wyckoffs", sym_data["wyckoffs"])
         sym_struct = SymmetrizedStructure(s, sg, equiv_atoms, wyckoffs)
         equivs = sym_struct.find_equivalent_sites(site)
         return equivs
