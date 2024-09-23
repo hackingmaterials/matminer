@@ -7,6 +7,7 @@ from monty.json import MontyEncoder
 from pandas import DataFrame, MultiIndex
 from pymatgen.core import SETTINGS, Composition, Element, Lattice, Structure
 from pymatgen.core.structure import IStructure
+from pymatgen.ext.matproj import MPRestError
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.conversions import (
@@ -300,7 +301,11 @@ class TestConversions(PymatgenTest):
     def test_composition_to_structurefromMP(self):
         df = DataFrame(data={"composition": [Composition("Fe2O3"), Composition("N9Al34Fe234")]})
 
-        cto = CompositionToStructureFromMP()
+        try:
+            cto = CompositionToStructureFromMP()
+        except (ValueError, MPRestError):
+            raise unittest.SkipTest("Materials Project API key not set; Skipping cohesive energy test")
+
         df = cto.featurize_dataframe(df, "composition")
         structures = df["structure"].tolist()
         self.assertTrue(isinstance(structures[0], Structure))
