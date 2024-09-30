@@ -277,9 +277,11 @@ class FingerprintTests(SiteFeaturizerTest):
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset("multi_weights")
+        implemented_cetypes = set([gg.ce_symbol for gg in cefp.lgf.allcg.get_implemented_geometries()])
+        assert set(cefp.cetypes).difference(implemented_cetypes) == set()  # Added after issue #945
         l = cefp.feature_labels()
         cevals = cefp.featurize(self.sc, 0)
-        self.assertEqual(len(cevals), 66)
+        self.assertEqual(len(cevals), 61)
         self.assertAlmostEqual(cevals[l.index("O:6")], 1, places=7)
         self.assertAlmostEqual(cevals[l.index("C:8")], 0, places=7)
         cevals = cefp.featurize(self.cscl, 0)
@@ -288,12 +290,14 @@ class FingerprintTests(SiteFeaturizerTest):
         cefp = ChemEnvSiteFingerprint.from_preset("simple")
         l = cefp.feature_labels()
         cevals = cefp.featurize(self.sc, 0)
-        self.assertEqual(len(cevals), 66)
+        self.assertEqual(len(cevals), 61)
         self.assertAlmostEqual(cevals[l.index("O:6")], 1, places=7)
         self.assertAlmostEqual(cevals[l.index("C:8")], 0, places=7)
         cevals = cefp.featurize(self.cscl, 0)
         self.assertAlmostEqual(cevals[l.index("C:8")], 0.9953721, places=7)
         self.assertAlmostEqual(cevals[l.index("O:6")], 0, places=7)
+        cevals = cefp.featurize(self.ni3al, 0)  # Added after issue #945
+        self.assertAlmostEqual(cevals[l.index("I:12")], 0.3401699, places=7)
 
     def test_voronoifingerprint(self):
         df_sc = pd.DataFrame({"struct": [self.sc], "site": [0]})
