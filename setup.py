@@ -54,7 +54,7 @@ if __name__ == "__main__":
         include_package_data=True,
         zip_safe=False,
         install_requires=[
-            "numpy >= 1.23, < 2",
+            "numpy >= 1.23",
             "requests ~= 2.31",
             "pandas >= 1.5, < 3",
             "tqdm ~= 4.66",
