@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>matminer.featurizers.composition package &#8212; matminer 0.9.2 documentation</title>
+    <title>matminer.featurizers.composition package &#8212; matminer 0.9.3 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css?v=8b5d5988" />
-    <script src="_static/documentation_options.js?v=aa3b121e"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/documentation_options.js?v=0e439607"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -17,7 +17,7 @@
 <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -26,7 +26,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers.composition package</a></li> 
       </ul>
     </div>  
@@ -68,6 +68,8 @@
 <li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_elem_matminer"><code class="docutils literal notranslate"><span class="pre">CompositeFeaturesTest.test_elem_matminer()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_elem_matscholar_el"><code class="docutils literal notranslate"><span class="pre">CompositeFeaturesTest.test_elem_matscholar_el()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_elem_megnet_el"><code class="docutils literal notranslate"><span class="pre">CompositeFeaturesTest.test_elem_megnet_el()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_elem_optical"><code class="docutils literal notranslate"><span class="pre">CompositeFeaturesTest.test_elem_optical()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_elem_transport"><code class="docutils literal notranslate"><span class="pre">CompositeFeaturesTest.test_elem_transport()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_fere_corr"><code class="docutils literal notranslate"><span class="pre">CompositeFeaturesTest.test_fere_corr()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_meredig"><code class="docutils literal notranslate"><span class="pre">CompositeFeaturesTest.test_meredig()</span></code></a></li>
 </ul>
@@ -106,7 +108,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="matminer.featurizers.composition.tests.html#module-matminer.featurizers.composition.tests.test_packing">matminer.featurizers.composition.tests.test_packing module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest"><code class="docutils literal notranslate"><span class="pre">PackingFeaturesTest</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest.test_ape"><code class="docutils literal notranslate"><span class="pre">PackingFeaturesTest.test_ape()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest.test_ape1"><code class="docutils literal notranslate"><span class="pre">PackingFeaturesTest.test_ape1()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest.test_ape2"><code class="docutils literal notranslate"><span class="pre">PackingFeaturesTest.test_ape2()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -133,7 +136,7 @@
 <p>Composition featurizers specialized for use with alloys.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.alloy.Miedema">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.alloy.</span></span><span class="sig-name descname"><span class="pre">Miedema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Miedema'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.Miedema" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.alloy.</span></span><span class="sig-name descname"><span class="pre">Miedema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Miedema'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.Miedema" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Formation enthalpies of intermetallic compounds, from Miedema et al.</p>
 <p>Calculate the formation enthalpies of the intermetallic compound,
@@ -166,6 +169,9 @@ containing the following model parameters for 73 elements:
 ‘compressibility’, ‘shear_modulus’, ‘melting_point’
 ‘structural_stability’. Please see the references for details.</p>
 </dd>
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl>
@@ -182,7 +188,7 @@ containing the following model parameters for 73 elements:
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.alloy.Miedema.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Miedema'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.Miedema.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">struct_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Miedema'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.Miedema.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -306,7 +312,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <span class="sig-name descname"><span class="pre">precheck</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Composition</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#matminer.featurizers.composition.alloy.Miedema.precheck" title="Link to this definition">¶</a></dt>
 <dd><p>Precheck a single entry. Miedema does not work for compositions
 containing any elements for which the Miedema model has no parameters.
-To precheck an entire dataframe (qnd automatically gather
+To precheck an entire dataframe (and automatically gather
 the fraction of structures that will pass the precheck), please use
 precheck_dataframe.</p>
 <dl class="simple">
@@ -321,7 +327,7 @@ precheck_dataframe.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.alloy.WenAlloys">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.alloy.</span></span><span class="sig-name descname"><span class="pre">WenAlloys</span></span><a class="headerlink" href="#matminer.featurizers.composition.alloy.WenAlloys" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.alloy.</span></span><span class="sig-name descname"><span class="pre">WenAlloys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.WenAlloys" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Calculate features for alloy properties.</p>
 <p>Based on the work:</p>
@@ -349,9 +355,17 @@ Shear modulus strength model</p>
 </dd>
 </dl>
 <p>Copyright 2020 Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.alloy.WenAlloys.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.WenAlloys.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.WenAlloys.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -407,8 +421,8 @@ element <span class="math">i</span>, and <span class="math">\bar{v}</span> is th
 average of the variable.
 Args:</p>
 <blockquote>
-<div><p>variable (list): List of properties to asses
-fractions (list): List of fractions to asses</p>
+<div><p>variable (list): List of properties to assess
+fractions (list): List of fractions to assess</p>
 </div></blockquote>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>(float) delta</p>
@@ -620,7 +634,7 @@ nearest neighbors computations on a structure with many thousand sites).</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.alloy.YangSolidSolution">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.alloy.</span></span><span class="sig-name descname"><span class="pre">YangSolidSolution</span></span><a class="headerlink" href="#matminer.featurizers.composition.alloy.YangSolidSolution" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.alloy.</span></span><span class="sig-name descname"><span class="pre">YangSolidSolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.YangSolidSolution" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Mixing thermochemistry and size mismatch terms of Yang and Zhang (2012)</p>
 <p>This featurizer returns two different features developed by
@@ -634,11 +648,17 @@ atomic size mismatch between the different elements of the material.</p>
 <dt>Features</dt><dd><p>Yang omega - Mixing thermochemistry feature, Omega
 Yang delta - Atomic size mismatch term</p>
 </dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
+</dd>
+</dl>
+</dd>
 <dt>References:</dt><dd></dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.alloy.YangSolidSolution.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.YangSolidSolution.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.alloy.YangSolidSolution.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -733,7 +753,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 containing any binary element combinations for which the model has no
 parameters. We can nearly equivalently approximate this by checking
 against the unary element list.</p>
-<p>To precheck an entire dataframe (qnd automatically gather
+<p>To precheck an entire dataframe (and automatically gather
 the fraction of structures that will pass the precheck), please use
 precheck_dataframe.</p>
 <dl class="simple">
@@ -752,7 +772,7 @@ precheck_dataframe.</p>
 <p>Composition featurizers for composite features containing more than 1 category of general-purpose data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.composite.ElementProperty">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.composite.</span></span><span class="sig-name descname"><span class="pre">ElementProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.composite.ElementProperty" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.composite.</span></span><span class="sig-name descname"><span class="pre">ElementProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.composite.ElementProperty" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Class to calculate elemental property attributes.</p>
 <p>To initialize quickly, use the from_preset() method.</p>
@@ -774,12 +794,15 @@ MatscholarElementData, etc.).</p>
 </dd>
 <dt>stats (list of strings): a list of weighted statistics to compute to for each</dt><dd><p>property (see PropertyStats for available stats)</p>
 </dd>
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
+</dd>
 </dl>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.composite.ElementProperty.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.composite.ElementProperty.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.composite.ElementProperty.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -819,12 +842,15 @@ MatscholarElementData, etc.).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.composite.ElementProperty.from_preset">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.composite.ElementProperty.from_preset" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.composite.ElementProperty.from_preset" title="Link to this definition">¶</a></dt>
 <dd><p>Return ElementProperty from a preset string
 Args:</p>
 <blockquote>
 <div><dl class="simple">
 <dt>preset_name: (str) can be one of “magpie”, “deml”, “matminer”,</dt><dd><p>“matscholar_el”, or “megnet_el”.</p>
+</dd>
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -853,7 +879,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.composite.Meredig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.composite.</span></span><span class="sig-name descname"><span class="pre">Meredig</span></span><a class="headerlink" href="#matminer.featurizers.composition.composite.Meredig" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.composite.</span></span><span class="sig-name descname"><span class="pre">Meredig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.composite.Meredig" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Class to calculate features as defined in Meredig et. al.</p>
 <dl>
@@ -869,10 +895,16 @@ Mean number of valence electrons in each orbital
 Fraction of total valence electrons in each orbital</p>
 </div></blockquote>
 </dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
+</dd>
+</dl>
+</dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.composite.Meredig.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.composite.Meredig.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.composite.Meredig.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -933,7 +965,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <p>Composition featurizers for elemental data and stoichiometry.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.element.BandCenter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.element.</span></span><span class="sig-name descname"><span class="pre">BandCenter</span></span><a class="headerlink" href="#matminer.featurizers.composition.element.BandCenter" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.element.</span></span><span class="sig-name descname"><span class="pre">BandCenter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.element.BandCenter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Estimation of absolute position of band center using electronegativity.</p>
 <dl class="simple">
@@ -942,6 +974,11 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matminer.featurizers.composition.element.BandCenter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.element.BandCenter.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.element.BandCenter.citations">
 <span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.element.BandCenter.citations" title="Link to this definition">¶</a></dt>
@@ -954,11 +991,6 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="matminer.featurizers.composition.element.BandCenter.deml_data">
-<span class="sig-name descname"><span class="pre">deml_data</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;matminer.utils.data.DemlData</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#matminer.featurizers.composition.element.BandCenter.deml_data" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.element.BandCenter.feature_labels">
@@ -973,7 +1005,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.element.BandCenter.featurize">
 <span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.element.BandCenter.featurize" title="Link to this definition">¶</a></dt>
-<dd><p>(Rough) estimation of absolution position of band center using
+<dd><p>(Rough) estimation of absolute position of band center using
 geometric mean of electronegativity.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>comp (Composition).</p>
@@ -997,11 +1029,6 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="matminer.featurizers.composition.element.BandCenter.magpie_data">
-<span class="sig-name descname"><span class="pre">magpie_data</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;matminer.utils.data.MagpieData</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#matminer.featurizers.composition.element.BandCenter.magpie_data" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -1212,7 +1239,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <p>Composition featurizers for compositions with ionic data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.ion.CationProperty">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.ion.</span></span><span class="sig-name descname"><span class="pre">CationProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.CationProperty" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.ion.</span></span><span class="sig-name descname"><span class="pre">CationProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.CationProperty" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#matminer.featurizers.composition.composite.ElementProperty" title="matminer.featurizers.composition.composite.ElementProperty"><code class="xref py py-class docutils literal notranslate"><span class="pre">ElementProperty</span></code></a></p>
 <p>Features based on properties of cations in a material</p>
 <p>Requires that oxidation states have already been determined. Property
@@ -1263,12 +1290,15 @@ MatscholarElementData, etc.).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.ion.CationProperty.from_preset">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.CationProperty.from_preset" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.CationProperty.from_preset" title="Link to this definition">¶</a></dt>
 <dd><p>Return ElementProperty from a preset string
 Args:</p>
 <blockquote>
 <div><dl class="simple">
 <dt>preset_name: (str) can be one of “magpie”, “deml”, “matminer”,</dt><dd><p>“matscholar_el”, or “megnet_el”.</p>
+</dd>
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -1282,14 +1312,22 @@ Args:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.ion.ElectronAffinity">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.ion.</span></span><span class="sig-name descname"><span class="pre">ElectronAffinity</span></span><a class="headerlink" href="#matminer.featurizers.composition.ion.ElectronAffinity" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.ion.</span></span><span class="sig-name descname"><span class="pre">ElectronAffinity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.ElectronAffinity" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Calculate average electron affinity times formal charge of anion elements.
 Note: The formal charges must already be computed before calling <cite>featurize</cite>.
 Generates average (electron affinity*formal charge) of anions.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.ion.ElectronAffinity.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.ElectronAffinity.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.ElectronAffinity.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1419,12 +1457,12 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.ion.IonProperty">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.ion.</span></span><span class="sig-name descname"><span class="pre">IonProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source=&lt;matminer.utils.data.PymatgenData</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.IonProperty" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.ion.</span></span><span class="sig-name descname"><span class="pre">IonProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.IonProperty" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Ionic property attributes. Similar to ElementProperty.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.ion.IonProperty.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source=&lt;matminer.utils.data.PymatgenData</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.IonProperty.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.ion.IonProperty.__init__" title="Link to this definition">¶</a></dt>
 <dd><dl>
 <dt>Args:</dt><dd><blockquote>
 <div><dl class="simple">
@@ -1666,7 +1704,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.orbital.ValenceOrbital">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.orbital.</span></span><span class="sig-name descname"><span class="pre">ValenceOrbital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbitals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('s',</span> <span class="pre">'p',</span> <span class="pre">'d',</span> <span class="pre">'f')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">props</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('avg',</span> <span class="pre">'frac')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.orbital.ValenceOrbital" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.orbital.</span></span><span class="sig-name descname"><span class="pre">ValenceOrbital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbitals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('s',</span> <span class="pre">'p',</span> <span class="pre">'d',</span> <span class="pre">'f')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">props</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('avg',</span> <span class="pre">'frac')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.orbital.ValenceOrbital" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Attributes of valence orbital shells</p>
 <dl>
@@ -1676,11 +1714,16 @@ props (list): specifies whether to return average number of electrons in each or
 <blockquote>
 <div><p>fraction of electrons in each orbital, or both</p>
 </div></blockquote>
+<dl class="simple">
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.orbital.ValenceOrbital.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbitals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('s',</span> <span class="pre">'p',</span> <span class="pre">'d',</span> <span class="pre">'f')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">props</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('avg',</span> <span class="pre">'frac')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.orbital.ValenceOrbital.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbitals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('s',</span> <span class="pre">'p',</span> <span class="pre">'d',</span> <span class="pre">'f')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">props</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('avg',</span> <span class="pre">'frac')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.orbital.ValenceOrbital.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1744,7 +1787,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 <p>Composition featurizers for determining packing characteristics.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.packing.AtomicPackingEfficiency">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.packing.</span></span><span class="sig-name descname"><span class="pre">AtomicPackingEfficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nearest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.packing.AtomicPackingEfficiency" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matminer.featurizers.composition.packing.</span></span><span class="sig-name descname"><span class="pre">AtomicPackingEfficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nearest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.packing.AtomicPackingEfficiency" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matminer.featurizers.html#matminer.featurizers.base.BaseFeaturizer" title="matminer.featurizers.base.BaseFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFeaturizer</span></code></a></p>
 <p>Packing efficiency based on a geometric theory of the amorphous packing
 of hard spheres.</p>
@@ -1778,7 +1821,7 @@ for bulk metallic glasses, Nat. Commun. 6 (2015) 8123. doi:10.1038/ncomms9123.</
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matminer.featurizers.composition.packing.AtomicPackingEfficiency.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nearest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.packing.AtomicPackingEfficiency.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nearest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">3,</span> <span class="pre">5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impute_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matminer.featurizers.composition.packing.AtomicPackingEfficiency.__init__" title="Link to this definition">¶</a></dt>
 <dd><p>Initialize the featurizer</p>
 <dl>
 <dt>Args:</dt><dd><dl class="simple">
@@ -1791,6 +1834,11 @@ max_types (int): Maximum number of atom types to consider when</p>
 <div><p>looking for efficient clusters. The process for finding
 efficient clusters very expensive for large numbers of types</p>
 </div></blockquote>
+<dl class="simple">
+<dt>impute_nan (bool): if True, the features for the elements</dt><dd><p>that are missing from the data_source or are NaNs are replaced by the
+average of each features over the available elements.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -2088,7 +2136,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="index.html">Table of Contents</a></h3>
@@ -2164,12 +2212,11 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
 </li>
 <li><a class="reference internal" href="#module-matminer.featurizers.composition.element">matminer.featurizers.composition.element module</a><ul>
 <li><a class="reference internal" href="#matminer.featurizers.composition.element.BandCenter"><code class="docutils literal notranslate"><span class="pre">BandCenter</span></code></a><ul>
+<li><a class="reference internal" href="#matminer.featurizers.composition.element.BandCenter.__init__"><code class="docutils literal notranslate"><span class="pre">BandCenter.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#matminer.featurizers.composition.element.BandCenter.citations"><code class="docutils literal notranslate"><span class="pre">BandCenter.citations()</span></code></a></li>
-<li><a class="reference internal" href="#matminer.featurizers.composition.element.BandCenter.deml_data"><code class="docutils literal notranslate"><span class="pre">BandCenter.deml_data</span></code></a></li>
 <li><a class="reference internal" href="#matminer.featurizers.composition.element.BandCenter.feature_labels"><code class="docutils literal notranslate"><span class="pre">BandCenter.feature_labels()</span></code></a></li>
 <li><a class="reference internal" href="#matminer.featurizers.composition.element.BandCenter.featurize"><code class="docutils literal notranslate"><span class="pre">BandCenter.featurize()</span></code></a></li>
 <li><a class="reference internal" href="#matminer.featurizers.composition.element.BandCenter.implementors"><code class="docutils literal notranslate"><span class="pre">BandCenter.implementors()</span></code></a></li>
-<li><a class="reference internal" href="#matminer.featurizers.composition.element.BandCenter.magpie_data"><code class="docutils literal notranslate"><span class="pre">BandCenter.magpie_data</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#matminer.featurizers.composition.element.ElementFraction"><code class="docutils literal notranslate"><span class="pre">ElementFraction</span></code></a><ul>
@@ -2308,7 +2355,7 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
@@ -2316,13 +2363,13 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -2331,14 +2378,14 @@ Jain”, “email”: “<a class="reference external" href="mailto:ajain&#37;&#
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.featurizers.composition package</a></li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
     </div>
 
   </body>

@@ -36,6 +36,14 @@ matminer.utils.tests.test\_io module
    :undoc-members:
    :show-inheritance:
 
+matminer.utils.tests.test\_utils module
+---------------------------------------
+
+.. automodule:: matminer.utils.tests.test_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

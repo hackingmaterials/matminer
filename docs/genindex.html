@@ -4,11 +4,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; matminer 0.9.2 documentation</title>
+    <title>Index &#8212; matminer 0.9.3 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css?v=8b5d5988" />
-    <script src="_static/documentation_options.js?v=aa3b121e"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/documentation_options.js?v=0e439607"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
     </div>  
@@ -100,6 +100,8 @@
         <li><a href="matminer.featurizers.composition.html#matminer.featurizers.composition.composite.ElementProperty.__init__">(matminer.featurizers.composition.composite.ElementProperty method)</a>
 </li>
         <li><a href="matminer.featurizers.composition.html#matminer.featurizers.composition.composite.Meredig.__init__">(matminer.featurizers.composition.composite.Meredig method)</a>
+</li>
+        <li><a href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter.__init__">(matminer.featurizers.composition.element.BandCenter method)</a>
 </li>
         <li><a href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.ElementFraction.__init__">(matminer.featurizers.composition.element.ElementFraction method)</a>
 </li>
@@ -263,7 +265,11 @@
 </li>
         <li><a href="matminer.utils.html#matminer.utils.data.MixingEnthalpy.__init__">(matminer.utils.data.MixingEnthalpy method)</a>
 </li>
+        <li><a href="matminer.utils.html#matminer.utils.data.OpticalData.__init__">(matminer.utils.data.OpticalData method)</a>
+</li>
         <li><a href="matminer.utils.html#matminer.utils.data.PymatgenData.__init__">(matminer.utils.data.PymatgenData method)</a>
+</li>
+        <li><a href="matminer.utils.html#matminer.utils.data.TransportData.__init__">(matminer.utils.data.TransportData method)</a>
 </li>
         <li><a href="matminer.utils.html#matminer.utils.pipeline.DropExcluded.__init__">(matminer.utils.pipeline.DropExcluded method)</a>
 </li>
@@ -677,8 +683,6 @@
       <li><a href="matminer.featurizers.composition.html#matminer.featurizers.composition.alloy.Miedema.deltaH_struct">deltaH_struct() (matminer.featurizers.composition.alloy.Miedema method)</a>
 </li>
       <li><a href="matminer.featurizers.composition.html#matminer.featurizers.composition.alloy.Miedema.deltaH_topo">deltaH_topo() (matminer.featurizers.composition.alloy.Miedema method)</a>
-</li>
-      <li><a href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter.deml_data">deml_data (matminer.featurizers.composition.element.BandCenter attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -1270,12 +1274,12 @@
         <li><a href="matminer.data_retrieval.html#matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval.get_dataframe">(matminer.data_retrieval.retrieve_MPDS.MPDSDataRetrieval method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matminer.datasets.html#matminer.datasets.dataset_retrieval.get_dataset_attribute">get_dataset_attribute() (in module matminer.datasets.dataset_retrieval)</a>
 </li>
       <li><a href="matminer.datasets.html#matminer.datasets.dataset_retrieval.get_dataset_citations">get_dataset_citations() (in module matminer.datasets.dataset_retrieval)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matminer.datasets.html#matminer.datasets.dataset_retrieval.get_dataset_column_description">get_dataset_column_description() (in module matminer.datasets.dataset_retrieval)</a>
 </li>
       <li><a href="matminer.datasets.html#matminer.datasets.dataset_retrieval.get_dataset_columns">get_dataset_columns() (in module matminer.datasets.dataset_retrieval)</a>
@@ -1287,6 +1291,8 @@
       <li><a href="matminer.datasets.html#matminer.datasets.dataset_retrieval.get_dataset_reference">get_dataset_reference() (in module matminer.datasets.dataset_retrieval)</a>
 </li>
       <li><a href="matminer.featurizers.structure.html#matminer.featurizers.structure.composite.JarvisCFID.get_distributions">get_distributions() (matminer.featurizers.structure.composite.JarvisCFID method)</a>
+</li>
+      <li><a href="matminer.utils.html#matminer.utils.utils.get_elem_in_data">get_elem_in_data() (in module matminer.utils.utils)</a>
 </li>
       <li><a href="matminer.utils.html#matminer.utils.data.AbstractData.get_elemental_properties">get_elemental_properties() (matminer.utils.data.AbstractData method)</a>
 </li>
@@ -1303,7 +1309,11 @@
 </li>
         <li><a href="matminer.utils.html#matminer.utils.data.MEGNetElementData.get_elemental_property">(matminer.utils.data.MEGNetElementData method)</a>
 </li>
+        <li><a href="matminer.utils.html#matminer.utils.data.OpticalData.get_elemental_property">(matminer.utils.data.OpticalData method)</a>
+</li>
         <li><a href="matminer.utils.html#matminer.utils.data.PymatgenData.get_elemental_property">(matminer.utils.data.PymatgenData method)</a>
+</li>
+        <li><a href="matminer.utils.html#matminer.utils.data.TransportData.get_elemental_property">(matminer.utils.data.TransportData method)</a>
 </li>
       </ul></li>
       <li><a href="matminer.featurizers.structure.html#matminer.featurizers.structure.bonding.GlobalInstabilityIndex.get_equiv_sites">get_equiv_sites() (matminer.featurizers.structure.bonding.GlobalInstabilityIndex method)</a>
@@ -1328,6 +1338,8 @@
         <li><a href="matminer.utils.html#matminer.utils.data.PymatgenData.get_oxidation_states">(matminer.utils.data.PymatgenData method)</a>
 </li>
       </ul></li>
+      <li><a href="matminer.utils.html#matminer.utils.utils.get_pseudo_inverse">get_pseudo_inverse() (in module matminer.utils.utils)</a>
+</li>
       <li><a href="matminer.featurizers.structure.html#matminer.featurizers.structure.rdf.get_rdf_bin_labels">get_rdf_bin_labels() (in module matminer.featurizers.structure.rdf)</a>
 </li>
       <li><a href="matminer.data_retrieval.html#matminer.data_retrieval.retrieve_AFLOW.AFLOWDataRetrieval.get_relaxed_structure">get_relaxed_structure() (matminer.data_retrieval.retrieve_AFLOW.AFLOWDataRetrieval static method)</a>
@@ -1668,8 +1680,6 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matminer.featurizers.composition.html#matminer.featurizers.composition.element.BandCenter.magpie_data">magpie_data (matminer.featurizers.composition.element.BandCenter attribute)</a>
-</li>
       <li><a href="matminer.utils.html#matminer.utils.data.MagpieData">MagpieData (class in matminer.utils.data)</a>
 </li>
       <li><a href="matminer.data_retrieval.html#matminer.data_retrieval.retrieve_MDF.make_dataframe">make_dataframe() (in module matminer.data_retrieval.retrieve_MDF)</a>
@@ -2315,8 +2325,6 @@
         <li><a href="matminer.featurizers.utils.html#module-matminer.featurizers.utils">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     matminer.featurizers.utils.grdf
 
@@ -2331,6 +2339,8 @@
         <li><a href="matminer.featurizers.utils.html#module-matminer.featurizers.utils.oxidation">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     matminer.featurizers.utils.stats
 
@@ -2465,10 +2475,24 @@
 </li>
       </ul></li>
       <li>
+    matminer.utils.tests.test_utils
+
+      <ul>
+        <li><a href="matminer.utils.tests.html#module-matminer.utils.tests.test_utils">module</a>
+</li>
+      </ul></li>
+      <li>
     matminer.utils.utils
 
       <ul>
         <li><a href="matminer.utils.html#module-matminer.utils.utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    matminer.utils.warnings
+
+      <ul>
+        <li><a href="matminer.utils.html#module-matminer.utils.warnings">module</a>
 </li>
       </ul></li>
       <li><a href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest">MatminerDatasetsTest (class in matminer.datasets.tests.test_datasets)</a>
@@ -2737,7 +2761,11 @@
 </li>
         <li><a href="matminer.utils.tests.html#module-matminer.utils.tests.test_io">matminer.utils.tests.test_io</a>
 </li>
+        <li><a href="matminer.utils.tests.html#module-matminer.utils.tests.test_utils">matminer.utils.tests.test_utils</a>
+</li>
         <li><a href="matminer.utils.html#module-matminer.utils.utils">matminer.utils.utils</a>
+</li>
+        <li><a href="matminer.utils.html#module-matminer.utils.warnings">matminer.utils.warnings</a>
 </li>
       </ul></li>
       <li><a href="matminer.data_retrieval.html#matminer.data_retrieval.retrieve_MongoDB.MongoDataRetrieval">MongoDataRetrieval (class in matminer.data_retrieval.retrieve_MongoDB)</a>
@@ -2780,14 +2808,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matminer.featurizers.site.html#matminer.featurizers.site.fingerprint.OPSiteFingerprint">OPSiteFingerprint (class in matminer.featurizers.site.fingerprint)</a>
 </li>
+      <li><a href="matminer.utils.html#matminer.utils.data.OpticalData">OpticalData (class in matminer.utils.data)</a>
+</li>
       <li><a href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_orbital.OrbitalFeaturesTest">OrbitalFeaturesTest (class in matminer.featurizers.composition.tests.test_orbital)</a>
 </li>
       <li><a href="matminer.featurizers.structure.html#matminer.featurizers.structure.matrix.OrbitalFieldMatrix">OrbitalFieldMatrix (class in matminer.featurizers.structure.matrix)</a>
 </li>
-      <li><a href="matminer.featurizers.structure.tests.html#matminer.featurizers.structure.tests.test_order.OrderStructureFeaturesTest">OrderStructureFeaturesTest (class in matminer.featurizers.structure.tests.test_order)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matminer.featurizers.structure.tests.html#matminer.featurizers.structure.tests.test_order.OrderStructureFeaturesTest">OrderStructureFeaturesTest (class in matminer.featurizers.structure.tests.test_order)</a>
+</li>
       <li><a href="matminer.utils.html#matminer.utils.data.OxidationStateDependentData">OxidationStateDependentData (class in matminer.utils.data)</a>
 </li>
       <li><a href="matminer.featurizers.composition.html#matminer.featurizers.composition.ion.OxidationStates">OxidationStates (class in matminer.featurizers.composition.ion)</a>
@@ -2941,9 +2971,15 @@
 </li>
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMixingEnthalpy.setUp">(matminer.utils.tests.test_data.TestMixingEnthalpy method)</a>
 </li>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestOpticalData.setUp">(matminer.utils.tests.test_data.TestOpticalData method)</a>
+</li>
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestPymatgenData.setUp">(matminer.utils.tests.test_data.TestPymatgenData method)</a>
 </li>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestTransportData.setUp">(matminer.utils.tests.test_data.TestTransportData method)</a>
+</li>
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_io.IOTest.setUp">(matminer.utils.tests.test_io.IOTest method)</a>
+</li>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_utils.UtilsTest.setUp">(matminer.utils.tests.test_utils.UtilsTest method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -3020,7 +3056,9 @@
       </ul></li>
       <li><a href="matminer.featurizers.site.tests.html#matminer.featurizers.site.tests.test_rdf.RDFTests.test_afs">test_afs() (matminer.featurizers.site.tests.test_rdf.RDFTests method)</a>
 </li>
-      <li><a href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest.test_ape">test_ape() (matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest method)</a>
+      <li><a href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest.test_ape1">test_ape1() (matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest method)</a>
+</li>
+      <li><a href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest.test_ape2">test_ape2() (matminer.featurizers.composition.tests.test_packing.PackingFeaturesTest method)</a>
 </li>
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_conversions.TestConversions.test_ase_conversion">test_ase_conversion() (matminer.featurizers.tests.test_conversions.TestConversions method)</a>
 </li>
@@ -3128,6 +3166,10 @@
 </li>
       <li><a href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_elem_megnet_el">test_elem_megnet_el() (matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest method)</a>
 </li>
+      <li><a href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_elem_optical">test_elem_optical() (matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest method)</a>
+</li>
+      <li><a href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest.test_elem_transport">test_elem_transport() (matminer.featurizers.composition.tests.test_composite.CompositeFeaturesTest method)</a>
+</li>
       <li><a href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_ion.IonFeaturesTest.test_en_diff">test_en_diff() (matminer.featurizers.composition.tests.test_ion.IonFeaturesTest method)</a>
 </li>
       <li><a href="matminer.featurizers.structure.tests.html#matminer.featurizers.structure.tests.test_misc.MiscStructureFeaturesTest.test_ewald">test_ewald() (matminer.featurizers.structure.tests.test_misc.MiscStructureFeaturesTest method)</a>
@@ -3179,6 +3221,10 @@
 </li>
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMixingEnthalpy.test_get_data">(matminer.utils.tests.test_data.TestMixingEnthalpy method)</a>
 </li>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestOpticalData.test_get_data">(matminer.utils.tests.test_data.TestOpticalData method)</a>
+</li>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestTransportData.test_get_data">(matminer.utils.tests.test_data.TestTransportData method)</a>
+</li>
       </ul></li>
       <li><a href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest.test_get_data_home">test_get_data_home() (matminer.datasets.tests.test_utils.UtilsTest method)</a>
 </li>
@@ -3204,6 +3250,8 @@
 </li>
       <li><a href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_get_dataset_reference">test_get_dataset_reference() (matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest method)</a>
 </li>
+      <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_utils.UtilsTest.test_get_elem_in_data">test_get_elem_in_data() (matminer.utils.tests.test_utils.UtilsTest method)</a>
+</li>
       <li><a href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest.test_get_file_sha256_hash">test_get_file_sha256_hash() (matminer.datasets.tests.test_utils.UtilsTest method)</a>
 </li>
       <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestDemlData.test_get_oxidation">test_get_oxidation() (matminer.utils.tests.test_data.TestDemlData method)</a>
@@ -3226,6 +3274,8 @@
         <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestPymatgenData.test_get_property">(matminer.utils.tests.test_data.TestPymatgenData method)</a>
 </li>
       </ul></li>
+      <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_utils.UtilsTest.test_get_pseudo_inverse">test_get_pseudo_inverse() (matminer.utils.tests.test_utils.UtilsTest method)</a>
+</li>
       <li><a href="matminer.featurizers.structure.tests.html#matminer.featurizers.structure.tests.test_rdf.StructureRDFTest.test_get_rdf_bin_labels">test_get_rdf_bin_labels() (matminer.featurizers.structure.tests.test_rdf.StructureRDFTest method)</a>
 </li>
       <li><a href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_glass_binary">test_glass_binary() (matminer.datasets.tests.test_datasets.MatminerDatasetsTest method)</a>
@@ -3250,12 +3300,12 @@
 </li>
       <li><a href="matminer.featurizers.utils.tests.html#matminer.featurizers.utils.tests.test_grdf.GRDFTests.test_histogram">test_histogram() (matminer.featurizers.utils.tests.test_grdf.GRDFTests method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matminer.featurizers.utils.tests.html#matminer.featurizers.utils.tests.test_stats.TestPropertyStats.test_holder_mean">test_holder_mean() (matminer.featurizers.utils.tests.test_stats.TestPropertyStats method)</a>
 </li>
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_dos.DOSFeaturesTest.test_Hybridization">test_Hybridization() (matminer.featurizers.tests.test_dos.DOSFeaturesTest method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_base.TestBaseClass.test_ignore_errors">test_ignore_errors() (matminer.featurizers.tests.test_base.TestBaseClass method)</a>
 </li>
       <li><a href="matminer.featurizers.tests.html#matminer.featurizers.tests.test_base.TestBaseClass.test_indices">test_indices() (matminer.featurizers.tests.test_base.TestBaseClass method)</a>
@@ -3474,9 +3524,13 @@
 </li>
       <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestMixingEnthalpy">TestMixingEnthalpy (class in matminer.utils.tests.test_data)</a>
 </li>
+      <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestOpticalData">TestOpticalData (class in matminer.utils.tests.test_data)</a>
+</li>
       <li><a href="matminer.featurizers.utils.tests.html#matminer.featurizers.utils.tests.test_stats.TestPropertyStats">TestPropertyStats (class in matminer.featurizers.utils.tests.test_stats)</a>
 </li>
       <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestPymatgenData">TestPymatgenData (class in matminer.utils.tests.test_data)</a>
+</li>
+      <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_data.TestTransportData">TestTransportData (class in matminer.utils.tests.test_data)</a>
 </li>
       <li><a href="matminer.featurizers.composition.tests.html#matminer.featurizers.composition.tests.test_thermo.ThermoFeaturesTest">ThermoFeaturesTest (class in matminer.featurizers.composition.tests.test_thermo)</a>
 </li>
@@ -3490,6 +3544,8 @@
         <li><a href="matminer.utils.html#matminer.utils.pipeline.ItemSelector.transform">(matminer.utils.pipeline.ItemSelector method)</a>
 </li>
       </ul></li>
+      <li><a href="matminer.utils.html#matminer.utils.data.TransportData">TransportData (class in matminer.utils.data)</a>
+</li>
       <li><a href="matminer.data_retrieval.html#matminer.data_retrieval.retrieve_MP.MPDataRetrieval.try_get_prop_by_material_id">try_get_prop_by_material_id() (matminer.data_retrieval.retrieve_MP.MPDataRetrieval method)</a>
 </li>
   </ul></td>
@@ -3503,7 +3559,11 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest">UtilsTest (class in matminer.datasets.tests.test_utils)</a>
+
+      <ul>
+        <li><a href="matminer.utils.tests.html#matminer.utils.tests.test_utils.UtilsTest">(class in matminer.utils.tests.test_utils)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -3561,9 +3621,9 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
@@ -3571,13 +3631,13 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -3586,14 +3646,14 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
     </div>
 
   </body>

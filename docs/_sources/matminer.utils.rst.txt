@@ -69,6 +69,14 @@ matminer.utils.utils module
    :undoc-members:
    :show-inheritance:
 
+matminer.utils.warnings module
+------------------------------
+
+.. automodule:: matminer.utils.warnings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
