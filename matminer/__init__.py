@@ -1,9 +1,9 @@
 """data mining materials properties"""
 
-from pkg_resources import DistributionNotFound, get_distribution
+from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = get_distribution("matminer").version
-except DistributionNotFound:  # pragma: no cover
+    __version__ = version("matminer")
+except PackageNotFoundError:  # pragma: no cover
     # package is not installed
     pass
