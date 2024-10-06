@@ -73,7 +73,7 @@ jobs:
 
     - name: Run tests
       run: |
-        python${{ matrix.python-version }} -m pytest --cov=matminer matminer --durations=0 --timeout=360
+        python${{ matrix.python-version }} -m pytest --cov=matminer matminer --durations=20 --timeout=360
 
     - name: Build package
       if: matrix.python-version == 3.9
