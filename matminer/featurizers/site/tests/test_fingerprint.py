@@ -277,7 +277,7 @@ class FingerprintTests(SiteFeaturizerTest):
 
     def test_chemenv_site_fingerprint(self):
         cefp = ChemEnvSiteFingerprint.from_preset("multi_weights")
-        implemented_cetypes = set([gg.ce_symbol for gg in cefp.lgf.allcg.get_implemented_geometries()])
+        implemented_cetypes = {gg.ce_symbol for gg in cefp.lgf.allcg.get_implemented_geometries()}
         assert set(cefp.cetypes).difference(implemented_cetypes) == set()  # Added after issue #945
         l = cefp.feature_labels()
         cevals = cefp.featurize(self.sc, 0)
