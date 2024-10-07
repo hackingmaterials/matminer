@@ -13,7 +13,7 @@ ase==3.23.0
     #   aflow
     #   dscribe
     #   matminer (setup.py)
-astroid==3.3.3
+astroid==3.3.5
     # via pylint
 attrs==24.2.0
     # via
@@ -50,9 +50,9 @@ cryptography==43.0.1
     #   pyjwt
 cycler==0.12.1
     # via matplotlib
-dill==0.3.8
+dill==0.3.9
     # via pylint
-dnspython==2.6.1
+dnspython==2.7.0
     # via pymongo
 docopt==0.6.2
     # via coveralls
@@ -64,7 +64,7 @@ fair-research-login==0.3.1
     # via mdf-toolbox
 flake8==7.1.1
     # via matminer (setup.py)
-fonttools==4.53.1
+fonttools==4.54.1
     # via matplotlib
 globus-sdk==3.45.0
     # via
@@ -130,7 +130,7 @@ networkx==3.3
     # via pymatgen
 numba==0.60.0
     # via sparse
-numpy==1.26.4
+numpy==2.0.2
     # via
     #   aflow
     #   ase
@@ -183,11 +183,11 @@ pygments==2.18.0
     # via sphinx
 pyjwt[crypto]==2.9.0
     # via globus-sdk
-pylint==3.3.0
+pylint==3.3.1
     # via matminer (setup.py)
-pymatgen==2024.9.17.1
+pymatgen==2024.10.3
     # via matminer (setup.py)
-pymongo==4.9.1
+pymongo==4.10.1
     # via matminer (setup.py)
 pyparsing==3.1.4
     # via
@@ -284,7 +284,7 @@ tabulate==0.9.0
     # via pymatgen
 tenacity==9.0.0
     # via plotly
-termcolor==2.4.0
+termcolor==2.5.0
     # via aflow
 threadpoolctl==3.5.0
     # via scikit-learn
@@ -295,7 +295,7 @@ tqdm==4.66.5
     #   matminer (setup.py)
     #   mdf-forge
     #   pymatgen
-tzdata==2024.1
+tzdata==2024.2
     # via pandas
 ujson==5.10.0
     # via matminer (setup.py)
