@@ -1,9 +1,25 @@
 [build-system]
-requires = [
-     "setuptools>=43.0.0",
-]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "matminer"
+description = "matminer is a library that contains tools for data mining in Materials Science"
+readme = "README.md"
+license = {text = "modified BSD"}
+keywords = ["data mining", "materials science", "scientific tools"]
+authors = [
+    { name = "Anubhav Jain", email = "anubhavster@gmail.com" }
+]
+requires-python = ">=3.9"
+dynamic = ["version"]
+
+[project.urls]
+"Homepage" = "https://github.com/hackingmaterials/matminer"
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"
 
 [tool.black]
 line-length = 120

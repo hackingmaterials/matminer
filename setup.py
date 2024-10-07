@@ -4,12 +4,6 @@ import os
 
 from setuptools import find_packages, setup
 
-
-def local_version(version):
-    # https://github.com/pypa/setuptools_scm/issues/342
-    return ""
-
-
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 extras_require = {
@@ -36,20 +30,8 @@ extras_require["tests"] = tests_require
 
 if __name__ == "__main__":
     setup(
-        name="matminer",
-        use_scm_version={
-            "root": ".",
-            "relative_to": __file__,
-            "local_scheme": local_version,
-        },
-        setup_requires=["setuptools_scm"],
-        description="matminer is a library that contains tools for data mining in Materials Science",
         long_description=open(os.path.join(module_dir, "README.md")).read(),
-        url="https://github.com/hackingmaterials/matminer",
         long_description_content_type="text/markdown",
-        author="Anubhav Jain",
-        author_email="anubhavster@gmail.com",
-        license="modified BSD",
         packages=find_packages(),
         include_package_data=True,
         zip_safe=False,
@@ -78,7 +60,6 @@ if __name__ == "__main__":
             "Topic :: Other/Nonlisted Topic",
             "Topic :: Scientific/Engineering",
         ],
-        python_requires=">=3.9",
         test_suite="matminer",
         tests_require=tests_require,
         scripts=[],
