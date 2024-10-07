@@ -67,6 +67,9 @@ tests = ["ujson", "jmespath", "httplib2", "ase", "jsonschema",
 version_scheme = "guess-next-dev"
 local_scheme = "no-local-version"
 
+[tool.pytest.ini_options]
+testpaths = ["matminer"]
+
 [tool.black]
 line-length = 120
 target-version = ['py39']
