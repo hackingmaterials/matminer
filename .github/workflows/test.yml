@@ -1,5 +1,5 @@
-# This workflow runs only on Ubuntu and aims to be more complete than the Mac and Windows workflows.
-# In particular, Openbabel and many of the external command line dependencies are included for testing.defaults:
+# This workflow runs only on Ubuntu and aims to be more complete than the MacOS and Windows workflows.
+# In particular, Open Babel and many of the external command line dependencies are included for testing.defaults:
 # The ext package is also only tested in this workflow. Coverage is also computed based on this platform.
 name: Testing
 
@@ -61,14 +61,14 @@ jobs:
 
     - name: Install Python dependencies
       run: |
-        python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools setuptools setuptools_scm
+        python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools
         python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}.txt
         # Using non-editable install for testing building of MANIFEST files
         python${{ matrix.python-version }} -m pip install --no-deps .
-        python${{ matrix.python-version }} -m pip install pre-commit
 
     - name: linting
       run: |
+        python${{ matrix.python-version }} -m pip install pre-commit
         pre-commit run --all-files
 
     - name: Run tests
@@ -78,7 +78,6 @@ jobs:
     - name: Build package
       if: matrix.python-version == 3.9
       run: |
-        python${{ matrix.python-version }} -m pip install --upgrade pip build setuptools setuptools_scm wheel
         python${{ matrix.python-version }} -m build
 
   auto-gen-release:
