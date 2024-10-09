@@ -58,9 +58,7 @@ dev = [
     "pylint",
     "sphinx"
 ]
-tests = ["ujson", "jmespath", "httplib2", "ase", "jsonschema",
-  "dscribe~=2.1", "mdf-forge", "aflow", "citrination-client"
-]
+tests = ["matminer[mpds,describe,mdfforge,aflow,citrine,dev]"]
 
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
