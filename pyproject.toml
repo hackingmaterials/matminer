@@ -1,9 +1,74 @@
 [build-system]
-requires = [
-     "setuptools>=43.0.0",
-]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "matminer"
+description = "matminer is a library that contains tools for data mining in Materials Science"
+readme = "README.md"
+license = {text = "modified BSD"}
+keywords = ["data mining", "materials science", "scientific tools"]
+authors = [
+    { name = "Anubhav Jain", email = "anubhavster@gmail.com" }
+]
+requires-python = ">=3.9"
+dynamic = ["version"]
+classifiers = [
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Information Technology",
+  "Operating System :: OS Independent",
+  "Topic :: Other/Nonlisted Topic",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = [
+  "numpy>=1.23",
+  "requests~=2.31",
+  "pandas>=1.5, <3",
+  "tqdm~=4.66",
+  "pymongo~=4.5",
+  "scikit-learn~=1.3",
+  "sympy~=1.11",
+  "monty>=2023",
+  "pymatgen>=2023",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/hackingmaterials/matminer"
+
+
+[project.optional-dependencies]
+mpds = ["ujson", "jmespath", "httplib2", "ase", "jsonschema"]
+dscribe = ["dscribe~=2.1"]
+mdfforge = ["mdf-forge"]
+aflow = ["aflow"]
+citrine = ["citrination-client"]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pytest-timeout",
+    "coverage",
+    "coveralls",
+    "flake8",
+    "black",
+    "pylint",
+    "sphinx"
+]
+tests = ["matminer[mpds,describe,mdfforge,aflow,citrine,dev]"]
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"
+
+[tool.setuptools.packages.find]
+where = ["matminer"]
+
+[tool.pytest.ini_options]
+testpaths = ["matminer"]
 
 [tool.black]
 line-length = 120
