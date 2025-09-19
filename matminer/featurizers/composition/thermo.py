@@ -25,41 +25,40 @@ class CohesiveEnergy(BaseFeaturizer):
     def __init__(self, mapi_key=None):
         self.mapi_key = mapi_key
 
-    def featurize(self, comp, formation_energy_per_atom=None):
+    def featurize(self, comp, formation_energy_per_atom: float | None = None):
         """
         Args:
-            comp: (pymatgen.Composition): A composition
-            formation_energy_per_atom: (float) the formation energy per atom of
+            comp (pymatgen.Composition): A composition
+            formation_energy_per_atom (float): the formation energy per atom of
                 your compound. If not set, will look up the most stable
                 formation energy from the Materials Project database.
         """
         comp = comp.reduced_composition
         el_amt_dict = comp.get_el_amt_dict()
 
-        formation_energy_per_atom = formation_energy_per_atom or None
+        if formation_energy_per_atom is None:
+            from mp_api.client import MPRester
 
-        if not formation_energy_per_atom:
-            from pymatgen.ext.matproj import MPRester
+            mpr = MPRester(self.mapi_key)
 
-            # Get formation energy of most stable structure from MP
-            if self.mapi_key:
-                struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
+            docs = mpr.thermo.search(
+                formula=comp.reduced_formula,
+                fields=["material_id", "formation_energy_per_atom"]
+            )
+
+            if docs:
+                # The API returns the most stable material first
+                most_stable_entry = docs[0]
+                formation_energy_per_atom = most_stable_entry.formation_energy_per_atom
             else:
-                struct_lst = MPRester().get_data(comp.reduced_formula)
+                # Raise an error if the compound is not found
+                raise ValueError(f"No entry found in Materials Project for {comp.reduced_formula}")
 
-            if len(struct_lst) > 0:
-                most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
-                formation_energy_per_atom = most_stable_entry["formation_energy_per_atom"]
-            else:
-                raise ValueError(f"No structure found in MP for {comp}")
-
-        # Subtract elemental cohesive energies from formation energy
+        # This calculation is the core purpose of this specific featurizer
         cohesive_energy = -formation_energy_per_atom * comp.num_atoms
         for el in el_amt_dict:
             cohesive_energy += el_amt_dict[el] * CohesiveEnergyData().get_elemental_property(el)
-
         cohesive_energy_per_atom = cohesive_energy / comp.num_atoms
-
         return [cohesive_energy_per_atom]
 
     def feature_labels(self):
