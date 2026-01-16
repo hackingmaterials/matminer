@@ -59,8 +59,8 @@ class BondOrientationalParameter(BaseFeaturizer):
         nns = get_nearest_neighbors(self._nn, strc, idx)
 
         # Get the polar and azimuthal angles of each face
-        phi = np.arccos([x["poly_info"]["normal"][-1] for x in nns])
-        theta = np.arctan2(
+        theta = np.arccos([x["poly_info"]["normal"][-1] for x in nns])
+        phi = np.arctan2(
             [x["poly_info"]["normal"][1] for x in nns],
             [x["poly_info"]["normal"][0] for x in nns],
         )
