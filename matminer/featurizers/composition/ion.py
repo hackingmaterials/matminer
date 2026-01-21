@@ -2,7 +2,6 @@
 Composition featurizers for compositions with ionic data.
 """
 import itertools
-import warnings
 
 import numpy as np
 

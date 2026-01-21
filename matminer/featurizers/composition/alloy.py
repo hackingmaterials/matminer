@@ -4,7 +4,6 @@ Composition featurizers specialized for use with alloys.
 
 import collections
 import os
-import warnings
 from functools import reduce
 
 import numpy as np

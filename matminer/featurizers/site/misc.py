@@ -1,7 +1,6 @@
 """
 Miscellaneous site featurizers.
 """
-import warnings
 
 import numpy as np
 import pymatgen.analysis.local_env

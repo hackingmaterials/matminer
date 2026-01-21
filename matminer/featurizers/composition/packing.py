@@ -3,7 +3,6 @@ Composition featurizers for determining packing characteristics.
 """
 
 import itertools
-import warnings
 from functools import lru_cache
 
 import numpy as np

@@ -2,7 +2,6 @@
 Composition featurizers for elemental data and stoichiometry.
 """
 
-import warnings
 
 from pymatgen.core import Element
 
