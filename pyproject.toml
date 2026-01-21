@@ -50,6 +50,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "pytest-timeout",
+    "pytest-xdist",
     "coverage",
     "coveralls",
     "flake8",
