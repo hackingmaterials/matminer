@@ -1,3 +1,5 @@
+
+from importlib.resources import files
 import os
 import unittest
 
@@ -78,7 +80,7 @@ class DatasetTest(unittest.TestCase):
         # either at MATMINER_DATA env var or under matminer/datasets/
         self.dataset_dir = os.environ.get(
             "MATMINER_DATA",
-            os.path.abspath(os.path.join(current_dir, "..", "..", "matminer","datasets"))
+            str(files("matminer.datasets").absolute())
         )
 
         # Shared set up for test_validate_dataset & test_fetch_external_dataset
