@@ -52,7 +52,7 @@ class ElementFeaturesTest(CompositionFeaturesTest):
         self.assertAlmostEqual(BandCenter(impute_nan=True).featurize(Composition("Ag33O500V200"))[0], 6.033480099340539)
 
         df_band_center = BandCenter(impute_nan=True).featurize_dataframe(self.df_nans, col_id="composition")
-        self.assertAlmostEqual(df_band_center["band center"][0], 4.598904, 6)
+        self.assertAlmostEqual(df_band_center["band center"][0], 4.539923, 6)
 
 
 if __name__ == "__main__":

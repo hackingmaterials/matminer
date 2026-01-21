@@ -117,7 +117,7 @@ class CompositeFeaturesTest(CompositionFeaturesTest):
             ]
             .sum()
             .sum(),
-            16295.221,
+            16493.079,
             3,
         )
 

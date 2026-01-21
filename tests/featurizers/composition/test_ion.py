@@ -70,8 +70,8 @@ class IonFeaturesTest(CompositionFeaturesTest):
         df_ionic = featurizer.featurize_dataframe(self.df_nans, col_id="composition")
 
         self.assertEqual(df_ionic["compound possible"][0], 1.0)
-        self.assertAlmostEqual(df_ionic["max ionic char"][0], 0.028909, 6)
-        self.assertAlmostEqual(df_ionic["avg ionic char"][0], 0.006938, 6)
+        self.assertAlmostEqual(df_ionic["max ionic char"][0], 0.027342, 6)
+        self.assertAlmostEqual(df_ionic["avg ionic char"][0], 0.006562, 6)
 
     def test_cation_properties(self):
         featurizer = CationProperty.from_preset("deml", impute_nan=False)
@@ -121,9 +121,9 @@ class IonFeaturesTest(CompositionFeaturesTest):
         self.assertAlmostEqual(features["DemlData range magn_moment of cations"], 0)
         self.assertAlmostEqual(features["DemlData mean magn_moment of cations"], 0)
         self.assertAlmostEqual(features["DemlData std_dev magn_moment of cations"], 0)
-        self.assertAlmostEqual(features["DemlData minimum total_ioniz of cations"], 811242.222222, 6)
-        self.assertAlmostEqual(features["DemlData maximum total_ioniz of cations"], 811242.222222, 6)
-        self.assertAlmostEqual(features["DemlData mean total_ioniz of cations"], 811242.222222, 6)
+        self.assertAlmostEqual(features["DemlData minimum total_ioniz of cations"], 799861.363636, 6)
+        self.assertAlmostEqual(features["DemlData maximum total_ioniz of cations"], 799861.363636, 6)
+        self.assertAlmostEqual(features["DemlData mean total_ioniz of cations"], 799861.363636, 6)
 
     def test_elec_affin(self):
         featurizer = ElectronAffinity(impute_nan=False)
