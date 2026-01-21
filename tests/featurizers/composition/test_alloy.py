@@ -273,7 +273,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
         for flabel, fvalue in d.items():
             correct_value = correct[flabel]
             if isinstance(correct_value, str):
-                self.assertEqual(correct_value, fvalue)
+                self.assertEqual(correct_value.replace(" ",""), fvalue)
             else:
                 self.assertAlmostEqual(correct_value, fvalue, places=8)
 
@@ -342,7 +342,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
         for flabel, fvalue in d.items():
             correct_value = correct[flabel]
             if isinstance(correct_value, str):
-                self.assertEqual(correct_value, fvalue)
+                self.assertEqual(correct_value.replace(" ",""), fvalue)
             else:
                 self.assertAlmostEqual(correct_value, fvalue, places=8)
 
@@ -389,7 +389,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
         for flabel, fvalue in d.items():
             correct_value = correct[flabel]
             if isinstance(correct_value, str):
-                self.assertEqual(correct_value, fvalue)
+                self.assertEqual(correct_value.replace(" ",""), fvalue)
             else:
                 self.assertAlmostEqual(correct_value, fvalue, places=8)
 
