@@ -66,7 +66,7 @@ class TestPropertyStats(TestCase):
         self.assertAlmostEqual(0, PropertyStats.mode([0, 1, 2], [1, 1, 1]))
 
     def test_holder_mean(self):
-        self._run_test("holder_mean::0", 1, 1, np.product(self.sample_2), 0)
+        self._run_test("holder_mean::0", 1, 1, np.prod(self.sample_2), 0)
 
         self._run_test("holder_mean::1", 1, 1, 2.0 / 3, 5.0 / 7)
         self._run_test("holder_mean::2", 1, 1, sqrt(5.0 / 6), 0.88640526)

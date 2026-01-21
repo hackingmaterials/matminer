@@ -286,7 +286,7 @@ class PropertyStats:
 
             # If power=0, return geometric mean
             elif power == 0:
-                return np.product(np.power(data_lst, np.true_divide(weights, np.sum(weights))))
+                return np.prod(np.power(data_lst, np.true_divide(weights, np.sum(weights))))
             else:
                 return np.power(
                     np.sum(np.multiply(weights, np.power(data_lst, power))) / alpha,

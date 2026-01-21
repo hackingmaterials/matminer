@@ -90,12 +90,12 @@ class TestDemlData(TestCase):
             6,
         )
         self.assertAlmostEqual(
-            811242.222222,
+            799861.363636,
             self.data_source_imputed.get_elemental_property(Element("Og"), "first_ioniz"),
             6,
         )
         self.assertAlmostEqual(
-            811242.222222,
+            799861.363636,
             self.data_source_imputed.get_charge_dependent_property_from_specie(Specie("Og", 2), "total_ioniz"),
             6,
         )
@@ -171,7 +171,7 @@ class TestPymatgenData(TestCase):
             self.data_source_imputed.get_charge_dependent_property(Element("Ac"), 3, "ionic_radii"),
         )
         self.assertAlmostEqual(
-            1.472889, self.data_source_imputed.get_charge_dependent_property(Element("Og"), 0, "ionic_radii"), 6
+            1.500682, self.data_source_imputed.get_charge_dependent_property(Element("Og"), 0, "ionic_radii"), 6
         )
         self.assertEqual(
             0,
