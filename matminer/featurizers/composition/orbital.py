@@ -11,7 +11,6 @@ from pymatgen.core.molecular_orbitals import MolecularOrbitals
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import MagpieData
-from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class AtomicOrbitals(BaseFeaturizer):
@@ -109,10 +108,8 @@ class ValenceOrbital(BaseFeaturizer):
             average of each features over the available elements.
     """
 
-    def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac"), impute_nan=False):
+    def __init__(self, orbitals=("s", "p", "d", "f"), props=("avg", "frac"), impute_nan=True):
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = MagpieData(impute_nan=self.impute_nan)
         self.orbitals = orbitals
         self.props = props

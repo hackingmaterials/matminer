@@ -21,7 +21,6 @@ from scipy import stats
 from scipy.interpolate import interp1d
 
 from matminer.utils.utils import get_elem_in_data, get_pseudo_inverse
-from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 __author__ = "Kiran Mathew, Jiming Chen, Logan Ward, Anubhav Jain, Alex Dunn"
 
@@ -114,7 +113,7 @@ class CohesiveEnergyData(AbstractData):
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=False):
+    def __init__(self, impute_nan=True):
         # Load elemental cohesive energy data from json file
         with open(os.path.join(module_dir, "data_files", "cohesive_energies.json")) as f:
             self.cohesive_energy_data = json.load(f)
@@ -128,9 +127,6 @@ class CohesiveEnergyData(AbstractData):
             for e in Element:
                 if e.symbol in missing_elements or np.isnan(self.cohesive_energy_data[e.symbol]):
                     self.cohesive_energy_data[e.symbol] = avg_cohesive_energy
-
-        else:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_elemental_property(self, elem, property_name="cohesive energy"):
         """
@@ -161,7 +157,7 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=False):
+    def __init__(self, impute_nan=True):
         from matminer.utils.data_files.deml_elementdata import properties
 
         self.all_props = deepcopy(properties)
@@ -214,8 +210,6 @@ class DemlData(OxidationStateDependentData, OxidationStatesMixin):
                 ]:
                     if e.symbol not in self.all_props[key] or np.isnan(self.all_props[key][e.symbol]):
                         self.all_props[key][e.symbol] = np.nanmean(list(self.all_props[key].values()))
-        else:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
         # Compute the FERE correction energy
         fere_corr = {}
@@ -270,7 +264,7 @@ class MagpieData(AbstractData, OxidationStatesMixin):
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=False):
+    def __init__(self, impute_nan=True):
         self.all_elemental_props = dict()
         available_props = []
         self.data_dir = os.path.join(module_dir, "data_files", "magpie_elementdata")
@@ -322,8 +316,6 @@ class MagpieData(AbstractData, OxidationStatesMixin):
                             self.all_elemental_props[prop][e.symbol]
                         ):
                             self.all_elemental_props[prop][e.symbol] = avg_prop
-        else:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_elemental_property(self, elem, property_name):
         return self.all_elemental_props[property_name][elem.symbol]
@@ -348,7 +340,7 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
             average of each features over the available elements.
     """
 
-    def __init__(self, use_common_oxi_states=True, impute_nan=False):
+    def __init__(self, use_common_oxi_states=True, impute_nan=True):
         self.use_common_oxi_states = use_common_oxi_states
         self.impute_nan = impute_nan
 
@@ -377,7 +369,6 @@ class PymatgenData(OxidationStateDependentData, OxidationStatesMixin):
                         value_avg = np.nanmean(all_values)
                     return value_avg
             else:
-                warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
                 return np.nan if value is None else value
 
     def get_oxidation_states(self, elem):
@@ -423,7 +414,7 @@ class MixingEnthalpy:
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=False):
+    def __init__(self, impute_nan=True):
         mixing_dataset = pd.read_csv(
             os.path.join(module_dir, "data_files", "MiedemaLiquidDeltaHf.tsv"),
             sep=r"\s+",
@@ -520,8 +511,6 @@ class MixingEnthalpy:
                     if key not in self.mixing_data or np.isnan(self.mixing_data[key]):
                         self.mixing_data[key] = avg_value
             self.valid_element_list = list(Element)
-        else:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_mixing_enthalpy(self, elemA, elemB):
         """
@@ -557,7 +546,7 @@ class MatscholarElementData(AbstractData):
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=False):
+    def __init__(self, impute_nan=True):
         dfile = os.path.join(module_dir, "data_files/matscholar_els.json")
         with open(dfile) as fp:
             embeddings = json.load(fp)
@@ -580,8 +569,6 @@ class MatscholarElementData(AbstractData):
                         self.all_element_data[e.symbol][embedding]
                     ):
                         self.all_element_data[e.symbol][embedding] = avg_value
-        else:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_elemental_property(self, elem, property_name):
         return self.all_element_data[str(elem)][property_name]
@@ -615,7 +602,7 @@ class MEGNetElementData(AbstractData):
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=False):
+    def __init__(self, impute_nan=True):
         dfile = os.path.join(module_dir, "data_files/megnet_elemental_embedding.json")
         self._dummy = "Dummy"
         with open(dfile) as fp:
@@ -642,8 +629,6 @@ class MEGNetElementData(AbstractData):
                         self.all_element_data[e.symbol][embedding]
                     ):
                         self.all_element_data[e.symbol][embedding] = avg_value
-        else:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def get_elemental_property(self, elem, property_name):
         estr = str(elem)
@@ -831,7 +816,7 @@ class OpticalData(AbstractData):
         n_wl=401,
         bins=10,
         saving_dir="~/.matminer/optical_props/",
-        impute_nan=False,
+        impute_nan=True,
     ):
         # Handles the saving folder
         saving_dir = os.path.expanduser(saving_dir)
@@ -890,8 +875,6 @@ class OpticalData(AbstractData):
         self.impute_nan = impute_nan
         if self.impute_nan:
             self.all_element_data.fillna(self.all_element_data.mean(), inplace=True)
-        else:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def _get_element_props(self):
         """
@@ -1232,7 +1215,7 @@ class TransportData(AbstractData):
         method="pseudo_inverse",
         alpha=0,
         saving_dir="~/.matminer/transport_props/",
-        impute_nan=False,
+        impute_nan=True,
     ):
         # Handles the saving folder
         saving_dir = os.path.expanduser(saving_dir)
@@ -1278,8 +1261,6 @@ class TransportData(AbstractData):
         self.impute_nan = impute_nan
         if self.impute_nan:
             self.all_element_data.fillna(self.all_element_data.mean(), inplace=True)
-        else:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
 
     def _get_element_props(self):
         #

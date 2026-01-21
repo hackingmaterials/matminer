@@ -15,7 +15,6 @@ from sklearn.utils.validation import check_is_fitted
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.utils.caching import get_nearest_neighbors
 from matminer.utils.data import MagpieData
-from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class ChemicalSRO(BaseFeaturizer):
@@ -314,7 +313,7 @@ class LocalPropertyDifference(BaseFeaturizer):
     def __init__(
         self,
         data_source=None,
-        impute_nan=False,
+        impute_nan=True,
         weight="area",
         properties=("Electronegativity",),
         signed=False,
@@ -331,15 +330,13 @@ class LocalPropertyDifference(BaseFeaturizer):
                             properties(default=False (absolute difference))
         """
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = data_source or MagpieData(impute_nan=self.impute_nan)
         self.properties = properties
         self.weight = weight
         self.signed = signed
 
     @staticmethod
-    def from_preset(preset, impute_nan=False):
+    def from_preset(preset, impute_nan=True):
         """
         Create a new LocalPropertyDifference class according to a preset
 
@@ -448,7 +445,7 @@ class SiteElementalProperty(BaseFeaturizer):
         `Schmidt et al., _Chem Mater_. (2017) <http://dx.doi.org/10.1021/acs.chemmater.7b00156>`_
     """
 
-    def __init__(self, data_source=None, properties=("Number",), impute_nan=False):
+    def __init__(self, data_source=None, properties=("Number",), impute_nan=True):
         """Initialize the featurizer
 
         Args:
@@ -459,8 +456,6 @@ class SiteElementalProperty(BaseFeaturizer):
                 average of each features over the available elements.
         """
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = data_source or MagpieData(impute_nan=self.impute_nan)
         self.properties = properties
         self._preset_citations = []
@@ -485,7 +480,7 @@ class SiteElementalProperty(BaseFeaturizer):
         return ["Logan Ward"]
 
     @staticmethod
-    def from_preset(preset, impute_nan=False):
+    def from_preset(preset, impute_nan=True):
         """Create the class with pre-defined settings
 
         Args:

@@ -12,7 +12,6 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.caching import get_nearest_neighbors
 from matminer.utils.data import MagpieData
-from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class IntersticeDistribution(BaseFeaturizer):
@@ -56,7 +55,7 @@ class IntersticeDistribution(BaseFeaturizer):
             average of each features over the available elements.
     """
 
-    def __init__(self, cutoff=6.5, interstice_types=None, stats=None, radius_type="MiracleRadius", impute_nan=False):
+    def __init__(self, cutoff=6.5, interstice_types=None, stats=None, radius_type="MiracleRadius", impute_nan=True):
         self.cutoff = cutoff
         self.interstice_types = ["dist", "area", "vol"] if interstice_types is None else interstice_types
         if isinstance(self.interstice_types, str):
@@ -66,8 +65,6 @@ class IntersticeDistribution(BaseFeaturizer):
         self.stats = ["mean", "std_dev", "minimum", "maximum"] if stats is None else stats
         self.radius_type = radius_type
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = MagpieData(impute_nan=impute_nan)
 
     def featurize(self, struct, idx):

@@ -17,7 +17,6 @@ from matminer.utils.data import (
     PymatgenData,
     TransportData,
 )
-from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class ElementProperty(BaseFeaturizer):
@@ -53,7 +52,7 @@ class ElementProperty(BaseFeaturizer):
             average of each features over the available elements.
     """
 
-    def __init__(self, data_source, features, stats, impute_nan=False):
+    def __init__(self, data_source, features, stats, impute_nan=True):
         self.impute_nan = impute_nan
         if data_source == "pymatgen":
             self.data_source = PymatgenData(impute_nan=self.impute_nan)
@@ -84,7 +83,7 @@ class ElementProperty(BaseFeaturizer):
         self.pstats = PropertyStats()
 
     @classmethod
-    def from_preset(cls, preset_name, impute_nan=False):
+    def from_preset(cls, preset_name, impute_nan=True):
         """
         Return ElementProperty from a preset string
         Args:
@@ -328,10 +327,8 @@ class Meredig(BaseFeaturizer):
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=False):
+    def __init__(self, impute_nan=True):
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = MagpieData(impute_nan=self.impute_nan)
 
         # The labels for statistics on element properties

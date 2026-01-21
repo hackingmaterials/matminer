@@ -14,7 +14,6 @@ from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.composition.element import ElementFraction
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import MagpieData
-from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class AtomicPackingEfficiency(BaseFeaturizer):
@@ -51,7 +50,7 @@ class AtomicPackingEfficiency(BaseFeaturizer):
         for bulk metallic glasses, Nat. Commun. 6 (2015) 8123. doi:10.1038/ncomms9123.
     """
 
-    def __init__(self, threshold=0.01, n_nearest=(1, 3, 5), max_types=6, impute_nan=False):
+    def __init__(self, threshold=0.01, n_nearest=(1, 3, 5), max_types=6, impute_nan=True):
         """
         Initialize the featurizer
 
@@ -80,8 +79,6 @@ class AtomicPackingEfficiency(BaseFeaturizer):
 
         # Tool for looking up radii
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self._data_source = MagpieData(impute_nan=self.impute_nan)
 
         # Lookup table of ideal radius ratios
