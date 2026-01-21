@@ -76,7 +76,10 @@ class DatasetTest(unittest.TestCase):
 
         # directory where in-use datasets should be stored,
         # either at MATMINER_DATA env var or under matminer/datasets/
-        self.dataset_dir = os.environ.get("MATMINER_DATA", os.path.abspath(os.path.join(current_dir, os.pardir)))
+        self.dataset_dir = os.environ.get(
+            "MATMINER_DATA",
+            os.path.abspath(os.path.join(current_dir, "..", "..", "matminer","datasets"))
+        )
 
         # Shared set up for test_validate_dataset & test_fetch_external_dataset
         self._path = os.path.join(current_dir, "test_dataset.csv")
