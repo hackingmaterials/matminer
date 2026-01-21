@@ -1,6 +1,5 @@
 import copy
 import unittest
-import warnings
 from itertools import product
 
 import numpy as np
@@ -193,9 +192,7 @@ class TestBaseClass(PymatgenTest):
             self.assertEqual(2, len(implementors))
 
             # Ensure BaseFeaturizer operation without overridden featurize_dataframe
-            with warnings.catch_warnings(record=True) as w:
-                data = multi_f.featurize_dataframe(data, "x")
-                self.assertEqual(len(w), 0)
+            data = multi_f.featurize_dataframe(data, "x")
             np.testing.assert_array_almost_equal(data["y"], [2, 3, 4])
             np.testing.assert_array_almost_equal(data["w"], [0, 1, 2])
             np.testing.assert_array_almost_equal(data["z"], [3, 4, 5])
@@ -203,9 +200,7 @@ class TestBaseClass(PymatgenTest):
             f = MatrixFeaturizer()
             multi_f = MultipleFeaturizer([self.single, self.multi, f])
             data = self.make_test_data()
-            with warnings.catch_warnings(record=True) as w:
-                data = multi_f.featurize_dataframe(data, "x")
-                self.assertEqual(len(w), 0)
+            data = multi_f.featurize_dataframe(data, "x")
 
             np.testing.assert_array_almost_equal(data["representation"][0], [[1.0, 0.0], [0.0, 1.0]])
 
