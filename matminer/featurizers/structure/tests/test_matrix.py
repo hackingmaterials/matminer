@@ -82,7 +82,7 @@ class MatrixStructureFeaturesTest(StructureFeaturesTest):
             for j in range(32):
                 if i not in [1, 3] and j not in [1, 3]:
                     self.assertEqual(ofm[i, j], 0.0)
-        mtarget = np.matrix(mtarget)
+        mtarget = np.array(mtarget)
         self.assertAlmostEqual(np.linalg.norm(ofm - mtarget), 0.0, places=4)
 
         ofm_maker = OrbitalFieldMatrix(True, flatten=False)
@@ -97,7 +97,7 @@ class MatrixStructureFeaturesTest(StructureFeaturesTest):
         mtarget[33][1] = 1.4789015
         mtarget[33][3] = 1.4789015
         mtarget[33][33] = 1.4789015
-        mtarget = np.matrix(mtarget)
+        mtarget = np.array(mtarget)
         self.assertAlmostEqual(np.linalg.norm(ofm - mtarget), 0.0, places=4)
 
         ofm_flat = OrbitalFieldMatrix(period_tag=False, flatten=True)
