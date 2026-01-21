@@ -1,7 +1,6 @@
-
-from importlib.resources import files
 import os
 import unittest
+from importlib.resources import files
 
 from matminer.datasets.utils import _load_dataset_dict
 
@@ -78,10 +77,7 @@ class DatasetTest(unittest.TestCase):
 
         # directory where in-use datasets should be stored,
         # either at MATMINER_DATA env var or under matminer/datasets/
-        self.dataset_dir = os.environ.get(
-            "MATMINER_DATA",
-            str(files("matminer.datasets").absolute())
-        )
+        self.dataset_dir = os.environ.get("MATMINER_DATA", str(files("matminer.datasets").absolute()))
 
         # Shared set up for test_validate_dataset & test_fetch_external_dataset
         self._path = os.path.join(current_dir, "test_dataset.csv")
