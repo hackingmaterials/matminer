@@ -73,7 +73,7 @@ jobs:
 
     - name: Run tests
       run: |
-        python${{ matrix.python-version }} -m pytest --cov=matminer matminer --durations=20 --timeout=360
+        python${{ matrix.python-version }} -m pytest --cov=matminer --durations=20 --timeout=360 tests
 
   auto-gen-release:
     needs:

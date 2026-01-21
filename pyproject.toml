@@ -67,11 +67,11 @@ local_scheme = "no-local-version"
 where = ["matminer"]
 
 [tool.pytest.ini_options]
-testpaths = ["matminer"]
+testpaths = ["tests"]
 
 [tool.black]
 line-length = 120
-target-version = ['py39']
+target-version = ['py312']
 include = '\.pyi?$'
 exclude = '''
 
