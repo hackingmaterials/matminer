@@ -3,6 +3,7 @@ import unittest
 from time import sleep
 
 import numpy as np
+import pytest
 import requests
 from pandas.api.types import is_bool_dtype, is_numeric_dtype, is_object_dtype
 from pymatgen.core.structure import Composition, Structure
@@ -646,6 +647,7 @@ class MatminerDatasetsTest(DataSetsTest):
 
         self.universal_dataset_check("ricci_boltztrap_mp_tabular", object_headers, numeric_headers)
 
+    @pytest.mark.xfail(reason="Download is unreliable", strict=False)
     def test_superconductivity2018(self):
         object_headers = ["composition"]
         numeric_headers = ["Tc"]
@@ -667,6 +669,7 @@ class MatminerDatasetsTest(DataSetsTest):
         ]
         self.universal_dataset_check("ucsb_thermoelectrics", object_headers, numeric_headers)
 
+    @pytest.mark.xfail(reason="Download is unreliable", strict=False)
     def test_tholander_nitrides_e_form(self):
         object_headers = ["material_id", "ht_id", "initial_structure", "final_structure", "chemical_system"]
         numeric_headers = ["E_vasp_per_atom"]

@@ -89,9 +89,11 @@ class UtilsTest(DatasetTest):
         os.remove(self._path)
 
     def test_get_file_sha256_hash(self):
+        from pathlib import Path
+
         if not os.path.exists(self._path):
             _fetch_external_dataset(self._url, self._path)
-
+        print(list(Path(self._path).parent.glob("*")))
         self.assertTrue(_get_file_sha256_hash(self._path) == self._hash)
         os.remove(self._path)
 
