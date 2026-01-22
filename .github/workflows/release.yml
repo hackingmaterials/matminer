@@ -31,7 +31,7 @@ jobs:
         run: python${{ matrix.python-version }} -m build
 
       - name: Publish package
-        uses: pypa/gh-action-pypi-publish@release/v1.5
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}
@@ -76,6 +76,6 @@ jobs:
           rm -r html
           rm -r doctrees
           touch .nojekyll
-          git add .
-          git commit -a -m "update docs"
-          git push
+          # git add .
+          # git commit -a -m "update docs"
+          # git push
