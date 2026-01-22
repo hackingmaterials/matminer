@@ -1,5 +1,8 @@
 # <img alt="matminer" src="docs_rst/_static/matminer_logo_small.png" width="300">
 
+[![testing](https://github.com/hackingmaterials/matminer/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/hackingmaterials/matminer/actions?query=workflow%3Atesting+branch%3Amain)
+![python](https://img.shields.io/badge/Python-3.11+-blue.svg?logo=python&amp;logoColor=white)
+
 matminer is a library for performing data mining in the field of materials science.
 
 - **[Website (including documentation)](https://hackingmaterials.github.io/matminer/)**
