@@ -79,7 +79,7 @@ jobs:
     needs:
       - test
     runs-on: ubuntu-latest
-    if: github.repository == 'hackingmaterials/matminer'
+    if: ${{ github.repository_owner == 'hackingmaterials' && github.repository == 'hackingmaterials/matminer' && && startsWith(github.event.workflow_run.head_branch, 'v') }}
     env:
       GITHUB_TOKEN: ${{ secrets.PAT }}
     steps:
