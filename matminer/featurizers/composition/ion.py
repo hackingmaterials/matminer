@@ -2,7 +2,6 @@
 Composition featurizers for compositions with ionic data.
 """
 import itertools
-import warnings
 
 import numpy as np
 
@@ -11,7 +10,6 @@ from matminer.featurizers.composition.composite import ElementProperty
 from matminer.featurizers.utils.oxidation import has_oxidation_states
 from matminer.featurizers.utils.stats import PropertyStats
 from matminer.utils.data import DemlData, PymatgenData
-from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class CationProperty(ElementProperty):
@@ -37,7 +35,7 @@ class CationProperty(ElementProperty):
     """
 
     @classmethod
-    def from_preset(cls, preset_name, impute_nan=False):
+    def from_preset(cls, preset_name, impute_nan=True):
         if preset_name == "deml":
             data_source = "deml"
             features = [
@@ -51,8 +49,6 @@ class CationProperty(ElementProperty):
         else:
             raise ValueError('Preset "%s" not found' % preset_name)
 
-        if not impute_nan:
-            warnings.warn("CationProperty(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         return cls(data_source, features, stats, impute_nan=impute_nan)
 
     def feature_labels(self):
@@ -146,7 +142,7 @@ class IonProperty(BaseFeaturizer):
     Ionic property attributes. Similar to ElementProperty.
     """
 
-    def __init__(self, data_source=None, impute_nan=False, fast=False):
+    def __init__(self, data_source=None, impute_nan=True, fast=False):
         """
 
         Args:
@@ -157,8 +153,6 @@ class IonProperty(BaseFeaturizer):
                 is possible, but will miss heterovalent compounds like Fe3O4.
         """
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = data_source or PymatgenData(impute_nan=self.impute_nan)
         self.fast = fast
 
@@ -251,10 +245,8 @@ class ElectronAffinity(BaseFeaturizer):
             average of each features over the available elements.
     """
 
-    def __init__(self, impute_nan=False):
+    def __init__(self, impute_nan=True):
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.data_source = DemlData(impute_nan=self.impute_nan)
 
     def featurize(self, comp):

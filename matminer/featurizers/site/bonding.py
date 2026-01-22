@@ -5,7 +5,7 @@ from functools import lru_cache
 
 import numpy as np
 from pymatgen.analysis.local_env import VoronoiNN
-from scipy.special import sph_harm
+from scipy.special import sph_harm_y
 from sympy.physics.wigner import wigner_3j
 
 from matminer.featurizers.base import BaseFeaturizer
@@ -59,8 +59,8 @@ class BondOrientationalParameter(BaseFeaturizer):
         nns = get_nearest_neighbors(self._nn, strc, idx)
 
         # Get the polar and azimuthal angles of each face
-        phi = np.arccos([x["poly_info"]["normal"][-1] for x in nns])
-        theta = np.arctan2(
+        theta = np.arccos([x["poly_info"]["normal"][-1] for x in nns])
+        phi = np.arctan2(
             [x["poly_info"]["normal"][1] for x in nns],
             [x["poly_info"]["normal"][0] for x in nns],
         )
@@ -74,7 +74,7 @@ class BondOrientationalParameter(BaseFeaturizer):
         Ws = []
         for l in range(1, self.max_l + 1):
             # Average the spherical harmonic over each neighbor, weighted by solid angle
-            qlm = {m: np.dot(weights, sph_harm(m, l, theta, phi)) for m in range(-l, l + 1)}
+            qlm = {m: np.dot(weights, sph_harm_y(l, m, theta, phi)) for m in range(-l, l + 1)}
 
             # Compute the average over all m's
             Qs.append(np.sqrt(np.pi * 4 / (2 * l + 1) * np.sum(np.abs(list(qlm.values())) ** 2)))

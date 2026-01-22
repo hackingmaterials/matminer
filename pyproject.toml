@@ -11,11 +11,9 @@ keywords = ["data mining", "materials science", "scientific tools"]
 authors = [
     { name = "Anubhav Jain", email = "anubhavster@gmail.com" }
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dynamic = ["version"]
 classifiers = [
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Development Status :: 4 - Beta",
@@ -35,6 +33,7 @@ dependencies = [
   "sympy~=1.11",
   "monty>=2023",
   "pymatgen>=2023",
+  "scipy>=1.17.0",
 ]
 
 [project.urls]
@@ -51,6 +50,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "pytest-timeout",
+    "pytest-xdist",
     "coverage",
     "coveralls",
     "flake8",
@@ -68,11 +68,11 @@ local_scheme = "no-local-version"
 where = ["matminer"]
 
 [tool.pytest.ini_options]
-testpaths = ["matminer"]
+testpaths = ["tests"]
 
 [tool.black]
 line-length = 120
-target-version = ['py39']
+target-version = ['py312']
 include = '\.pyi?$'
 exclude = '''
 

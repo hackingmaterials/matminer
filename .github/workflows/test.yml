@@ -28,7 +28,7 @@ jobs:
   test:
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.11", "3.12",]
         mongodb-version: ['4.0']
       fail-fast: false
 
@@ -73,18 +73,13 @@ jobs:
 
     - name: Run tests
       run: |
-        python${{ matrix.python-version }} -m pytest --cov=matminer matminer --durations=20 --timeout=360
-
-    - name: Build package
-      if: matrix.python-version == 3.9
-      run: |
-        python${{ matrix.python-version }} -m build
+        python${{ matrix.python-version }} -m pytest -n auto --cov=matminer --durations=20 --timeout=360 tests
 
   auto-gen-release:
     needs:
       - test
     runs-on: ubuntu-latest
-    if: github.repository == 'hackingmaterials/matminer'
+    if: ${{ github.repository_owner == 'hackingmaterials' && github.repository == 'hackingmaterials/matminer' && startsWith(github.event.workflow_run.head_branch, 'v') }}
     env:
       GITHUB_TOKEN: ${{ secrets.PAT }}
     steps:

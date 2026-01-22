@@ -2,13 +2,11 @@
 Composition featurizers for elemental data and stoichiometry.
 """
 
-import warnings
 
 from pymatgen.core import Element
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.utils.data import DemlData, MagpieData
-from matminer.utils.warnings import IMPUTE_NAN_WARNING
 
 
 class ElementFraction(BaseFeaturizer):
@@ -210,10 +208,8 @@ class BandCenter(BaseFeaturizer):
         - Band center
     """
 
-    def __init__(self, impute_nan=False):
+    def __init__(self, impute_nan=True):
         self.impute_nan = impute_nan
-        if not self.impute_nan:
-            warnings.warn(f"{self.__class__.__name__}(impute_nan=False):\n" + IMPUTE_NAN_WARNING)
         self.magpie_data = MagpieData(impute_nan=self.impute_nan)
         self.deml_data = DemlData(impute_nan=self.impute_nan)
 
