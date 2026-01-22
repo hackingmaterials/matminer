@@ -50,4 +50,3 @@ repos:
           - types-paramiko
           - types-requests
           - types-ujson
-
