@@ -1,4 +1,4 @@
-Gexclude: ^(docs|.*test_files|cmd_line|dev_scripts|.*data_files)
+exclude: ^(docs|.*test_files|cmd_line|dev_scripts|.*data_files)
 
 ci:
   autoupdate_schedule: monthly
@@ -50,3 +50,4 @@ repos:
           - types-paramiko
           - types-requests
           - types-ujson
+
