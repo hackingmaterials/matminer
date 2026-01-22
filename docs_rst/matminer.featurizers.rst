@@ -10,7 +10,6 @@ Subpackages
    matminer.featurizers.composition
    matminer.featurizers.site
    matminer.featurizers.structure
-   matminer.featurizers.tests
    matminer.featurizers.utils
 
 Submodules
@@ -21,45 +20,45 @@ matminer.featurizers.bandstructure module
 
 .. automodule:: matminer.featurizers.bandstructure
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 matminer.featurizers.base module
 --------------------------------
 
 .. automodule:: matminer.featurizers.base
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 matminer.featurizers.conversions module
 ---------------------------------------
 
 .. automodule:: matminer.featurizers.conversions
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 matminer.featurizers.dos module
 -------------------------------
 
 .. automodule:: matminer.featurizers.dos
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 matminer.featurizers.function module
 ------------------------------------
 
 .. automodule:: matminer.featurizers.function
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: matminer.featurizers
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

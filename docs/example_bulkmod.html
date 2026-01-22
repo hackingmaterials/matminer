@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Predicting bulk moduli with matminer &#8212; matminer 0.9.3 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <title>Predicting bulk moduli with matminer &#8212; matminer 0.10.0rc0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css?v=8b5d5988" />
-    <script src="_static/documentation_options.js?v=0e439607"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/documentation_options.js?v=d53086b4"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -26,7 +26,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.10.0rc0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Predicting bulk moduli with matminer</a></li> 
       </ul>
     </div>  
@@ -49,11 +49,11 @@ the dataset.</p>
 <h3>Preamble<a class="headerlink" href="#preamble" title="Link to this heading">¶</a></h3>
 <p><strong>Import libraries, and set pandas display options.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># filter warnings messages from the notebook</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="c1"># Set pandas view options</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.width&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
@@ -65,7 +65,7 @@ the dataset.</p>
 <section id="step-1-use-matminer-to-obtain-data-from-mp-automatically-in-a-pandas-dataframe">
 <h3>Step 1: Use matminer to obtain data from MP (automatically) in a “pandas” dataframe<a class="headerlink" href="#step-1-use-matminer-to-obtain-data-from-mp-automatically-in-a-pandas-dataframe" title="Link to this heading">¶</a></h3>
 <p><strong>Step 1a: Import matminer’s MP data retrieval tool and get calculated bulk moduli and possible descriptors.</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.data_retrieval.retrieve_MP</span> <span class="kn">import</span> <span class="n">MPDataRetrieval</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matminer.data_retrieval.retrieve_MP</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPDataRetrieval</span>
 
 <span class="n">api_key</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># Set your MP API key here. If set as an environment variable &#39;MAPI_KEY&#39;, set it to &#39;None&#39;</span>
 <span class="n">mpr</span> <span class="o">=</span> <span class="n">MPDataRetrieval</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>     <span class="c1"># Create an adapter to the MP Database.</span>
@@ -107,9 +107,9 @@ the dataset.</p>
 </pre></div>
 </div>
 <p><strong>Step 2b: add several more descriptors using MatMiner’s pymatgen descriptor getter tools</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.featurizers.composition</span> <span class="kn">import</span> <span class="n">ElementProperty</span>
-<span class="kn">from</span> <span class="nn">matminer.featurizers.data</span> <span class="kn">import</span> <span class="n">PymatgenData</span>
-<span class="kn">from</span> <span class="nn">pymatgen</span> <span class="kn">import</span> <span class="n">Composition</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matminer.featurizers.composition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElementProperty</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matminer.featurizers.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">PymatgenData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymatgen</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span>
 
 <span class="n">df_mp</span><span class="p">[</span><span class="s2">&quot;composition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_mp</span><span class="p">[</span><span class="s1">&#39;pretty_formula&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Composition</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
@@ -150,8 +150,8 @@ the dataset.</p>
 </pre></div>
 </div>
 <p><strong>Step 3b: Fit the linear regression model</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span>
 
 <span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
 
@@ -167,7 +167,7 @@ the dataset.</p>
 </pre></div>
 </div>
 <p><strong>Step 3c: Cross validate the results</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">KFold</span><span class="p">,</span> <span class="n">cross_val_score</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">KFold</span><span class="p">,</span> <span class="n">cross_val_score</span>
 
 <span class="c1"># Use 10-fold cross validation (90% training, 10% test)</span>
 <span class="n">crossvalidation</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -188,7 +188,7 @@ the dataset.</p>
 </section>
 <section id="step-4-plot-the-results-with-figrecipes">
 <h3>Step 4: Plot the results with FigRecipes<a class="headerlink" href="#step-4-plot-the-results-with-figrecipes" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.figrecipes.plotly.make_plots</span> <span class="kn">import</span> <span class="n">PlotlyFig</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matminer.figrecipes.plotly.make_plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlotlyFig</span>
 
 <span class="n">pf</span> <span class="o">=</span> <span class="n">PlotlyFig</span><span class="p">(</span><span class="n">x_title</span><span class="o">=</span><span class="s1">&#39;DFT (MP) bulk modulus (GPa)&#39;</span><span class="p">,</span>
                <span class="n">y_title</span><span class="o">=</span><span class="s1">&#39;Predicted bulk modulus (GPa)&#39;</span><span class="p">,</span>
@@ -216,7 +216,7 @@ the dataset.</p>
            <span class="n">add_xy_plot</span><span class="o">=</span><span class="p">[</span><span class="n">xy_params</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/example_bulkmod.png"><img alt="_images/example_bulkmod.png" src="_images/example_bulkmod.png" style="width: 630.0px; height: 496.99999999999994px;" />
+<a class="reference internal image-reference" href="_images/example_bulkmod.png"><img alt="_images/example_bulkmod.png" height="497" src="_images/example_bulkmod.png" width="630" />
 </a>
 <p>Great! We just fit a linear regression model to pymatgen features using matminer and sklearn. Now let’s use a Random
 Forest model to examine the importance of our features.</p>
@@ -224,7 +224,7 @@ Forest model to examine the importance of our features.</p>
 <section id="step-5-follow-similar-steps-for-a-random-forest-model">
 <h3>Step 5: Follow similar steps for a Random Forest model<a class="headerlink" href="#step-5-follow-similar-steps-for-a-random-forest-model" title="Link to this heading">¶</a></h3>
 <p><strong>Step 5a: Fit the Random Forest model, get R2 and RMSE</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestRegressor</span>
 
 <span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -254,7 +254,7 @@ Forest model to examine the importance of our features.</p>
 <section id="step-6-plot-our-results-and-determine-what-features-are-the-most-important">
 <h3>Step 6: Plot our results and determine what features are the most important<a class="headerlink" href="#step-6-plot-our-results-and-determine-what-features-are-the-most-important" title="Link to this heading">¶</a></h3>
 <p><strong>Step 6a: Plot the random forest model</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matminer.figrecipes.plotly.make_plots</span> <span class="kn">import</span> <span class="n">PlotlyFig</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matminer.figrecipes.plotly.make_plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlotlyFig</span>
 
 <span class="n">pf_rf</span> <span class="o">=</span> <span class="n">PlotlyFig</span><span class="p">(</span><span class="n">x_title</span><span class="o">=</span><span class="s1">&#39;DFT (MP) bulk modulus (GPa)&#39;</span><span class="p">,</span>
                   <span class="n">y_title</span><span class="o">=</span><span class="s1">&#39;Random forest bulk modulus (GPa)&#39;</span><span class="p">,</span>
@@ -283,7 +283,7 @@ Forest model to examine the importance of our features.</p>
               <span class="n">add_xy_plot</span><span class="o">=</span><span class="p">[</span><span class="n">xy_line</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/example_bulkmod_rf.png"><img alt="_images/example_bulkmod_rf.png" src="_images/example_bulkmod_rf.png" style="width: 646.4000000000001px; height: 517.6px;" />
+<a class="reference internal image-reference" href="_images/example_bulkmod_rf.png"><img alt="_images/example_bulkmod_rf.png" height="518" src="_images/example_bulkmod_rf.png" width="646" />
 </a>
 <p><strong>Step 6b: Plot the importance of the features we used</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">importances</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span>
@@ -302,7 +302,7 @@ Forest model to examine the importance of our features.</p>
 <span class="n">pf</span><span class="o">.</span><span class="n">bar_chart</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X_cols</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">importances</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/example_bulkmod_feats.png"><img alt="_images/example_bulkmod_feats.png" src="_images/example_bulkmod_feats.png" style="width: 1171.2px; height: 836.4px;" />
+<a class="reference internal image-reference" href="_images/example_bulkmod_feats.png"><img alt="_images/example_bulkmod_feats.png" height="836" src="_images/example_bulkmod_feats.png" width="1171" />
 </a>
 </section>
 </section>
@@ -364,14 +364,14 @@ Forest model to examine the importance of our features.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.10.0rc0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Predicting bulk moduli with matminer</a></li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
 
   </body>

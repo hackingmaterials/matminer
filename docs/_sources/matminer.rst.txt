@@ -17,5 +17,5 @@ Module contents
 
 .. automodule:: matminer
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Guide to adding datasets to matminer &#8212; matminer 0.9.3 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <title>Guide to adding datasets to matminer &#8212; matminer 0.10.0rc0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css?v=8b5d5988" />
-    <script src="_static/documentation_options.js?v=0e439607"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/documentation_options.js?v=d53086b4"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -26,7 +26,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.10.0rc0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Guide to adding datasets to matminer</a></li> 
       </ul>
     </div>  
@@ -93,7 +93,7 @@ of the form <code class="docutils literal notranslate"><span class="pre">(string
 produces more than one dataset it should return a tuple of two lists of the form
 <code class="docutils literal notranslate"><span class="pre">([dataset_name_1,</span> <span class="pre">dataset_name_2,</span> <span class="pre">…],</span> <span class="pre">[df_1,</span> <span class="pre">df_2,</span> <span class="pre">…])</span></code></p>
 <p>For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_preprocess_heusler_magnetic</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_heusler_magnetic</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">_read_dataframe_from_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 
     <span class="n">dropcols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gap width&#39;</span><span class="p">,</span> <span class="s1">&#39;stability&#39;</span><span class="p">]</span>
@@ -107,7 +107,7 @@ determines what pandas loading function to use based on the file type
 of the path passed to it. Keyword arguments passed to this function are
 passed on to the underlying pandas loading functions.</p>
 <p>An example for preprocessors that return multiple datasets:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_preprocess_double_perovskites_gap</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_double_perovskites_gap</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;bandgap&#39;</span><span class="p">)</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;A1_atom&#39;</span><span class="p">:</span> <span class="s1">&#39;a_1&#39;</span><span class="p">,</span> <span class="s1">&#39;B1_atom&#39;</span><span class="p">:</span> <span class="s1">&#39;b_1&#39;</span><span class="p">,</span>
@@ -183,8 +183,8 @@ filtering or modifying data in the dataset after it has been loaded. A
 convenience function should be added alongside dataset tests.</p>
 <ul>
 <li><p>Update dataset names saved in <cite>matminer/datasets/tests/base.py</cite></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DatasetTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">DatasetTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset_names</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;flla&#39;</span><span class="p">,</span>
         <span class="s1">&#39;elastic_tensor_2015&#39;</span><span class="p">,</span>
@@ -205,7 +205,7 @@ a call to a universal test function that only needs specifiers of what
 dataframe columns should be of what type and dataset specific type tests
 if necessary.</p>
 <p>Example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_dielectric_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_dielectric_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">object_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;material_id&#39;</span><span class="p">,</span> <span class="s1">&#39;formula&#39;</span><span class="p">,</span> <span class="s1">&#39;structure&#39;</span><span class="p">,</span>
                       <span class="s1">&#39;e_electronic&#39;</span><span class="p">,</span> <span class="s1">&#39;e_total&#39;</span><span class="p">,</span> <span class="s1">&#39;cif&#39;</span><span class="p">,</span> <span class="s1">&#39;meta&#39;</span><span class="p">,</span>
                       <span class="s1">&#39;poscar&#39;</span><span class="p">]</span>
@@ -216,7 +216,7 @@ if necessary.</p>
     <span class="n">bool_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pot_ferroelectric&#39;</span><span class="p">]</span>
 
     <span class="c1"># Unique Tests</span>
-    <span class="k">def</span> <span class="nf">_unique_tests</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_unique_tests</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
      <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;structure&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Structure</span><span class="p">)</span>
 
     <span class="c1"># Universal Tests</span>
@@ -232,7 +232,7 @@ if necessary.</p>
 or provide the user with extra options to return only subsets
 of the dataset with certain properties.</p>
 <p>Example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_elastic_tensor</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s2">&quot;2015&quot;</span><span class="p">,</span> <span class="n">include_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">load_elastic_tensor</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s2">&quot;2015&quot;</span><span class="p">,</span> <span class="n">include_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="n">download_if_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convenience function for loading the elastic_tensor dataset.</span>
@@ -331,14 +331,14 @@ convenience function. See existing tests for examples.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.10.0rc0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Guide to adding datasets to matminer</a></li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
 
   </body>

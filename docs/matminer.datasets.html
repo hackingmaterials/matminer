@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>matminer.datasets package &#8212; matminer 0.9.3 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <title>matminer.datasets package &#8212; matminer 0.10.0rc0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css?v=8b5d5988" />
-    <script src="_static/documentation_options.js?v=0e439607"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/documentation_options.js?v=d53086b4"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
  
@@ -26,7 +26,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.10.0rc0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.datasets package</a></li> 
       </ul>
     </div>  
@@ -38,100 +38,6 @@
             
   <section id="matminer-datasets-package">
 <h1>matminer.datasets package<a class="headerlink" href="#matminer-datasets-package" title="Link to this heading">¶</a></h1>
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="matminer.datasets.tests.html">matminer.datasets.tests package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.tests.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.tests.html#module-matminer.datasets.tests.base">matminer.datasets.tests.base module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.base.DatasetTest"><code class="docutils literal notranslate"><span class="pre">DatasetTest</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.base.DatasetTest.setUp"><code class="docutils literal notranslate"><span class="pre">DatasetTest.setUp()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.tests.html#module-matminer.datasets.tests.test_convenience_loaders">matminer.datasets.tests.test_convenience_loaders module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.tests.html#module-matminer.datasets.tests.test_dataset_retrieval">matminer.datasets.tests.test_dataset_retrieval module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_get_all_dataset_info"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_get_all_dataset_info()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_get_dataset_attribute"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_get_dataset_attribute()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_get_dataset_citations"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_get_dataset_citations()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_get_dataset_column_descriptions"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_get_dataset_column_descriptions()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_get_dataset_columns"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_get_dataset_columns()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_get_dataset_description"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_get_dataset_description()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_get_dataset_num_entries"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_get_dataset_num_entries()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_get_dataset_reference"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_get_dataset_reference()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_load_dataset"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_load_dataset()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_dataset_retrieval.DataRetrievalTest.test_print_available_datasets"><code class="docutils literal notranslate"><span class="pre">DataRetrievalTest.test_print_available_datasets()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.tests.html#module-matminer.datasets.tests.test_datasets">matminer.datasets.tests.test_datasets module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.DataSetsTest"><code class="docutils literal notranslate"><span class="pre">DataSetsTest</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.DataSetsTest.universal_dataset_check"><code class="docutils literal notranslate"><span class="pre">DataSetsTest.universal_dataset_check()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatbenchDatasetsTest"><code class="docutils literal notranslate"><span class="pre">MatbenchDatasetsTest</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatbenchDatasetsTest.test_matbench_v0_1"><code class="docutils literal notranslate"><span class="pre">MatbenchDatasetsTest.test_matbench_v0_1()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_boltztrap_mp"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_boltztrap_mp()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_brgoch_superhard_training"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_brgoch_superhard_training()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_castelli_perovskites"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_castelli_perovskites()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_citrine_thermal_conductivity"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_citrine_thermal_conductivity()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_dielectric_constant"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_dielectric_constant()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_double_perovskites_gap"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_double_perovskites_gap()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_double_perovskites_gap_lumo"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_double_perovskites_gap_lumo()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_elastic_tensor_2015"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_elastic_tensor_2015()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_expt_formation_enthalpy"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_expt_formation_enthalpy()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_expt_formation_enthalpy_kingsbury"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_expt_formation_enthalpy_kingsbury()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_expt_gap"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_expt_gap()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_expt_gap_kingsbury"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_expt_gap_kingsbury()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_flla"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_flla()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_glass_binary"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_glass_binary()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_glass_binary_v2"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_glass_binary_v2()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_glass_ternary_hipt"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_glass_ternary_hipt()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_glass_ternary_landolt"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_glass_ternary_landolt()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_heusler_magnetic"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_heusler_magnetic()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_jarvis_dft_2d"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_jarvis_dft_2d()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_jarvis_dft_3d"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_jarvis_dft_3d()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_jarvis_ml_dft_training"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_jarvis_ml_dft_training()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_m2ax"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_m2ax()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_mp_all_20181018"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_mp_all_20181018()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_mp_nostruct_20181018"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_mp_nostruct_20181018()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_phonon_dielectric_mp"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_phonon_dielectric_mp()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_piezoelectric_tensor"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_piezoelectric_tensor()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_ricci_boltztrap_mp_tabular"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_ricci_boltztrap_mp_tabular()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_steel_strength"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_steel_strength()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_superconductivity2018"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_superconductivity2018()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_tholander_nitrides_e_form"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_tholander_nitrides_e_form()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_ucsb_thermoelectrics"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_ucsb_thermoelectrics()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_datasets.MatminerDatasetsTest.test_wolverton_oxides"><code class="docutils literal notranslate"><span class="pre">MatminerDatasetsTest.test_wolverton_oxides()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.tests.html#module-matminer.datasets.tests.test_utils">matminer.datasets.tests.test_utils module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest"><code class="docutils literal notranslate"><span class="pre">UtilsTest</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest.test_fetch_external_dataset"><code class="docutils literal notranslate"><span class="pre">UtilsTest.test_fetch_external_dataset()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest.test_get_data_home"><code class="docutils literal notranslate"><span class="pre">UtilsTest.test_get_data_home()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest.test_get_file_sha256_hash"><code class="docutils literal notranslate"><span class="pre">UtilsTest.test_get_file_sha256_hash()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest.test_load_dataset_dict"><code class="docutils literal notranslate"><span class="pre">UtilsTest.test_load_dataset_dict()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest.test_read_dataframe_from_file"><code class="docutils literal notranslate"><span class="pre">UtilsTest.test_read_dataframe_from_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="matminer.datasets.tests.html#matminer.datasets.tests.test_utils.UtilsTest.test_validate_dataset"><code class="docutils literal notranslate"><span class="pre">UtilsTest.test_validate_dataset()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="matminer.datasets.tests.html#module-matminer.datasets.tests">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
@@ -723,7 +629,6 @@ by default.</p>
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">matminer.datasets package</a><ul>
-<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-matminer.datasets.convenience_loaders">matminer.datasets.convenience_loaders module</a><ul>
 <li><a class="reference internal" href="#matminer.datasets.convenience_loaders.load_boltztrap_mp"><code class="docutils literal notranslate"><span class="pre">load_boltztrap_mp()</span></code></a></li>
@@ -802,14 +707,14 @@ by default.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.9.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">matminer 0.10.0rc0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">matminer.datasets package</a></li> 
       </ul>
     </div>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2015, Anubhav Jain.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
 
   </body>
