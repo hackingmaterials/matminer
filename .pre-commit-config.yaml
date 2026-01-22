@@ -1,4 +1,4 @@
-exclude: ^(docs|.*test_files|cmd_line|dev_scripts|.*data_files)
+Gexclude: ^(docs|.*test_files|cmd_line|dev_scripts|.*data_files)
 
 ci:
   autoupdate_schedule: monthly
@@ -50,13 +50,3 @@ repos:
           - types-paramiko
           - types-requests
           - types-ujson
-
-#  - repo: local
-#    hooks:
-#      - id: pylint
-#        name: pylint
-#        entry: pylint
-#        language: python
-#        types: [python]
-#        args: [-sn, --rcfile=pylintrc]
-#        additional_dependencies: [pylint]
