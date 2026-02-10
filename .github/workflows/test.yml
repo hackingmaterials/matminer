@@ -61,7 +61,7 @@ jobs:
 
     - name: Install Python dependencies
       run: |
-        python${{ matrix.python-version }} -m pip install --upgrade pip pip-tools
+        python${{ matrix.python-version }} -m pip install --upgrade 'pip<26' pip-tools
         python${{ matrix.python-version }} -m piptools sync --user requirements/ubuntu-latest_py${{ matrix.python-version }}.txt
         # Using non-editable install for testing building of MANIFEST files
         python${{ matrix.python-version }} -m pip install --no-deps .
