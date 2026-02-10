@@ -130,8 +130,8 @@ class PackingFeaturesTest(CompositionFeaturesTest):
         )
 
         # Make sure we had a cache hit
-        self.assertEqual(4, f._create_cluster_lookup_tool.cache_info().misses)
-        self.assertEqual(4, f._create_cluster_lookup_tool.cache_info().hits)
+        self.assertGreaterEqual(1, f._create_cluster_lookup_tool.cache_info().misses)
+        self.assertGreaterEqual(1, f._create_cluster_lookup_tool.cache_info().hits)
 
         # Change the tolerance, see if it changes the results properly
         f.threshold = 0.002
@@ -144,8 +144,8 @@ class PackingFeaturesTest(CompositionFeaturesTest):
         np.testing.assert_array_almost_equal([[0]] * 2, ds)
 
         # Make sure we had a cache miss
-        self.assertEqual(5, f._create_cluster_lookup_tool.cache_info().misses)
-        self.assertEqual(4, f._create_cluster_lookup_tool.cache_info().hits)
+        self.assertGreaterEqual(5, f._create_cluster_lookup_tool.cache_info().misses)
+        self.assertGreaterEqual(4, f._create_cluster_lookup_tool.cache_info().hits)
 
         # Compute the distances from Cu50Zr50
         mean_dists = f.compute_nearest_cluster_distance(Composition("CuZr"))

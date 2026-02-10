@@ -1,6 +1,11 @@
 import os
 import unittest
 
+try:
+    pass
+except ImportError:
+    raise unittest.SkipTest("`pkg_resources` removed from this version of `setuptools`.")
+
 from matminer.data_retrieval.retrieve_Citrine import CitrineDataRetrieval
 
 from .conftest import on_ci
