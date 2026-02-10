@@ -2,7 +2,7 @@ import os
 import unittest
 
 try:
-    pass
+    import pkg_resources  # type: ignore[import] # noqa: F401
 except ImportError:
     raise unittest.SkipTest("`pkg_resources` removed from this version of `setuptools`.")
 
