@@ -285,7 +285,7 @@ class FingerprintTests(SiteFeaturizerTest):
         self.assertEqual(len(cevals), 61)
         self.assertAlmostEqual(cevals[l.index("O:6")], 1, places=7)
         self.assertAlmostEqual(cevals[l.index("C:8")], 0, places=7)
-        cevals = cefp.featurize(self.cscl, 0)
+        cevals = cefp.featurize(self.cscl, 1)
         self.assertAlmostEqual(cevals[l.index("C:8")], 0.9953721, places=7)
         self.assertAlmostEqual(cevals[l.index("O:6")], 0, places=7)
         cefp = ChemEnvSiteFingerprint.from_preset("simple")
@@ -294,7 +294,7 @@ class FingerprintTests(SiteFeaturizerTest):
         self.assertEqual(len(cevals), 61)
         self.assertAlmostEqual(cevals[l.index("O:6")], 1, places=7)
         self.assertAlmostEqual(cevals[l.index("C:8")], 0, places=7)
-        cevals = cefp.featurize(self.cscl, 0)
+        cevals = cefp.featurize(self.cscl, 1)
         self.assertAlmostEqual(cevals[l.index("C:8")], 0.9953721, places=7)
         self.assertAlmostEqual(cevals[l.index("O:6")], 0, places=7)
         cevals = cefp.featurize(self.ni3al, 0)  # Added after issue #945
