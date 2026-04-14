@@ -2,12 +2,9 @@
 Site featurizers that fingerprint a site using local geometry.
 """
 import copy
-import os
 from typing import Literal
 
 import numpy as np
-import pymatgen.analysis.local_env
-import ruamel.yaml as yaml
 from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies import (
     MultiWeightsChemenvStrategy,
     SimplestChemenvStrategy,
@@ -16,6 +13,13 @@ from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_f
     LocalGeometryFinder,
 )
 from pymatgen.analysis.local_env import CrystalNN, LocalStructOrderParams, VoronoiNN
+
+try:
+    # pymatgen<=2025.10.7
+    from pymatgen.analysis.local_env import CN_OPT_PARAMS
+except ImportError:
+    # pymatgen>2025.10.7
+    from pymatgen.core.local_env import CN_OPT_PARAMS
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
@@ -836,7 +840,7 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
                 tmp = tmp[0]["symmetry_measure"] if len(tmp) != 0 else self.max_csm
                 tmp = tmp if tmp < self.max_csm else self.max_csm
                 cevals.append(1 - tmp / self.max_csm)
-            except IndexError:
+            except (TypeError, IndexError):
                 cevals.append(0)
         return np.array(cevals)
 
@@ -865,18 +869,27 @@ def load_cn_motif_op_params():
     Returns:
         (dict)
     """
-    with open(
-        os.path.join(os.path.dirname(pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"),
-    ) as f:
-        return yaml.YAML(typ="safe", pure=True).load(f)
+    return CN_OPT_PARAMS
 
 
-def load_cn_target_motif_op():
+def load_cn_target_motif_op() -> dict[int, list[str]]:
     """
-    Load the file fpor the
+    Load the file for the local motifs
 
     Returns:
-        (dict)
+        (dict of int, to list of str)
     """
-    with open(os.path.join(os.path.dirname(__file__), "cn_target_motif_op.yaml")) as f:
-        return yaml.YAML(typ="safe", pure=True).load(f)
+    return {
+        1: ["sgl_bd"],
+        2: ["L-shaped", "water-like", "bent 120 degrees", "bent 150 degrees", "linear"],
+        3: ["trigonal planar", "trigonal non-coplanar", "T-shaped"],
+        4: ["square co-planar", "tetrahedral", "rectangular see-saw-like", "see-saw-like", "trigonal pyramidal"],
+        5: ["pentagonal planar", "square pyramidal", "trigonal bipyramidal"],
+        6: ["hexagonal planar", "octahedral", "pentagonal pyramidal"],
+        7: ["hexagonal pyramidal", "pentagonal bipyramidal"],
+        8: ["body-centered cubic", "hexagonal bipyramidal"],
+        9: ["q2", "q4", "q6"],
+        10: ["q2", "q4", "q6"],
+        11: ["q2", "q4", "q6"],
+        12: ["cuboctahedral", "q2", "q4", "q6"],
+    }
