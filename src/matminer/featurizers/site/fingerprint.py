@@ -6,7 +6,6 @@ import os
 from typing import Literal
 
 import numpy as np
-import pymatgen.analysis.local_env
 import ruamel.yaml as yaml
 from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies import (
     MultiWeightsChemenvStrategy,
@@ -16,6 +15,13 @@ from pymatgen.analysis.chemenv.coordination_environments.coordination_geometry_f
     LocalGeometryFinder,
 )
 from pymatgen.analysis.local_env import CrystalNN, LocalStructOrderParams, VoronoiNN
+
+try:
+    # pymatgen<=2025.10.7
+    from pymatgen.analysis.local_env import CN_OPT_PARAMS
+except ImportError:
+    # pymatgen>2025.10.7
+    from pymatgen.core.local_env import CN_OPT_PARAMS
 
 from matminer.featurizers.base import BaseFeaturizer
 from matminer.featurizers.utils.stats import PropertyStats
@@ -865,10 +871,7 @@ def load_cn_motif_op_params():
     Returns:
         (dict)
     """
-    with open(
-        os.path.join(os.path.dirname(pymatgen.analysis.local_env.__file__), "cn_opt_params.yaml"),
-    ) as f:
-        return yaml.YAML(typ="safe", pure=True).load(f)
+    return CN_OPT_PARAMS
 
 
 def load_cn_target_motif_op():
