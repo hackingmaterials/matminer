@@ -840,7 +840,7 @@ class ChemEnvSiteFingerprint(BaseFeaturizer):
                 tmp = tmp[0]["symmetry_measure"] if len(tmp) != 0 else self.max_csm
                 tmp = tmp if tmp < self.max_csm else self.max_csm
                 cevals.append(1 - tmp / self.max_csm)
-            except IndexError:
+            except (TypeError, IndexError):
                 cevals.append(0)
         return np.array(cevals)
 
