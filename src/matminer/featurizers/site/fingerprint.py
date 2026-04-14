@@ -2,11 +2,9 @@
 Site featurizers that fingerprint a site using local geometry.
 """
 import copy
-import os
 from typing import Literal
 
 import numpy as np
-import ruamel.yaml as yaml
 from pymatgen.analysis.chemenv.coordination_environments.chemenv_strategies import (
     MultiWeightsChemenvStrategy,
     SimplestChemenvStrategy,
@@ -874,12 +872,24 @@ def load_cn_motif_op_params():
     return CN_OPT_PARAMS
 
 
-def load_cn_target_motif_op():
+def load_cn_target_motif_op() -> dict[int, list[str]]:
     """
-    Load the file fpor the
+    Load the file for the local motifs
 
     Returns:
-        (dict)
+        (dict of int, to list of str)
     """
-    with open(os.path.join(os.path.dirname(__file__), "cn_target_motif_op.yaml")) as f:
-        return yaml.YAML(typ="safe", pure=True).load(f)
+    return {
+        1: ["sgl_bd"],
+        2: ["L-shaped", "water-like", "bent 120 degrees", "bent 150 degrees", "linear"],
+        3: ["trigonal planar", "trigonal non-coplanar", "T-shaped"],
+        4: ["square co-planar", "tetrahedral", "rectangular see-saw-like", "see-saw-like", "trigonal pyramidal"],
+        5: ["pentagonal planar", "square pyramidal", "trigonal bipyramidal"],
+        6: ["hexagonal planar", "octahedral", "pentagonal pyramidal"],
+        7: ["hexagonal pyramidal", "pentagonal bipyramidal"],
+        8: ["body-centered cubic", "hexagonal bipyramidal"],
+        9: ["q2", "q4", "q6"],
+        10: ["q2", "q4", "q6"],
+        11: ["q2", "q4", "q6"],
+        12: ["cuboctahedral", "q2", "q4", "q6"],
+    }

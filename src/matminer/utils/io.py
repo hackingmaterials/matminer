@@ -39,7 +39,7 @@ def store_dataframe_as_json(dataframe, filename, compression=None, orient="split
     if compression and not filename.lower().endswith(f".{compression}"):
         filename = f"{filename}.{compression}"
 
-    write_type = "wb" if compression else "w"
+    write_type = "wb" if compression else "wt"
 
     def is_encodable(obj):
         """
