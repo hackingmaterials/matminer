@@ -125,6 +125,8 @@ kiwisolver==1.5.0
     # via matplotlib
 llvmlite==0.47.0
     # via numba
+lxml==6.1.0
+    # via pymatgen-core
 markdown-it-py==4.0.0
     # via rich
 markupsafe==3.0.3
@@ -182,7 +184,7 @@ numpy==2.4.4
     #   spglib
 orjson==3.11.8
     # via pymatgen-core
-packaging==26.0
+packaging==26.1
     # via
     #   black
     #   matplotlib
@@ -231,7 +233,7 @@ pymatgen==2026.3.23
     # via
     #   matminer
     #   matminer (pyproject.toml)
-pymatgen-core==2026.4.7
+pymatgen-core==2026.4.16
     # via pymatgen
 pymongo==4.16.0
     # via
