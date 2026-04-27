@@ -34,7 +34,7 @@ black==26.3.1
     # via
     #   matminer
     #   matminer (pyproject.toml)
-certifi==2026.2.25
+certifi==2026.4.22
     # via requests
 cffi==2.0.0
     # via cryptography
@@ -44,7 +44,7 @@ citrination-client==6.5.1
     # via
     #   matminer
     #   matminer (pyproject.toml)
-click==8.3.2
+click==8.3.3
     # via
     #   black
     #   typer
@@ -60,7 +60,7 @@ coveralls==4.1.0
     # via
     #   matminer
     #   matminer (pyproject.toml)
-cryptography==46.0.7
+cryptography==47.0.0
     # via
     #   globus-sdk
     #   pyjwt
@@ -93,7 +93,7 @@ httplib2==0.31.2
     # via
     #   matminer
     #   matminer (pyproject.toml)
-idna==3.11
+idna==3.13
     # via requests
 imagesize==2.0.0
     # via sphinx
@@ -133,7 +133,7 @@ markupsafe==3.0.3
     # via jinja2
 matminer[aflow,citrine,describe,dev,mdfforge,mpds] @ file:///home/runner/work/matminer/matminer
     # via matminer (pyproject.toml)
-matplotlib==3.10.8
+matplotlib==3.10.9
     # via
     #   ase
     #   pymatgen-core
@@ -158,11 +158,11 @@ mpmath==1.3.0
     # via sympy
 mypy-extensions==1.1.0
     # via black
-narwhals==2.19.0
+narwhals==2.20.0
     # via plotly
 networkx==3.6.1
     # via pymatgen-core
-numba==0.65.0
+numba==0.65.1
     # via sparse
 numpy==2.4.4
     # via
@@ -184,7 +184,7 @@ numpy==2.4.4
     #   spglib
 orjson==3.11.8
     # via pymatgen-core
-packaging==26.1
+packaging==26.2
     # via
     #   black
     #   matplotlib
@@ -198,7 +198,7 @@ pandas==2.3.3
     #   matminer
     #   matminer (pyproject.toml)
     #   pymatgen-core
-pathspec==1.0.4
+pathspec==1.1.1
     # via black
 pillow==12.2.0
     # via matplotlib
@@ -235,7 +235,7 @@ pymatgen==2026.3.23
     #   matminer (pyproject.toml)
 pymatgen-core==2026.4.16
     # via pymatgen
-pymongo==4.16.0
+pymongo==4.17.0
     # via
     #   matminer
     #   matminer (pyproject.toml)
@@ -364,14 +364,14 @@ tqdm==4.67.3
     #   matminer (pyproject.toml)
     #   mdf-forge
     #   pymatgen-core
-typer==0.24.1
+typer==0.25.0
     # via coveralls
 typing-extensions==4.15.0
     # via
     #   beautifulsoup4
     #   referencing
     #   spglib
-tzdata==2026.1
+tzdata==2026.2
     # via pandas
 ujson==5.12.0
     # via
