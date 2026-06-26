@@ -93,7 +93,7 @@ class SiteStatsFingerprint(BaseFeaturizer):
         vals = [[] for t in self._site_labels]
         for i, site in enumerate(s.sites):
             if (self.min_oxi is None or site.specie.oxi_state >= self.min_oxi) and (
-                self.max_oxi is None or site.specie.oxi_state >= self.max_oxi
+                self.max_oxi is None or site.specie.oxi_state <= self.max_oxi
             ):
                 opvalstmp = self.site_featurizer.featurize(s, i)
                 for j, opval in enumerate(opvalstmp):
