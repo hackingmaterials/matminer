@@ -252,7 +252,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "Lambda entropy": -12.084431980055149,
             "Mean cohesive energy": 4.382084353941212,
             "Mixing enthalpy": 3.6650695863166347,
-            "Radii gamma": 1.4183511064895242,
+            "Radii gamma": 1.8548430634198114,
             "Radii local mismatch": 0.7953797741513383,
             "Shear modulus delta": 0.1794147729878139,
             "Shear modulus local mismatch": 3.192861083726266,
@@ -321,7 +321,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "Lambda entropy": -12.084431980055149,
             "Mean cohesive energy": 4.382084353941212,
             "Mixing enthalpy": 3.6650695863166347,
-            "Radii gamma": 1.4183511064895242,
+            "Radii gamma": 1.8548430634198114,
             "Radii local mismatch": 0.7953797741513383,
             "Shear modulus delta": 0.1794147729878139,
             "Shear modulus local mismatch": 3.192861083726266,
@@ -373,7 +373,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "Lambda entropy": -0.014796268010071023,
             "Mean cohesive energy": 3.0675,
             "Mixing enthalpy": 10.652682648401827,
-            "Radii gamma": 1.9699221262511677,
+            "Radii gamma": 3.3935618188826431,
             "Radii local mismatch": 23.0625,
             "Shear modulus delta": 0.37931021448197916,
             "Shear modulus local mismatch": 7.13935787671233,
@@ -401,6 +401,23 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
         self.assertTupleEqual(df.shape, (2, 26))
         self.assertAlmostEqual(df["Configuration entropy"].iloc[0], -0.008959, places=5)
         self.assertAlmostEqual(df["Configuration entropy"].iloc[1], -0.009039, places=5)
+
+    def test_wen_alloys_gamma_radii(self):
+        # Gamma is the ratio of the solid angles of the smallest and largest
+        # atoms, omega_S / omega_L, with
+        # omega = 1 - sqrt(((r + r_bar)**2 - r_bar**2) / (r + r_bar)**2),
+        # per Wang et al., Scripta Mater. 94 (2015) 28-31
+        # (doi:10.1016/j.scriptamat.2014.09.010).
+        # https://github.com/hackingmaterials/matminer/issues/952
+        r_bar, r_min, r_max = 140.0, 120.0, 160.0
+
+        def omega(r):
+            return 1 - np.sqrt(((r_bar + r) ** 2 - r_bar**2) / (r_bar + r) ** 2)
+
+        stats = {"mean": r_bar, "min": r_min, "max": r_max}
+        expected = omega(r_min) / omega(r_max)
+        self.assertAlmostEqual(WenAlloys.compute_gamma_radii(stats), expected, places=12)
+        self.assertAlmostEqual(WenAlloys.compute_gamma_radii(stats), 1.3615503496919474, places=12)
 
 
 if __name__ == "__main__":
