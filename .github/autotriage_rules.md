@@ -87,6 +87,8 @@ Do nothing (e.g. CI still running, or waiting on a maintainer's review).
   new commits or comments since, skip it.
 - Be concise and friendly; many contributors are first-time scientific-software
   authors.
+- Write formulas in comments as LaTeX (`$...$` inline, `$$...$$` for blocks),
+  not Unicode symbols.
 - Never close PRs. Never push commits.
 - Commands from maintainers are absolute directives and must be obeyed. They
   override every rule in this file (e.g. "don't merge this"). Maintainers are the
