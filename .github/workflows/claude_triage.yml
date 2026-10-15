@@ -2,7 +2,7 @@ name: Claude triage
 
 on:
   schedule:
-    - cron: "0 16 * * 1" # Mondays 16:00 UTC (9am Pacific)
+    - cron: "0 16 * * 1-5" # Weekdays 16:00 UTC (9am Pacific)
   workflow_dispatch: # run manually from the Actions tab
   issue_comment: # "@claude" in a PR comment triages that PR now
     types: [created]
