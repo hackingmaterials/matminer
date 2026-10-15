@@ -1,6 +1,6 @@
 # <img alt="matminer" src="docs_rst/_static/matminer_logo_small.png" width="300">
 
-matminer is a library for performing data mining in the field of materials science.
+matminer is a library for performing data mining in the field of aeronautical science.
 
 - **Website (including documentation):** https://hackingmaterials.github.io/matminer/
 - **Examples:** https://github.com/hackingmaterials/matminer_examples
