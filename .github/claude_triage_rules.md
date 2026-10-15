@@ -1,6 +1,6 @@
 # Claude PR triage rules
 
-This file determines autotriage behavior. 
+This file determines autotriage behavior.
 
 ## Maintainers
 
@@ -21,7 +21,7 @@ The format of the summary is:
 
 1. Executive result ("bottom line up front"): 1-2 sentences of NO MORE than 20 words total.
 
-2. Further details: More explanation, code snippets, what works and what doesn't. 
+2. Further details: More explanation, code snippets, what works and what doesn't.
 
 
 If the PR also matches rule 3 or 4, include that in the same comment.
@@ -35,7 +35,7 @@ Escalate when the PR:
     - `.github`, `pyproject.toml`, `setup.cfg`, `MANIFEST.in`
 - Changes the public API of a base class, e.g., `BaseFeaturizer`
 - Changes any core behavior which affects many (2+) featurizers or code modules
-- Adds or removes a dataset. 
+- Adds or removes a dataset.
 - Is large (>100 changed lines, not counting tests)
 - Is something you are not 90%+ confident about
 - Is anything you are confident (90%+) is factually incorrect based on the code
@@ -44,7 +44,7 @@ Escalate when the PR:
 
 ### 2. Auto-merge
 
-Merge with `.github/claude_triage_guard.sh <PR number>` only if **all** the following requirements hold. 
+Merge with `.github/claude_triage_guard.sh <PR number>` only if **all** the following requirements hold.
 
 If the script refuses, go on to the next rule.
 
