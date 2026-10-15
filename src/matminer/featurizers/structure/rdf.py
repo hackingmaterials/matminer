@@ -149,7 +149,7 @@ class PartialRadialDistributionFunction(BaseFeaturizer):
         # Initialize list with included elements
         elements = {Element(e) for e in self.include_elems}
 
-        # Get all of elements that appaer
+        # Get all of the elements that appaer
         for strc in X:
             elements.update([e.element if isinstance(e, Specie) else e for e in strc.composition.keys()])
 
