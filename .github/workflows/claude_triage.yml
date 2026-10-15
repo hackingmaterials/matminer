@@ -1,0 +1,81 @@
+name: Claude triage
+
+on:
+  schedule:
+    - cron: "0 16 * * 1" # Mondays 16:00 UTC (9am Pacific)
+  workflow_dispatch: # run manually from the Actions tab
+  issue_comment: # "@claude" in a PR comment triages that PR now
+    types: [created]
+
+env:
+  MAX_PRS_PER_RUN: 5 # at most this many PRs get a comment/tag/merge per run
+
+jobs:
+  triage:
+    # Only PR comments from people (not bots) that mention @claude.
+    if: >-
+      github.event_name != 'issue_comment' || (
+        github.event.issue.pull_request &&
+        github.event.comment.user.type != 'Bot' &&
+        contains(github.event.comment.body, '@claude')
+      )
+    # One run at a time per PR (or for the weekly sweep).
+    concurrency:
+      group: claude_triage-${{ github.event.issue.number || 'weekly' }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: read
+      checks: read
+      id-token: write
+
+    steps:
+      # Only maintainers (write access) can trigger it.
+      - name: Check commenter is a maintainer
+        if: github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMENTER: ${{ github.event.comment.user.login }}
+        run: |
+          perm=$(gh api "repos/${{ github.repository }}/collaborators/$COMMENTER/permission" --jq .permission || echo none)
+          echo "$COMMENTER has '$perm' access"
+          [[ "$perm" == admin || "$perm" == write ]] || { echo "Not a maintainer; skipping."; exit 1; }
+
+      # Checks out main only. PR code is never executed; Claude reads diffs via gh.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          additional_permissions: |
+            actions: read
+          prompt: |
+            You are the PR triage bot for ${{ github.repository }}.
+
+            1. Read .github/claude_triage_rules.md. It is the only source of rules.
+            2. This run was triggered by: ${{ github.event_name }}
+               - If `issue_comment`: a maintainer tagged you in ${{ github.event.comment.html_url }}
+                 Handle only PR #${{ github.event.issue.number }}. Act on it even if it is a draft or you
+                 already commented with no new activity since. If the comment asks something specific,
+                 answer that in your reply too.
+               - Otherwise: list open PRs, newest first:
+                 `gh pr list --state open --limit 100 --json number,title,author,headRefName,isDraft,createdAt`
+                 Skip drafts. Take an action (comment, tag, review, label, or merge) on at most
+                 ${{ env.MAX_PRS_PER_RUN }} PRs this run, then stop. PRs you skip without acting (drafts,
+                 no new activity since your last comment) do not count toward the limit.
+            3. For each PR, inspect it with `gh pr view <n> --comments`, `gh pr diff <n>`,
+               and `gh pr checks <n>`. Read the surrounding source in this checkout when you
+               need context to judge the change.
+            4. Take exactly one action per PR as the rules file specifies.
+            5. Finish with a short summary table: PR number, title, action taken, reason.
+               List any PRs left unprocessed because of the limit.
+          claude_args: >-
+            --max-turns 150
+            --allowedTools "Read,Grep,Glob,Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh pr comment:*),Bash(gh pr edit:*),Bash(gh pr review:*),Bash(.github/claude_triage_guard.sh:*)"
+            --disallowedTools "Edit,Write,MultiEdit,NotebookEdit"
