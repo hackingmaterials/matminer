@@ -44,7 +44,7 @@ Escalate when the PR:
 
 ### 2. Auto-merge
 
-Merge with `.github/claude_triage_guard.sh <PR number>` only if **all** the following requirements hold.
+Merge with `.github/autotriage_guard.sh <PR number>` only if **all** the following requirements hold.
 
 If the script refuses, go on to the next rule.
 

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Check the argument is a PR number.
-pr="${1:?usage: claude_triage_guard.sh <pr-number>}"
+pr="${1:?usage: autotriage_guard.sh <pr-number>}"
 [[ "$pr" =~ ^[0-9]+$ ]] || { echo "REFUSED: '$pr' is not a PR number"; exit 1; }
 
 # Fetch the PR.
