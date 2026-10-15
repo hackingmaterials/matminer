@@ -549,7 +549,7 @@ class YangSolidSolution(BaseFeaturizer):
         mean_Tm = PropertyStats.mean(self.elem_data.get_elemental_properties(elements, "MeltingT"), fractions)
 
         # Get the mixing entropy
-        entropy = np.dot(fractions, np.log(fractions)) * 8.314 / 1000
+        entropy = -np.dot(fractions, np.log(fractions)) * 8.314 / 1000
 
         # Get the mixing enthalpy
         enthalpy = 0
@@ -558,12 +558,7 @@ class YangSolidSolution(BaseFeaturizer):
                 enthalpy += f1 * f2 * self.dhf_mix.get_mixing_enthalpy(e1, e2)
         enthalpy *= 4
 
-        # Make sure the enthalpy is nonzero
-        #  The limit as dH->0 of omega is +\inf. A very small positive dH will approximate
-        #  this limit without causing issues with infinite features
-        enthalpy = max(1e-6, abs(enthalpy))
-
-        return abs(mean_Tm * entropy / enthalpy)
+        return mean_Tm * entropy / max(1e-6, abs(enthalpy))
 
     def compute_delta(self, comp):
         """Compute Yang's delta parameter
@@ -852,7 +847,7 @@ class WenAlloys(BaseFeaturizer):
             (float) gamma
         """
 
-        return np.dot(fractions, np.log(fractions)) * 8.314 / 1000
+        return -np.dot(fractions, np.log(fractions)) * 8.314 / 1000
 
     @staticmethod
     def compute_weight_fraction(elements, composition):
@@ -953,11 +948,7 @@ class WenAlloys(BaseFeaturizer):
                     * self.data_source_enthalpy.get_mixing_enthalpy(Element(e1), Element(e2))
                 )
         enthalpy *= 4
-        # Make sure the enthalpy is nonzero
-        #  The limit as dH->0 of omega is +\inf. A very small positive dH will approximate
-        #  this limit without causing issues with infinite features
-        enthalpy = max(1e-6, abs(enthalpy))
-        return abs(enthalpy)
+        return enthalpy
 
     def feature_labels(self):
         return [
