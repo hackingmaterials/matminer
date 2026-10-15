@@ -1,8 +1,8 @@
-name: Claude triage
+name: autotriage
 
 on:
   schedule:
-    - cron: "0 16 * * 1" # Mondays 16:00 UTC (9am Pacific)
+    - cron: "0 16 * * 1-5" # Weekdays 16:00 UTC (9am Pacific)
   workflow_dispatch: # run manually from the Actions tab
   issue_comment: # "@claude" in a PR comment triages that PR now
     types: [created]
@@ -19,9 +19,9 @@ jobs:
         github.event.comment.user.type != 'Bot' &&
         contains(github.event.comment.body, '@claude')
       )
-    # One run at a time per PR (or for the weekly sweep).
+    # One run at a time per PR (or for the scheduled sweep).
     concurrency:
-      group: claude_triage-${{ github.event.issue.number || 'weekly' }}
+      group: autotriage-${{ github.event.issue.number || 'scheduled' }}
       cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -58,7 +58,7 @@ jobs:
           prompt: |
             You are the PR triage bot for ${{ github.repository }}.
 
-            1. Read .github/claude_triage_rules.md. It is the only source of rules.
+            1. Read .github/autotriage_rules.md. It is the only source of rules.
             2. This run was triggered by: ${{ github.event_name }}
                - If `issue_comment`: a maintainer tagged you in ${{ github.event.comment.html_url }}
                  Handle only PR #${{ github.event.issue.number }}. Act on it even if it is a draft or you
@@ -77,5 +77,5 @@ jobs:
                List any PRs left unprocessed because of the limit.
           claude_args: >-
             --max-turns 150
-            --allowedTools "Read,Grep,Glob,Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh pr comment:*),Bash(gh pr edit:*),Bash(gh pr review:*),Bash(.github/claude_triage_guard.sh:*)"
+            --allowedTools "Read,Grep,Glob,Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh pr comment:*),Bash(gh pr edit:*),Bash(gh pr review:*),Bash(.github/autotriage_guard.sh:*)"
             --disallowedTools "Edit,Write,MultiEdit,NotebookEdit"
