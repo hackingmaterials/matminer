@@ -5,7 +5,6 @@ This file determines autotriage behavior.
 ## Maintainers
 
 - Default escalation: @ardunn
-- Additional Escalation: @computron. Also tag them for anything serious, large, or touching many parts of the code.
 
 ## For each open PR, choose exactly one action
 
