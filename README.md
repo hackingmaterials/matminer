@@ -12,11 +12,11 @@ matminer is a library for performing data mining in the field of materials scien
 
 matminer supports Python 3.11+.
 
+matminer is still actively maintained. Some related packages are archived; see [Archived related packages](#archived-related-packages) below.
+
 #### Related packages:
 
-- If you like matminer, you might also try [automatminer](https://github.com/hackingmaterials/automatminer).
 - If you are interested in furthering development of datasets in matminer, you may be interested in [matbench](https://github.com/hackingmaterials/matbench).
-- If you are looking for figrecipes, it is now in its [own repo](https://github.com/hackingmaterials/figrecipes).
 
 
 #### Citation
@@ -34,3 +34,10 @@ Matminer helps users apply methods and data sets developed by the community. Ple
 - If you use one or more **datasets** accessed through matminer, check the dataset metadata info for relevant citations on the original datasets.
 - If you use one or more **data retrieval methods**, check ``citations()`` method of the data retrieval class. This method will provide a list of BibTeX-formatted citations for that featurizer, making it easy to keep track of and cite the original publications.
 - If you use one or more **featurizers**, please take advantage of the ```citations()``` function present for every featurizer in matminer.
+
+#### Archived related packages
+
+These packages are archived and no longer maintained:
+
+- [automatminer](https://github.com/hackingmaterials/automatminer)
+- [figrecipes](https://github.com/hackingmaterials/figrecipes)
