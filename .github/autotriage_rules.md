@@ -71,7 +71,9 @@ Besides tests for every behavior change, contributions to this repo must:
 
 ## When a maintainer tags you
 
-A maintainer can tag `@claude` on any issue or PR. Handle only that one, and
+A maintainer can tag `@claude` on any issue or PR. A comment that is only
+`@claude sweep` (or `@claude cron`) is not a question: it runs the scheduled
+sweep now, and the workflow tells you so. Otherwise, handle only that one, and
 reply once, in the format under "Writing comments", with the answer to what
 they asked in the bottom line.
 
