@@ -16,7 +16,7 @@ matminer is still actively maintained. Some related packages are archived; see [
 
 #### Related packages:
 
-- If you are interested in furthering development of datasets in matminer, you may be interested in [matbench](https://github.com/hackingmaterials/matbench).
+- If you are interested in furthering development of datasets in matminer, you may be interested in [matbench](https://github.com/hackingmaterials/matbench), which is still active. Its successor is [matbench-discovery](https://github.com/janosh/matbench-discovery).
 
 
 #### Citation
