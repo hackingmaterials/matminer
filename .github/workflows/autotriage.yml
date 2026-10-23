@@ -11,7 +11,9 @@ on:
   schedule:
     - cron: "0 16 * * 1"
   workflow_dispatch: # run manually from the Actions tab
-  issue_comment: # a maintainer tags @claude on an issue or PR
+  # A maintainer tags @claude on an issue or PR. A comment that is only
+  # "@claude sweep" (or "@claude cron") runs the scheduled sweep now.
+  issue_comment:
     types: [created]
 
 jobs:
@@ -30,9 +32,13 @@ jobs:
           endsWith(github.event.comment.body, '@claude fix')
         )
       )
-    # One run at a time per issue or PR (or for the scheduled sweep).
+    # One run at a time per issue or PR (or for the sweep, however started).
     concurrency:
-      group: autotriage-${{ github.event.issue.number || 'scheduled' }}
+      group: >-
+        autotriage-${{
+          (startsWith(github.event.comment.body, '@claude sweep') ||
+           startsWith(github.event.comment.body, '@claude cron'))
+          && 'scheduled' || github.event.issue.number || 'scheduled' }}
       cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -53,11 +59,13 @@ jobs:
 
       # Reads the settings. A mention runs only if it comes from a maintainer
       # (write access) and mentions are on; otherwise this run does nothing.
+      # "@claude sweep" or "@claude cron" alone turns the mention into a sweep.
       - name: Decide whether to run
         id: settings
         env:
           GH_TOKEN: ${{ github.token }}
           COMMENTER: ${{ github.event.comment.user.login }}
+          BODY: ${{ github.event.comment.body }}
         run: |
           source .github/autotriage_lib.sh
           load_conf .github/autotriage.conf
@@ -65,7 +73,11 @@ jobs:
           [[ "$mentions" =~ ^(on|off)$ ]] || fail "bad mentions '$mentions'"
           echo "max_prs=$max_prs_per_run" >>"$GITHUB_OUTPUT"
           run=true
-          if [[ "${{ github.event_name }}" == issue_comment ]]; then
+          trigger="${{ github.event_name }}"
+          if [[ "$trigger" == issue_comment ]]; then
+            shopt -s nocasematch
+            [[ "$BODY" =~ ^[[:space:]]*@claude[[:space:]]+(sweep|cron)[[:space:]]*$ ]] && trigger=sweep
+            shopt -u nocasematch
             perm=$(gh api "repos/${{ github.repository }}/collaborators/$COMMENTER/permission" --jq .permission || echo none)
             echo "$COMMENTER has '$perm' access"
             if [[ "$perm" != admin && "$perm" != write ]]; then
@@ -76,6 +88,7 @@ jobs:
               run=false
             fi
           fi
+          echo "trigger=$trigger" >>"$GITHUB_OUTPUT"
           echo "run=$run" >>"$GITHUB_OUTPUT"
 
       # Reacts 👀 to the maintainer's comment, to show the bot is on it.
@@ -110,12 +123,14 @@ jobs:
 
             1. Read .github/autotriage_rules.md. It is the only source of rules.
                Its mode is `mode` in .github/autotriage.conf, which also says what the merge guard allows.
-            2. This run was triggered by: ${{ github.event_name }}
+            2. This run was triggered by: ${{ steps.settings.outputs.trigger }}
                - If `issue_comment`: maintainer @${{ github.event.comment.user.login }} tagged you in
                  ${{ github.event.comment.html_url }} on #${{ github.event.issue.number }}
                  (a ${{ github.event.issue.pull_request && 'PR' || 'issue' }}). Handle only that, as
                  "When a maintainer tags you" in the rules says.
-               - Otherwise: list open PRs, newest first:
+               - Otherwise (`schedule`, `workflow_dispatch`, or `sweep`, which is maintainer
+                 @${{ github.event.comment.user.login }} asking for a sweep now; don't reply to that
+                 comment): list open PRs, newest first:
                  `gh pr list --state open --limit 100 --json number,title,author,headRefName,isDraft,createdAt`
                  Skip drafts. Take an action (comment, tag, review, label, or merge) on at most
                  ${{ steps.settings.outputs.max_prs }} PRs this run, then stop. PRs you skip without acting
