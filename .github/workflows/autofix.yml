@@ -1,7 +1,7 @@
 # Make a change on request. A maintainer comments "@claude fix" on an issue
 # (to get a PR that fixes it) or on a PR (to get a commit on it); anything
 # else in the comment is passed on as instructions. Or run this by hand.
-# Claude reads and edits files; nothing is run. Its only way to write is
+# Claude reads, edits, and deletes files; nothing is run. Its only way to write is
 # autofix_publish.sh, which checks the change and commits it as claude[bot].
 # The repo's own CI then tests it. Repeat the request to redo.
 # The mode in .github/autotriage.conf decides whether this may run at all.
@@ -145,7 +145,7 @@ jobs:
                commits it, and posts the result.
           claude_args: >-
             --max-turns 60
-            --allowedTools "Read,Grep,Glob,Edit,Write,MultiEdit,Bash(gh issue view:*),Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh run view:*),Bash(git diff:*),Bash(git status:*),Bash(git log:*),Bash(git blame:*),Bash(${{ runner.temp }}/gate/autofix_publish.sh)"
+            --allowedTools "Read,Grep,Glob,Edit,Write,MultiEdit,Bash(gh issue view:*),Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh run view:*),Bash(git diff:*),Bash(git status:*),Bash(git log:*),Bash(git blame:*),Bash(git rm:*),Bash(${{ runner.temp }}/gate/autofix_publish.sh)"
 
       # If Claude never got to the gate, say so where it was asked for.
       - name: Report if nothing was published
