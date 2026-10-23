@@ -105,20 +105,32 @@ git apply --check "$patch" || fail "the change does not apply to $base"
 # Allow only edits and plain file creations or deletions: no renames, mode
 # changes, executables, symlinks, or submodules.
 plain='^ (create|delete) mode 100644 '
+deletion='^ delete mode 100644 (.*)$'
 shapes=$(git apply --summary "$patch")
+deletions=""
 while IFS= read -r line; do
   [[ -z "$line" || "$line" =~ $plain ]] || fail "the change has '${line# }'"
+  if [[ "$line" =~ $deletion ]]; then
+    deletions+="${BASH_REMATCH[1]}"$'\n'
+  fi
 done <<<"$shapes"
 
-# Check each file: not binary, not protected, inside autofix_paths if any
-# are listed. Count files, lines, and test files.
+# Check each file: not binary (unless deleted), not protected, inside
+# autofix_paths if any are listed. Count files, lines, and test files, and
+# whether it adds or edits code: anything not deleted, docs, or a test.
 numstat=$(git apply --numstat "$patch")
 n_files=0
 n_lines=0
 has_test=false
+has_code=false
 while IFS=$'\t' read -r added deleted path; do
   [[ -n "$path" ]] || continue
-  [[ "$added" != - ]] || fail "the change has binary file $path"
+  is_deleted=false
+  ! grep -qxF -- "$path" <<<"$deletions" || is_deleted=true
+  if [[ "$added" == - ]]; then
+    [[ "$is_deleted" == true ]] || fail "the change has binary file $path"
+    added=0 deleted=0
+  fi
   [[ "$path" != \"* ]] || fail "the change has unusual file name $path"
   ! matches_any "$path" ${protected[@]+"${protected[@]}"} || fail "it touches protected file $path"
   if [[ ${#autofix_paths[@]} -gt 0 ]]; then
@@ -126,6 +138,8 @@ while IFS=$'\t' read -r added deleted path; do
   fi
   if matches_any "$path" ${test_paths[@]+"${test_paths[@]}"}; then
     has_test=true
+  elif [[ "$is_deleted" == false ]] && ! matches_any "$path" ${docs_paths[@]+"${docs_paths[@]}"}; then
+    has_code=true
   fi
   n_files=$((n_files + 1))
   n_lines=$((n_lines + added + deleted))
@@ -163,10 +177,12 @@ Pushed $sha."
   exit 0
 fi
 
-# An issue: the base must be on the default branch, and the fix must change
-# a test file if test_paths are listed.
+# An issue: the base must be on the default branch, and a fix that adds or
+# edits code must change a test file if test_paths are listed. Changes that
+# only touch docs or delete files need no test.
 git merge-base --is-ancestor "$base" "origin/$default" || fail "$base is not on $default"
-[[ ${#test_paths[@]} -eq 0 || "$has_test" == true ]] || fail "no test changed; a fix needs a regression test"
+[[ ${#test_paths[@]} -eq 0 || "$has_test" == true || "$has_code" == false ]] ||
+  fail "no test changed; a code fix needs a regression test"
 
 # Don't overwrite commits someone else pushed to the bot's branch.
 branch="autofix/issue-$number"
