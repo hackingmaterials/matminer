@@ -1,25 +1,36 @@
 name: autotriage
 
 on:
+  # How often the bot sweeps open PRs, in UTC. Some choices:
+  #   "0 16 * * 1-5"  weekdays, 9am Pacific (default)
+  #   "0 16 * * *"    every day
+  #   "0 16 * * 1"    Mondays
+  #   "0 */6 * * *"   every 6 hours
+  # Delete the schedule block to run only when tagged or run by hand.
+  # How many PRs each sweep may act on is max_prs_per_run in autotriage.conf.
   schedule:
-    - cron: "0 12 * * 4" # Weekdays 16:00 UTC (9am Pacific)
+    - cron: "0 16 * * 1"
   workflow_dispatch: # run manually from the Actions tab
-  issue_comment: # "@claude" in a PR comment triages that PR now
+  issue_comment: # a maintainer tags @claude on an issue or PR
     types: [created]
-
-env:
-  MAX_PRS_PER_RUN: 5 # at most this many PRs get a comment/tag/merge per run
 
 jobs:
   triage:
-    # Only PR comments from people (not bots) that mention @claude.
+    # Only comments from people (not bots) that mention @claude, except the
+    # "@claude fix" command, which autofix.yml handles with the same test.
     if: >-
       github.event_name != 'issue_comment' || (
-        github.event.issue.pull_request &&
         github.event.comment.user.type != 'Bot' &&
-        contains(github.event.comment.body, '@claude')
+        contains(github.event.comment.body, '@claude') &&
+        !(
+          contains(github.event.comment.body, '@claude fix ') ||
+          contains(github.event.comment.body, '@claude fix:') ||
+          contains(github.event.comment.body, fromJSON('"@claude fix\n"')) ||
+          contains(github.event.comment.body, fromJSON('"@claude fix\r"')) ||
+          endsWith(github.event.comment.body, '@claude fix')
+        )
       )
-    # One run at a time per PR (or for the scheduled sweep).
+    # One run at a time per issue or PR (or for the scheduled sweep).
     concurrency:
       group: autotriage-${{ github.event.issue.number || 'scheduled' }}
       cancel-in-progress: false
@@ -34,48 +45,91 @@ jobs:
       id-token: write
 
     steps:
-      # Only maintainers (write access) can trigger it.
-      - name: Check commenter is a maintainer
-        if: github.event_name == 'issue_comment'
+      # Checks out the default branch only. PR code is never executed; Claude
+      # reads diffs via gh. Full history lets it check data provenance.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Reads the settings. A mention runs only if it comes from a maintainer
+      # (write access) and mentions are on; otherwise this run does nothing.
+      - name: Decide whether to run
+        id: settings
         env:
           GH_TOKEN: ${{ github.token }}
           COMMENTER: ${{ github.event.comment.user.login }}
         run: |
-          perm=$(gh api "repos/${{ github.repository }}/collaborators/$COMMENTER/permission" --jq .permission || echo none)
-          echo "$COMMENTER has '$perm' access"
-          [[ "$perm" == admin || "$perm" == write ]] || { echo "Not a maintainer; skipping."; exit 1; }
+          source .github/autotriage_lib.sh
+          load_conf .github/autotriage.conf
+          [[ "$max_prs_per_run" =~ ^[1-9][0-9]*$ ]] || fail "bad max_prs_per_run '$max_prs_per_run'"
+          [[ "$mentions" =~ ^(on|off)$ ]] || fail "bad mentions '$mentions'"
+          echo "max_prs=$max_prs_per_run" >>"$GITHUB_OUTPUT"
+          run=true
+          if [[ "${{ github.event_name }}" == issue_comment ]]; then
+            perm=$(gh api "repos/${{ github.repository }}/collaborators/$COMMENTER/permission" --jq .permission || echo none)
+            echo "$COMMENTER has '$perm' access"
+            if [[ "$perm" != admin && "$perm" != write ]]; then
+              echo "Not a maintainer; ignoring the mention."
+              run=false
+            elif [[ "$mentions" == off ]]; then
+              echo "Mentions are off in autotriage.conf; ignoring."
+              run=false
+            fi
+          fi
+          echo "run=$run" >>"$GITHUB_OUTPUT"
 
-      # Checks out main only. PR code is never executed; Claude reads diffs via gh.
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
+      # Reacts 👀 to the maintainer's comment, to show the bot is on it.
+      - name: Acknowledge the comment
+        if: steps.settings.outputs.run == 'true' && github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X POST "repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions" \
+            -f content=eyes >/dev/null || echo "Couldn't add the reaction; carrying on."
+
+      # Creates the labels the bot and guard use, if the repo lacks them.
+      - name: Create missing labels
+        if: steps.settings.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          existing=$(gh label list -R "$REPO" --limit 500 --json name --jq '.[].name')
+          for label in "review requested" "not ready to merge" "do not merge"; do
+            grep -qixF "$label" <<<"$existing" || gh label create "$label" -R "$REPO"
+          done
 
       - uses: anthropics/claude-code-action@v1
+        if: steps.settings.outputs.run == 'true'
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           additional_permissions: |
             actions: read
           prompt: |
-            You are the PR triage bot for ${{ github.repository }}.
+            You are the triage bot for ${{ github.repository }}.
 
             1. Read .github/autotriage_rules.md. It is the only source of rules.
+               Its mode is `mode` in .github/autotriage.conf, which also says what the merge guard allows.
             2. This run was triggered by: ${{ github.event_name }}
-               - If `issue_comment`: a maintainer tagged you in ${{ github.event.comment.html_url }}
-                 Handle only PR #${{ github.event.issue.number }}. Act on it even if it is a draft or you
-                 already commented with no new activity since. If the comment asks something specific,
-                 answer that in your reply too.
+               - If `issue_comment`: maintainer @${{ github.event.comment.user.login }} tagged you in
+                 ${{ github.event.comment.html_url }} on #${{ github.event.issue.number }}
+                 (a ${{ github.event.issue.pull_request && 'PR' || 'issue' }}). Handle only that, as
+                 "When a maintainer tags you" in the rules says.
                - Otherwise: list open PRs, newest first:
                  `gh pr list --state open --limit 100 --json number,title,author,headRefName,isDraft,createdAt`
                  Skip drafts. Take an action (comment, tag, review, label, or merge) on at most
-                 ${{ env.MAX_PRS_PER_RUN }} PRs this run, then stop. PRs you skip without acting (drafts,
-                 no new activity since your last comment) do not count toward the limit.
+                 ${{ steps.settings.outputs.max_prs }} PRs this run, then stop. PRs you skip without acting
+                 (drafts, no new activity since your last comment) do not count toward the limit.
             3. For each PR, inspect it with `gh pr view <n> --comments`, `gh pr diff <n>`,
-               and `gh pr checks <n>`. Read the surrounding source in this checkout when you
-               need context to judge the change.
-            4. Take exactly one action per PR as the rules file specifies.
+               and `gh pr checks <n>`. Read any issue it fixes with `gh issue view <n> --comments`.
+               Read the surrounding source in this checkout, and its `git log`/`git blame`,
+               when you need context to judge the change.
+            4. Take exactly one action per PR as the rules file specifies. Every comment or review
+               you post follows "Writing comments" in the rules: an unlabeled bottom line first,
+               then only what is necessary.
             5. Finish with a short summary table: PR number, title, action taken, reason.
                List any PRs left unprocessed because of the limit.
           claude_args: >-
             --max-turns 150
-            --allowedTools "Read,Grep,Glob,Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh pr comment:*),Bash(gh pr edit:*),Bash(gh pr review:*),Bash(.github/autotriage_guard.sh:*)"
+            --allowedTools "Read,Grep,Glob,Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh pr comment:*),Bash(gh pr edit:*),Bash(gh pr review:*),Bash(gh issue list:*),Bash(gh issue view:*),Bash(gh issue comment:*),Bash(git log:*),Bash(git blame:*),Bash(.github/autotriage_guard.sh:*)"
             --disallowedTools "Edit,Write,MultiEdit,NotebookEdit"
