@@ -166,8 +166,8 @@ class IOTest(PymatgenTestExtended):
         # regression test for #832: dict-like json not in "split" orient
         # used to return None
         df = pd.DataFrame({"a": [1, 2], "b": ["x", "y"]})
-        temp_file = os.path.join(self.temp_folder, "test_dataframe_columns.json")
-        store_dataframe_as_json(df, temp_file, orient="columns")
+        temp_file = os.path.join(self.temp_folder, "test_dataframe_dict.json")
+        store_dataframe_as_json(df, temp_file, orient="dict")
 
         loaded = load_dataframe_from_json(temp_file)
         self.assertIsNotNone(loaded)
