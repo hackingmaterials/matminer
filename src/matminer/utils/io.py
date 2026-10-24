@@ -170,8 +170,6 @@ def load_dataframe_from_json(filename, pbar=True, decode=True):
     pbar2.close()
 
     # if only keys are data, columns, index then orient=split
-    if isinstance(dataframe_data, dict):
-        if set(dataframe_data.keys()) == {"data", "columns", "index"}:
-            return pandas.DataFrame(**dataframe_data)
-    else:
-        return pandas.DataFrame(dataframe_data)
+    if isinstance(dataframe_data, dict) and set(dataframe_data.keys()) == {"data", "columns", "index"}:
+        return pandas.DataFrame(**dataframe_data)
+    return pandas.DataFrame(dataframe_data)
