@@ -162,6 +162,22 @@ class IOTest(PymatgenTestExtended):
         df = load_dataframe_from_json(os.path.join(test_dir, "dataframe.json.bz2"))
         self.assertTrue(self.diamond == df["structure"][0], "Dataframe contents do not match")
 
+    def test_load_dataframe_from_json_multiindex(self):
+        temp_file = os.path.join(self.temp_folder, "test_multiindex.json")
+        arr = np.arange(20).reshape(5, 4)
+
+        df = pd.DataFrame(arr, columns=list("abcd")).set_index(["a", "b"])
+        store_dataframe_as_json(df, temp_file, pbar=False)
+        loaded = load_dataframe_from_json(temp_file, pbar=False)
+        self.assertIsInstance(loaded.index, pd.MultiIndex)
+        pd.testing.assert_frame_equal(loaded, df, check_names=False)
+
+        df = pd.DataFrame(arr, columns=pd.MultiIndex.from_tuples([("x", 1), ("x", 2), ("y", 1), ("y", 2)]))
+        store_dataframe_as_json(df, temp_file, pbar=False)
+        loaded = load_dataframe_from_json(temp_file, pbar=False)
+        self.assertIsInstance(loaded.columns, pd.MultiIndex)
+        pd.testing.assert_frame_equal(loaded, df, check_names=False)
+
     def tearDown(self):
         shutil.rmtree(self.temp_folder)
 
