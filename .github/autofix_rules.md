@@ -23,8 +23,9 @@ Change something only if all of these hold:
 Otherwise change nothing, and say why in the summary. Decline in particular
 when it is a feature request or design question the request doesn't settle;
 when it would change results, defaults, the public API, data, or a domain
-risk area without a maintainer agreeing; when the cause is in a dependency;
-or when the behavior looks intended or the issue is a duplicate.
+risk area without a maintainer agreeing; when the cause is in a dependency
+and changing its version doesn't fix it; or when the behavior looks
+intended or the issue is a duplicate.
 
 ## 2. Make the change
 
@@ -40,9 +41,11 @@ or when the behavior looks intended or the issue is a duplicate.
   `autofix/issue-<n>`, or an earlier bot commit on the PR), read its review
   comments and CI results (`gh pr checks`, `gh run view --log-failed`) and
   fix what failed.
-- **Never:** add or upgrade dependencies, touch `.github/`, change existing
-  tests' expected values or skip tests (unless asked), or make unrelated
-  changes.
+- **Dependencies:** you may add, upgrade, or re-pin dependencies in
+  `pyproject.toml` (and `requirements/`) when the fix or request needs it.
+  Say which and why in the summary.
+- **Never:** touch `.github/`, change existing tests' expected values or
+  skip tests (unless asked), or make unrelated changes.
 - Finish with `git status` and `git diff`; remove anything you didn't mean
   to change.
 

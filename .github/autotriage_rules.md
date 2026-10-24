@@ -152,7 +152,8 @@ If the PR also matches rule 3 or 4, include that in the same comment.
 - Changes the API of a base class or core data structure, or any core
   behavior that affects 2+ modules
 - Adds a dependency, makes an optional dependency required, or changes
-  version pins (other than the automated dependency PR)
+  version pins (other than the automated dependency PR or the bot's own
+  `autofix/*` PRs)
 - Is a dependency bump whose CI fails, because it needs porting work, not a
   merge. Also one that conflicts with other pinned versions, or is a major
   version jump in a dependency users install.
