@@ -1,13 +1,13 @@
 import json
 import math
 import unittest
+from types import SimpleNamespace
 
 import numpy as np
 from monty.json import MontyEncoder
 from pandas import DataFrame, MultiIndex
 from pymatgen.core import SETTINGS, Composition, Element, Lattice, Structure
 from pymatgen.core.structure import IStructure
-from pymatgen.ext.matproj import MPRestError
 from pymatgen.util.testing import PymatgenTest
 
 from matminer.featurizers.conversions import (
@@ -22,6 +22,8 @@ from matminer.featurizers.conversions import (
     StructureToIStructure,
     StructureToOxidStructure,
 )
+
+from ..mp_api_mock import FakeMPRester, fake_mp_api
 
 try:
     from ase import Atoms
@@ -302,6 +304,11 @@ class TestConversions(PymatgenTest):
         df = DataFrame(data={"composition": [Composition("Fe2O3"), Composition("N9Al34Fe234")]})
 
         try:
+            from mp_api.client.core import MPRestError
+        except ImportError:
+            raise unittest.SkipTest("mp_api not installed; Skipping composition to structure test")
+
+        try:
             cto = CompositionToStructureFromMP()
         except (ValueError, MPRestError):
             raise unittest.SkipTest("Materials Project API key not set; Skipping cohesive energy test")
@@ -311,6 +318,26 @@ class TestConversions(PymatgenTest):
         self.assertTrue(isinstance(structures[0], Structure))
         self.assertGreaterEqual(len(structures[0]), 5)  # has at least 5 sites
         self.assertTrue(math.isnan(structures[1]))
+
+    def test_composition_to_structurefromMP_uses_mp_api(self):
+        class _MPRester(FakeMPRester):
+            def _search(self, **kwargs):
+                super()._search(**kwargs)
+                if kwargs["formula"] != "Fe2O3":
+                    return []
+                return [
+                    SimpleNamespace(material_id="mp-2", energy_per_atom=-6.0),
+                    SimpleNamespace(material_id="mp-1", energy_per_atom=-7.0),
+                ]
+
+            def get_structure_by_material_id(self, material_id):
+                return f"structure of {material_id}"
+
+        with fake_mp_api(_MPRester):
+            cto = CompositionToStructureFromMP(mapi_key="key")
+            self.assertEqual(cto.mpr.api_key, "key")
+            self.assertEqual(cto.featurize(Composition("Fe2O3")), ["structure of mp-1"])
+            self.assertTrue(math.isnan(cto.featurize(Composition("N9Al34Fe234"))[0]))
 
     def test_pymatgen_general_converter(self):
         cscl = Structure(
