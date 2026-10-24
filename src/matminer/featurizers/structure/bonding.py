@@ -1187,7 +1187,9 @@ class MinimumRelativeDistances(BaseFeaturizer):
             dists_relative = np.asarray(dists_relative)
             drmin = dists_relative.min()
             dists_relative_min[i] = drmin
-            dists_relative_min_ix = np.where(dists_relative == drmin)
+            # Use a tolerance so floating-point noise doesn't break ties
+            # between symmetry-equivalent neighbors
+            dists_relative_min_ix = np.where(np.isclose(dists_relative, drmin))
 
             neigh_species_equiv = np.asarray(neigh_species_relative)[dists_relative_min_ix]
 
