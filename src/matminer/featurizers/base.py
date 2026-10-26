@@ -2,8 +2,9 @@ import sys
 import traceback
 import warnings
 from abc import ABC, abstractmethod
+from concurrent.futures import ProcessPoolExecutor
 from functools import partial
-from multiprocessing import Pool, cpu_count
+from multiprocessing import cpu_count
 from typing import Any, Union
 
 import numpy as np
@@ -98,7 +99,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
 
     An additional factor to consider is the chunksize for data parallelisation.
     For lightweight computational tasks, the overhead associated with passing
-    data from `multiprocessing.Pool.map()` to the function being parallelized
+    data from `ProcessPoolExecutor.map()` to the function being parallelized
     can increase the time taken for all tasks to be completed. By setting
     the `self._chunksize` argument, the overhead associated with passing data
     to the tasks can be reduced. Note that there is only an advantage to using
@@ -153,7 +154,7 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         return self._n_jobs if hasattr(self, "_n_jobs") else cpu_count()
 
     def set_chunksize(self, chunksize):
-        """Set the chunksize used for Pool.map parallelisation."""
+        """Set the chunksize used for ProcessPoolExecutor.map parallelisation."""
         self._chunksize = chunksize
 
     @property
@@ -443,16 +444,29 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
         elif isinstance(entries, pd.Series) or not isinstance(entries[0], (tuple, list, np.ndarray)):
             entries = zip(entries)
 
-        # Add a progress bar
-        if pbar:
-            # list() required, tqdm has issues with memory if generator given
-            entries = tqdm(list(entries), desc=self.__class__.__name__, **(pbar if isinstance(pbar, dict) else {}))
+        # list() required, tqdm has issues with memory if generator given
+        entries = list(entries)
+
+        # Add a progress bar, which counts completed entries
+        def progress(results):
+            if not pbar:
+                return results
+            return tqdm(
+                results,
+                total=len(entries),
+                desc=self.__class__.__name__,
+                **(pbar if isinstance(pbar, dict) else {}),
+            )
+
+        func = partial(
+            self.featurize_wrapper,
+            return_errors=return_errors,
+            ignore_errors=ignore_errors,
+        )
 
         # Run the actual featurization
         if self.n_jobs == 1:
-            return [
-                self.featurize_wrapper(x, ignore_errors=ignore_errors, return_errors=return_errors) for x in entries
-            ]
+            return list(progress(map(func, entries)))
         else:
             if sys.version_info[0] < 3:
                 warnings.warn(
@@ -469,14 +483,10 @@ class BaseFeaturizer(BaseEstimator, TransformerMixin, ABC):
                     return_errors=return_errors,
                     pbar=pbar,
                 )
-            with Pool(self.n_jobs, maxtasksperchild=1) as p:
-                func = partial(
-                    self.featurize_wrapper,
-                    return_errors=return_errors,
-                    ignore_errors=ignore_errors,
-                )
-                res = p.map(func, entries, chunksize=self.chunksize)
-                return res
+            # ProcessPoolExecutor raises BrokenProcessPool if a worker dies
+            # (e.g. OOM-killed), where Pool.map would hang forever.
+            with ProcessPoolExecutor(self.n_jobs) as executor:
+                return list(progress(executor.map(func, entries, chunksize=self.chunksize)))
 
     def featurize_wrapper(self, x, return_errors=False, ignore_errors=False):
         """
