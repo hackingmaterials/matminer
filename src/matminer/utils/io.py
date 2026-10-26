@@ -172,6 +172,12 @@ def load_dataframe_from_json(filename, pbar=True, decode=True):
     # if only keys are data, columns, index then orient=split
     if isinstance(dataframe_data, dict):
         if set(dataframe_data.keys()) == {"data", "columns", "index"}:
+            # MultiIndex labels are stored as lists of lists, which pandas
+            # can't use directly as an index
+            for key in ("index", "columns"):
+                labels = dataframe_data[key]
+                if labels and all(isinstance(label, list) for label in labels):
+                    dataframe_data[key] = pandas.MultiIndex.from_tuples([tuple(label) for label in labels])
             return pandas.DataFrame(**dataframe_data)
     else:
         return pandas.DataFrame(dataframe_data)
