@@ -549,7 +549,7 @@ class YangSolidSolution(BaseFeaturizer):
         mean_Tm = PropertyStats.mean(self.elem_data.get_elemental_properties(elements, "MeltingT"), fractions)
 
         # Get the mixing entropy
-        entropy = np.dot(fractions, np.log(fractions)) * 8.314 / 1000
+        entropy = -np.dot(fractions, np.log(fractions)) * 8.314 / 1000
 
         # Get the mixing enthalpy
         enthalpy = 0
@@ -563,7 +563,7 @@ class YangSolidSolution(BaseFeaturizer):
         #  this limit without causing issues with infinite features
         enthalpy = max(1e-6, abs(enthalpy))
 
-        return abs(mean_Tm * entropy / enthalpy)
+        return mean_Tm * entropy / enthalpy
 
     def compute_delta(self, comp):
         """Compute Yang's delta parameter
@@ -842,7 +842,7 @@ class WenAlloys(BaseFeaturizer):
     def compute_configuration_entropy(fractions):
         r"""Compute the configuration entropy.
 
-        :math:`R \sum^n_{i=1} c_i \ln{c_i}`
+        :math:`-R \sum^n_{i=1} c_i \ln{c_i}`
 
         where :math:`c_i` are the fraction of each element :math:`i`
         and :math:`R` is the ideal gas constant
@@ -852,7 +852,7 @@ class WenAlloys(BaseFeaturizer):
             (float) gamma
         """
 
-        return np.dot(fractions, np.log(fractions)) * 8.314 / 1000
+        return -np.dot(fractions, np.log(fractions)) * 8.314 / 1000
 
     @staticmethod
     def compute_weight_fraction(elements, composition):
@@ -953,11 +953,7 @@ class WenAlloys(BaseFeaturizer):
                     * self.data_source_enthalpy.get_mixing_enthalpy(Element(e1), Element(e2))
                 )
         enthalpy *= 4
-        # Make sure the enthalpy is nonzero
-        #  The limit as dH->0 of omega is +\inf. A very small positive dH will approximate
-        #  this limit without causing issues with infinite features
-        enthalpy = max(1e-6, abs(enthalpy))
-        return abs(enthalpy)
+        return enthalpy
 
     def feature_labels(self):
         return [

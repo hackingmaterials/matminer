@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 import pandas as pd
-from pymatgen.core import Composition
+from pymatgen.core import Composition, Element
 
 from matminer.featurizers.composition.alloy import Miedema, WenAlloys, YangSolidSolution
 from matminer.featurizers.conversions import CompositionToOxidComposition
@@ -241,7 +241,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "0.017598986298389213V0.0001119935491715677Nb6.159645204436224e-05Co"
             "0.14599159088436503Al0.003179816842549869Ti0.018498934461375023",
             "Atomic weight mean": 57.24008321450784,
-            "Configuration entropy": -0.008958911485121818,
+            "Configuration entropy": 0.008958911485121818,
             "Electronegativity delta": 0.042327487126447516,
             "Electronegativity local mismatch": 0.08262466022141576,
             "Interant d electrons": 45.0,
@@ -249,7 +249,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "Interant f electrons": 0,
             "Interant p electrons": 5.0,
             "Interant s electrons": 3.0,
-            "Lambda entropy": -12.084431980055149,
+            "Lambda entropy":12.084431980055149,
             "Mean cohesive energy": 4.382084353941212,
             "Mixing enthalpy": 3.6650695863166347,
             "Radii gamma": 1.8548430634198114,
@@ -283,8 +283,8 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
 
         df = wa.featurize_dataframe(df, "composition")
         self.assertTupleEqual(df.shape, (2, 26))
-        self.assertAlmostEqual(df["Configuration entropy"].iloc[0], -0.008959, places=5)
-        self.assertAlmostEqual(df["Configuration entropy"].iloc[1], -0.009039, places=5)
+        self.assertAlmostEqual(df["Configuration entropy"].iloc[0], 0.008959, places=5)
+        self.assertAlmostEqual(df["Configuration entropy"].iloc[1], 0.009039, places=5)
 
         # Test impute_nan=True
         wa = WenAlloys(impute_nan=True)
@@ -310,7 +310,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "0.017598986298389213V0.0001119935491715677Nb6.159645204436224e-05Co"
             "0.14599159088436503Al0.003179816842549869Ti0.018498934461375023",
             "Atomic weight mean": 57.24008321450784,
-            "Configuration entropy": -0.008958911485121818,
+            "Configuration entropy": 0.008958911485121818,
             "Electronegativity delta": 0.042327487126447516,
             "Electronegativity local mismatch": 0.08262466022141576,
             "Interant d electrons": 45.0,
@@ -318,7 +318,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "Interant f electrons": 0,
             "Interant p electrons": 5.0,
             "Interant s electrons": 3.0,
-            "Lambda entropy": -12.084431980055149,
+            "Lambda entropy":12.084431980055149,
             "Mean cohesive energy": 4.382084353941212,
             "Mixing enthalpy": 3.6650695863166347,
             "Radii gamma": 1.8548430634198114,
@@ -352,8 +352,8 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
 
         df = wa.featurize_dataframe(df, "composition")
         self.assertTupleEqual(df.shape, (2, 26))
-        self.assertAlmostEqual(df["Configuration entropy"].iloc[0], -0.008959, places=5)
-        self.assertAlmostEqual(df["Configuration entropy"].iloc[1], -0.009039, places=5)
+        self.assertAlmostEqual(df["Configuration entropy"].iloc[0], 0.008959, places=5)
+        self.assertAlmostEqual(df["Configuration entropy"].iloc[1], 0.009039, places=5)
 
         f = wa.featurize(comp_bad)
 
@@ -362,7 +362,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "APE mean": 0.001579487142797431,
             "Atomic Fraction": "La0.25O0.75",
             "Atomic weight mean": 46.7259175,
-            "Configuration entropy": -0.004675254392360772,
+            "Configuration entropy": 0.004675254392360772,
             "Electronegativity delta": 0.09973459781368167,
             "Electronegativity local mismatch": 0.1654880136986303,
             "Interant d electrons": 1.0,
@@ -370,7 +370,7 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
             "Interant f electrons": 0,
             "Interant p electrons": 4.0,
             "Interant s electrons": 0,
-            "Lambda entropy": -0.014796268010071023,
+            "Lambda entropy":0.014796268010071023,
             "Mean cohesive energy": 3.0675,
             "Mixing enthalpy": 10.652682648401827,
             "Radii gamma": 3.3935618188826431,
@@ -399,8 +399,20 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
 
         df = wa.featurize_dataframe(df, "composition")
         self.assertTupleEqual(df.shape, (2, 26))
-        self.assertAlmostEqual(df["Configuration entropy"].iloc[0], -0.008959, places=5)
-        self.assertAlmostEqual(df["Configuration entropy"].iloc[1], -0.009039, places=5)
+        self.assertAlmostEqual(df["Configuration entropy"].iloc[0], 0.008959, places=5)
+        self.assertAlmostEqual(df["Configuration entropy"].iloc[1], 0.009039, places=5)
+
+    def test_wen_alloys_mixing_signs(self):
+        # Guo, Mater. Sci. Technol. 31 (2015) 1223-1230 (doi:10.1179/1743284715Y.0000000018):
+        # S_mix = -R sum(c_i ln c_i) is positive, and H_mix = 4 sum(c_i c_j H_ij) keeps its sign.
+        # https://github.com/hackingmaterials/matminer/issues/962
+        s_mix = WenAlloys.compute_configuration_entropy([0.5, 0.5])
+        self.assertAlmostEqual(s_mix, 8.314 / 1000 * np.log(2), places=12)
+
+        wa = WenAlloys()
+        h_nial = wa.data_source_enthalpy.get_mixing_enthalpy(Element("Ni"), Element("Al"))
+        self.assertLess(h_nial, 0)
+        self.assertAlmostEqual(wa.compute_enthalpy(["Ni", "Al"], [0.5, 0.5]), h_nial, places=12)
 
     def test_wen_alloys_gamma_radii(self):
         # Gamma is the ratio of the solid angles of the smallest and largest
