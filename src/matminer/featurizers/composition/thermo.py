@@ -39,17 +39,18 @@ class CohesiveEnergy(BaseFeaturizer):
         formation_energy_per_atom = formation_energy_per_atom or None
 
         if not formation_energy_per_atom:
-            from pymatgen.ext.matproj import MPRester
+            from mp_api.client import MPRester
 
             # Get formation energy of most stable structure from MP
-            if self.mapi_key:
-                struct_lst = MPRester(self.mapi_key).get_data(comp.reduced_formula)
-            else:
-                struct_lst = MPRester().get_data(comp.reduced_formula)
+            with MPRester(self.mapi_key) if self.mapi_key else MPRester() as mpr:
+                struct_lst = mpr.materials.summary.search(
+                    formula=comp.reduced_formula,
+                    fields=["material_id", "energy_per_atom", "formation_energy_per_atom"],
+                )
 
             if len(struct_lst) > 0:
-                most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
-                formation_energy_per_atom = most_stable_entry["formation_energy_per_atom"]
+                most_stable_entry = sorted(struct_lst, key=lambda e: e.energy_per_atom)[0]
+                formation_energy_per_atom = most_stable_entry.formation_energy_per_atom
             else:
                 raise ValueError(f"No structure found in MP for {comp}")
 
@@ -99,21 +100,22 @@ class CohesiveEnergyMP(BaseFeaturizer):
         Args:
             comp: (str) compound composition, eg: "NaCl"
         """
-        from pymatgen.ext.matproj import MPRester
+        from mp_api.client import MPRester
 
         # Get formation energy of most stable structure from MP
         with MPRester(self.mapi_key) if self.mapi_key else MPRester() as mpr:
-            struct_lst = mpr.get_data(comp.reduced_formula)
+            struct_lst = mpr.materials.summary.search(
+                formula=comp.reduced_formula, fields=["material_id", "energy_per_atom"]
+            )
             if len(struct_lst) > 0:
-                most_stable_entry = sorted(struct_lst, key=lambda e: e["energy_per_atom"])[0]
+                material_id = str(sorted(struct_lst, key=lambda e: e.energy_per_atom)[0].material_id)
                 try:
-                    return [mpr.get_cohesive_energy(most_stable_entry["material_id"], per_atom=True)]
+                    cohesive_energy = mpr.get_cohesive_energy([material_id], normalization="atom")
+                    if isinstance(cohesive_energy, dict):
+                        cohesive_energy = cohesive_energy[material_id]
+                    return [cohesive_energy]
                 except Exception:
-                    raise ValueError(
-                        "No cohesive energy can be determined for material_id: {}".format(
-                            most_stable_entry["material_id"]
-                        )
-                    )
+                    raise ValueError(f"No cohesive energy can be determined for material_id: {material_id}")
             else:
                 raise ValueError(f"No structure found in MP for {comp}")
 
