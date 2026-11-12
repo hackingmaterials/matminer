@@ -402,13 +402,10 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
         self.assertAlmostEqual(df["Configuration entropy"].iloc[0], 0.008959, places=5)
         self.assertAlmostEqual(df["Configuration entropy"].iloc[1], 0.009039, places=5)
 
-    def test_wen_alloys_mixing_signs(self):
+    def test_wen_alloys_mixing_enthalpy_sign(self):
         # Guo, Mater. Sci. Technol. 31 (2015) 1223-1230 (doi:10.1179/1743284715Y.0000000018):
-        # S_mix = -R sum(c_i ln c_i) is positive, and H_mix = 4 sum(c_i c_j H_ij) keeps its sign.
+        # H_mix = 4 sum(c_i c_j H_ij) keeps its sign.
         # https://github.com/hackingmaterials/matminer/issues/962
-        s_mix = WenAlloys.compute_configuration_entropy([0.5, 0.5])
-        self.assertAlmostEqual(s_mix, 8.314 / 1000 * np.log(2), places=12)
-
         wa = WenAlloys()
         h_nial = wa.data_source_enthalpy.get_mixing_enthalpy(Element("Ni"), Element("Al"))
         self.assertLess(h_nial, 0)
@@ -430,6 +427,14 @@ class AlloyFeaturizersTest(CompositionFeaturesTest):
         expected = omega(r_min) / omega(r_max)
         self.assertAlmostEqual(WenAlloys.compute_gamma_radii(stats), expected, places=12)
         self.assertAlmostEqual(WenAlloys.compute_gamma_radii(stats), 1.3615503496919474, places=12)
+
+    def test_wen_alloys_configuration_entropy_sign(self):
+        # Ideal configurational entropy is -R * sum(c_i * ln(c_i)), which is
+        # positive for any mixture. Units are kJ/(mol K).
+        # https://github.com/hackingmaterials/matminer/issues/954
+        s = WenAlloys.compute_configuration_entropy([0.5, 0.5])
+        self.assertGreater(s, 0)
+        self.assertAlmostEqual(s, 8.314 * math.log(2) / 1000, places=12)
 
 
 if __name__ == "__main__":
