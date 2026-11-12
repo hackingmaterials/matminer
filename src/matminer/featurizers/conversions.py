@@ -565,7 +565,7 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
     """
 
     def __init__(self, target_col_id="structure", overwrite_data=False, mapi_key=None):
-        from pymatgen.ext.matproj import MPRester
+        from mp_api.client import MPRester
 
         super().__init__(target_col_id, overwrite_data)
         if mapi_key:
@@ -584,10 +584,12 @@ class CompositionToStructureFromMP(ConversionFeaturizer):
             (`pymatgen.core.structure.Structure`): A Structure object.
         """
 
-        entries = self.mpr.get_data(comp.reduced_formula, prop="energy_per_atom")
+        entries = self.mpr.materials.summary.search(
+            formula=comp.reduced_formula, fields=["material_id", "energy_per_atom"]
+        )
         if len(entries) > 0:
-            most_stable_entry = sorted(entries, key=lambda e: e["energy_per_atom"])[0]
-            s = self.mpr.get_structure_by_material_id(most_stable_entry["material_id"])
+            most_stable_entry = sorted(entries, key=lambda e: e.energy_per_atom)[0]
+            s = self.mpr.get_structure_by_material_id(most_stable_entry.material_id)
             return [s]
 
         return [float("nan")]
