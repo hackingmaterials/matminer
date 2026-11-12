@@ -842,7 +842,7 @@ class WenAlloys(BaseFeaturizer):
     def compute_configuration_entropy(fractions):
         r"""Compute the configuration entropy.
 
-        :math:`R \sum^n_{i=1} c_i \ln{c_i}`
+        :math:`- R \sum^n_{i=1} c_i \ln{c_i}`
 
         where :math:`c_i` are the fraction of each element :math:`i`
         and :math:`R` is the ideal gas constant
@@ -852,7 +852,7 @@ class WenAlloys(BaseFeaturizer):
             (float) gamma
         """
 
-        return np.dot(fractions, np.log(fractions)) * 8.314 / 1000
+        return -np.dot(fractions, np.log(fractions)) * 8.314 / 1000
 
     @staticmethod
     def compute_weight_fraction(elements, composition):
