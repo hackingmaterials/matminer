@@ -70,7 +70,7 @@ cycler==0.12.1
     # via matplotlib
 dill==0.4.1
     # via pylint
-dnspython==2.9.0
+dnspython==2.9.1
     # via pymongo
 docutils==0.22.4
     # via sphinx
@@ -80,18 +80,18 @@ execnet==2.1.2
     # via pytest-xdist
 fair-research-login==0.3.1
     # via mdf-toolbox
-flake8==7.4.1
+flake8==7.5.0
     # via
     #   matminer
     #   matminer (pyproject.toml)
-fonttools==4.67.0
+fonttools==4.68.0
     # via matplotlib
 globus-sdk==3.66.0
     # via
     #   fair-research-login
     #   mdf-forge
     #   mdf-toolbox
-httplib2==0.32.0
+httplib2==0.32.1
     # via
     #   matminer
     #   matminer (pyproject.toml)
@@ -162,13 +162,13 @@ mypy-extensions==1.1.0
     # via
     #   black
     #   isort
-narwhals==2.27.1
+narwhals==2.28.0
     # via
     #   plotly
     #   scikit-learn
 networkx==3.6.1
     # via pymatgen-core
-numba==0.68.0
+numba==0.68.1
     # via sparse
 numpy==2.4.6
     # via
@@ -208,7 +208,7 @@ pathspec==1.1.1
     # via black
 pillow==13.0.0
     # via matplotlib
-platformdirs==4.13.5
+platformdirs==4.14.3
     # via
     #   black
     #   pylint
@@ -222,7 +222,7 @@ pycodestyle==2.15.0
     # via flake8
 pycparser==3.12
     # via cffi
-pyflakes==4.0.3
+pyflakes==4.1.0
     # via flake8
 pygments==2.21.0
     # via
@@ -239,7 +239,7 @@ pymatgen==2026.10.24
     # via
     #   matminer
     #   matminer (pyproject.toml)
-pymatgen-core==2026.10.16
+pymatgen-core==2026.10.31
     # via pymatgen
 pymongo==4.19.0
     # via
@@ -252,7 +252,7 @@ pyparsing==3.3.3
     #   matplotlib
 pypif==2.1.2
     # via citrination-client
-pytest==9.1.1
+pytest==9.2.0
     # via
     #   matminer
     #   matminer (pyproject.toml)
@@ -271,13 +271,13 @@ pytest-xdist==3.8.0
     # via
     #   matminer
     #   matminer (pyproject.toml)
-python-dateutil==3.0.0
+python-dateutil==4.0.0
     # via
     #   matplotlib
     #   pandas
 pytokens==0.4.1
     # via black
-pytz==2026.5
+pytz==2026.6
     # via pandas
 pyyaml==6.0.3
     # via citrination-client
@@ -326,7 +326,6 @@ six==1.17.0
     #   aflow
     #   citrination-client
     #   pypif
-    #   python-dateutil
 snowballstemmer==3.1.1
     # via sphinx
 soupsieve==3.0.4
@@ -378,7 +377,7 @@ typing-extensions==4.16.0
     #   beautifulsoup4
     #   referencing
     #   spglib
-tzdata==2026.5
+tzdata==2026.6
     # via
     #   pandas
     #   python-dateutil
