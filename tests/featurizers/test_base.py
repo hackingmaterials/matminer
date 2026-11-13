@@ -1,5 +1,7 @@
 import copy
+import os
 import unittest
+from concurrent.futures.process import BrokenProcessPool
 from itertools import product
 
 import numpy as np
@@ -29,6 +31,14 @@ class SingleFeaturizer(BaseFeaturizer):
 
     def implementors(self):
         return ["Us"]
+
+
+class WorkerKillingFeaturizer(SingleFeaturizer):
+    def featurize(self, x):
+        if x == 2:
+            # Simulate a worker being killed, e.g. by the OOM killer
+            os._exit(1)
+        return [x + 1]
 
 
 class SingleFeaturizerWithPrecheck(SingleFeaturizer):
@@ -245,6 +255,21 @@ class TestBaseClass(PymatgenTest):
         s.set_n_jobs(2)
         mat = s.featurize_many([[1, 4], [2, 5], [3, 6]])
         np.testing.assert_array_almost_equal(mat, [[5], [7], [9]])
+
+    def test_featurize_many_order(self):
+        s = self.single
+        s.set_n_jobs(2)
+        s.set_chunksize(3)
+        mat = s.featurize_many(list(range(50)), pbar=False)
+        np.testing.assert_array_almost_equal(mat, [[x + 1] for x in range(50)])
+
+    def test_featurize_many_killed_worker(self):
+        # A dead worker must raise, not hang (#902)
+        f = WorkerKillingFeaturizer()
+        f.set_n_jobs(2)
+        f.set_chunksize(1)
+        with self.assertRaises(BrokenProcessPool):
+            f.featurize_many([1, 2, 3], ignore_errors=True)
 
     def test_multiprocessing_df(self):
         # Single argument
