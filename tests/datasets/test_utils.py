@@ -1,5 +1,7 @@
+import hashlib
 import os
 import unittest
+from unittest.mock import patch
 
 import pandas as pd
 
@@ -78,6 +80,38 @@ class UtilsTest(DatasetTest):
 
         _validate_dataset(self._path, self._url, file_hash=None, download_if_missing=True)
         self.assertTrue(os.path.exists(self._path))
+        os.remove(self._path)
+
+    def test_validate_dataset_removes_corrupt_file(self):
+        # Regression test for #840: a corrupt download must not be left on disk
+        if os.path.exists(self._path):
+            os.remove(self._path)
+
+        def fake_fetch(url, file_path):
+            with open(file_path, "w") as f:
+                f.write("corrupt")
+
+        with patch("matminer.datasets.utils._fetch_external_dataset", side_effect=fake_fetch):
+            with self.assertRaises(UserWarning):
+                _validate_dataset(self._path, self._url, file_hash=self._hash, n_retries_allowed=0)
+        self.assertFalse(os.path.exists(self._path))
+
+    def test_validate_dataset_retries_after_hash_mismatch(self):
+        if os.path.exists(self._path):
+            os.remove(self._path)
+
+        contents = iter(["corrupt", "good"])
+
+        def fake_fetch(url, file_path):
+            with open(file_path, "w") as f:
+                f.write(next(contents))
+
+        good_hash = hashlib.sha256(b"good").hexdigest()
+        with patch("matminer.datasets.utils._fetch_external_dataset", side_effect=fake_fetch), patch(
+            "matminer.datasets.utils.time.sleep"
+        ):
+            _validate_dataset(self._path, self._url, file_hash=good_hash, n_retries_allowed=1)
+        self.assertEqual(_get_file_sha256_hash(self._path), good_hash)
         os.remove(self._path)
 
     def test_fetch_external_dataset(self):

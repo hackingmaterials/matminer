@@ -109,16 +109,17 @@ def _validate_dataset(data_path, url=None, file_hash=None, download_if_missing=T
                 break
             except UserWarning:
                 warnings.warn(hash_mismatch_msg)
+                # Remove the corrupt file so it is not loaded on a later call
+                if os.path.exists(data_path):
+                    os.remove(data_path)
                 if n_retries < n_retries_allowed:
                     warnings.warn(f"Waiting {download_retry_wait}s and trying again...")
                     time.sleep(download_retry_wait)
                 else:
                     raise UserWarning(
-                        f"File could not be downloaded to {data_path} after {n_retries_allowed} retries"
+                        f"File could not be downloaded to {data_path} after {n_retries_allowed} retries "
                         f"due to repeated hash validation failures."
                     )
-                if os.path.exists(data_path):
-                    os.remove(data_path)
                 n_retries += 1
 
 
