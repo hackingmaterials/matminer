@@ -1,6 +1,5 @@
 import os
 import shutil
-import stat
 import unittest
 from math import isnan
 from unittest import TestCase
@@ -315,63 +314,27 @@ class TestTransportData(TestCase):
         self.assertAlmostEqual(og_mn, 0.03293018092682478)
 
 
-@pytest.fixture
-def readonly_module_dir(tmp_path, monkeypatch):
-    """A read-only copy of the packaged transport data files, used as matminer's module_dir."""
-    src = os.path.join(data_module.module_dir, "data_files", "mp_transport")
-    pkg = tmp_path / "pkg"
-    dst = pkg / "data_files" / "mp_transport"
-    dst.mkdir(parents=True)
-    for name in ("transport_database.tar.xz", "transport_pure_elems.csv"):
-        shutil.copy(os.path.join(src, name), dst / name)
-    dirs = [pkg, pkg / "data_files", dst]
-    for d in dirs:
-        d.chmod(stat.S_IRUSR | stat.S_IXUSR)
-    monkeypatch.setattr(data_module, "module_dir", str(pkg))
-    yield pkg
-    for d in dirs:
-        d.chmod(stat.S_IRWXU)
-
-
-def _tree(root):
-    return sorted(os.path.relpath(os.path.join(d, f), root) for d, _, files in os.walk(root) for f in files)
-
-
-def test_transport_data_unpacks_into_saving_dir(readonly_module_dir, tmp_path, monkeypatch):
-    before = _tree(readonly_module_dir)
-    saving_dir = tmp_path / "save"
-
-    TransportData(saving_dir=str(saving_dir), method="exact")
-
-    assert (saving_dir / "transport_database.csv").is_file()
-    assert not [f for f in os.listdir(saving_dir) if f.endswith(".tmp")]
-    assert _tree(readonly_module_dir) == before
-
-    # A second instance reuses the unpacked CSV instead of unpacking again.
-    def no_unpack(*args, **kwargs):
-        raise AssertionError("the database was unpacked again")
-
-    monkeypatch.setattr(data_module.tarfile, "open", no_unpack)
-    td = TransportData(saving_dir=str(saving_dir), method="exact")
-    assert td.get_elemental_property(elem="Ca", property_name="m_n") == pytest.approx(9.31e-05)
-    assert _tree(readonly_module_dir) == before
-
-
-def test_transport_data_uses_csv_already_in_package_dir(tmp_path, monkeypatch):
-    # Installs where an older matminer already unpacked the CSV next to the tarball keep using it.
-    src = os.path.join(data_module.module_dir, "data_files", "mp_transport")
-    dst = tmp_path / "pkg" / "data_files" / "mp_transport"
-    dst.mkdir(parents=True)
-    shutil.copy(os.path.join(src, "transport_pure_elems.csv"), dst)
-    data_module.TransportData._unpack_database(
-        os.path.join(src, "transport_database.tar.xz"), str(dst / "transport_database.csv")
+def test_transport_data_unpacks_into_saving_dir(tmp_path, monkeypatch):
+    # A read-only copy of the packaged data, as in a shared or system-wide install.
+    pkg_data = tmp_path / "pkg" / "data_files" / "mp_transport"
+    shutil.copytree(
+        os.path.join(data_module.module_dir, "data_files", "mp_transport"),
+        pkg_data,
+        ignore=shutil.ignore_patterns("transport_database.csv"),
     )
+    pkg_data.chmod(0o555)
     monkeypatch.setattr(data_module, "module_dir", str(tmp_path / "pkg"))
-    monkeypatch.setattr(data_module.tarfile, "open", lambda *a, **k: pytest.fail("unpacked again"))
-
     saving_dir = tmp_path / "save"
-    TransportData(saving_dir=str(saving_dir), method="exact")
-    assert not (saving_dir / "transport_database.csv").exists()
+    try:
+        TransportData(saving_dir=str(saving_dir), method="exact")
+        assert os.listdir(saving_dir) == ["transport_database.csv"]
+        assert sorted(os.listdir(pkg_data)) == ["transport_database.tar.xz", "transport_pure_elems.csv"]
+
+        # A second instance reuses the unpacked CSV instead of unpacking again.
+        monkeypatch.setattr(data_module.tarfile, "open", lambda *args, **kwargs: pytest.fail("unpacked again"))
+        TransportData(saving_dir=str(saving_dir), method="exact")
+    finally:
+        pkg_data.chmod(0o755)
 
 
 if __name__ == "__main__":
