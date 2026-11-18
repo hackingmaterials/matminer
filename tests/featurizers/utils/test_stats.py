@@ -56,8 +56,48 @@ class TestPropertyStats(TestCase):
     def test_skewness(self):
         self._run_test("skewness", np.nan, 0, 0.38180177, 0.559451361)
 
+    def test_weighted_skewness_scale(self):
+        for scale in (1e-3, 1, 1e3):
+            with self.subTest(scale=scale):
+                self.assertAlmostEqual(
+                    PropertyStats.skewness(np.multiply(self.sample_2, scale), self.sample_2_weights),
+                    0.559451361,
+                )
+
     def test_kurtosis(self):
         self._run_test("kurtosis", np.nan, 0, 1.5, 1.9403292181)
+
+    def test_weighted_kurtosis_scale(self):
+        for scale in (1e-3, 1, 1e3):
+            for weight_scale in (1e-10, 1, 1e10):
+                with self.subTest(scale=scale, weight_scale=weight_scale):
+                    self.assertAlmostEqual(
+                        PropertyStats.kurtosis(
+                            np.multiply(self.sample_2, scale),
+                            np.multiply(self.sample_2_weights, weight_scale),
+                        ),
+                        1.9403292181,
+                    )
+
+    def test_weighted_moments_constant(self):
+        for value in (0.1, 0.3):
+            for weights in ([1, 1, 1], [0.1, 0.2, 0.3]):
+                with self.subTest(value=value, weights=weights):
+                    self.assertEqual(PropertyStats.skewness([value] * 3, weights), 0)
+                    self.assertEqual(PropertyStats.kurtosis([value] * 3, weights), 0)
+
+    def test_weighted_moments_zero_weight_outlier(self):
+        for value in (0.1, 0.3):
+            for weights in ([1, 2, 0], [0.1, 0.2, 0]):
+                with self.subTest(value=value, weights=weights):
+                    self.assertEqual(PropertyStats.skewness([value, value, 1], weights), 0)
+                    self.assertEqual(PropertyStats.kurtosis([value, value, 1], weights), 0)
+
+    def test_weighted_moments_nonfinite(self):
+        for value in (np.nan, np.inf):
+            with self.subTest(value=value), np.errstate(invalid="ignore"):
+                self.assertTrue(np.isnan(PropertyStats.skewness([0.1, 0.1, value], [1, 2, 0])))
+                self.assertTrue(np.isnan(PropertyStats.kurtosis([0.1, 0.1, value], [1, 2, 0])))
 
     def test_mode(self):
         self._run_test("mode", 1, 1, 0, 0.5)

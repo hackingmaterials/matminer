@@ -171,7 +171,7 @@ class PropertyStats:
             diff = np.subtract(data_lst, mean)
             u3 = np.dot(weights, np.power(diff, 3)) / total_weight
             u2 = np.dot(weights, np.power(diff, 2)) / total_weight
-            if np.isclose(u3, 0):
+            if u2 == 0 or (np.isfinite(u2) and np.ptp(np.asarray(data_lst)[np.asarray(weights) != 0]) == 0):
                 return 0
             return u3 / u2**1.5
 
@@ -201,7 +201,7 @@ class PropertyStats:
             diff_sq = np.power(np.subtract(data_lst, mean), 2)
             u4 = np.dot(weights, np.power(diff_sq, 2))
             u2 = np.dot(weights, diff_sq)
-            if np.isclose(u4, 0):
+            if u2 == 0 or (np.isfinite(u2) and np.ptp(np.asarray(data_lst)[np.asarray(weights) != 0]) == 0):
                 return 0
             return u4 / u2**2 * total_weight
 
