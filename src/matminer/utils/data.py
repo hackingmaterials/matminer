@@ -7,7 +7,9 @@ including ``pymatgen`` and ``Magpie``.
 import abc
 import json
 import os
+import shutil
 import tarfile
+import uuid
 import warnings
 from copy import deepcopy
 from glob import glob
@@ -1233,12 +1235,15 @@ class TransportData(AbstractData):
         self.method = method
         self.alpha = alpha
 
-        # Read the database as a compressed or csv file
-        dfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_database.csv")
-        dfile_tarred = os.path.join(module_dir, "data_files/mp_transport/", "transport_database.tar.xz")
-        if not os.path.isfile(dfile) and os.path.isfile(dfile_tarred):
-            with tarfile.open(dfile_tarred, mode="r:xz") as tar:
-                tar.extractall(os.path.join(module_dir, "data_files/mp_transport/"))
+        # Read the database. It ships compressed; it is unpacked into saving_dir, never into the
+        # package directory, which may not be writable (shared or system-wide installs).
+        # A copy already unpacked in the package directory by an older matminer is still used.
+        data_dir = os.path.join(module_dir, "data_files", "mp_transport")
+        dfile = os.path.join(data_dir, "transport_database.csv")
+        if not os.path.isfile(dfile):
+            dfile = os.path.join(self.saving_dir, "transport_database.csv")
+            if not os.path.isfile(dfile):
+                self._unpack_database(os.path.join(data_dir, "transport_database.tar.xz"), dfile)
         data = pd.read_csv(dfile).drop(columns=["mp_id"])
         data.rename(columns={"pretty_formula": "Compound"}, inplace=True)
         data.set_index("Compound", inplace=True)
@@ -1261,6 +1266,23 @@ class TransportData(AbstractData):
         self.impute_nan = impute_nan
         if self.impute_nan:
             self.all_element_data.fillna(self.all_element_data.mean(), inplace=True)
+
+    @staticmethod
+    def _unpack_database(tarball, dest):
+        """
+        Unpack transport_database.csv from tarball to dest.
+
+        The CSV is written under a temporary name next to dest and then renamed,
+        so a process reading dest never sees a partially written file.
+        """
+        tmp = f"{dest}.{uuid.uuid4().hex}.tmp"
+        try:
+            with tarfile.open(tarball, mode="r:xz") as tar, open(tmp, "xb") as out:
+                shutil.copyfileobj(tar.extractfile("transport_database.csv"), out)
+            os.replace(tmp, dest)
+        finally:
+            if os.path.exists(tmp):
+                os.remove(tmp)
 
     def _get_element_props(self):
         #
