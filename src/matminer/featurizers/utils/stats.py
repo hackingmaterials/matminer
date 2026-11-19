@@ -210,6 +210,8 @@ class PropertyStats:
         """
         Geometric standard deviation
 
+        Exponential of the sample standard deviation of logarithmic values.
+
         Args:
             data_lst (list of floats): List of values to be assessed
             weights (list of floats): Weights for each value
@@ -225,7 +227,7 @@ class PropertyStats:
         mean = PropertyStats.holder_mean(data_lst, weights, 0)
         beta = np.sum(weights) / (np.sum(weights) ** 2 - np.sum(np.power(weights, 2)))
         dev = np.log(np.true_divide(data_lst, mean))
-        return np.sqrt(np.exp(beta * np.dot(weights, np.power(dev, 2))))
+        return np.exp(np.sqrt(beta * np.dot(weights, np.power(dev, 2))))
 
     @staticmethod
     def mode(data_lst, weights=None):
