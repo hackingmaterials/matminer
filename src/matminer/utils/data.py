@@ -1241,7 +1241,7 @@ class TransportData(AbstractData):
         dfile_tarred = os.path.join(module_dir, "data_files/mp_transport/", "transport_database.tar.xz")
         if not os.path.isfile(dfile) and os.path.isfile(dfile_tarred):
             with tarfile.open(dfile_tarred, mode="r:xz") as tar:
-                tar.extractall(self.saving_dir)
+                tar.extractall(self.saving_dir, filter="data")
         data = pd.read_csv(dfile).drop(columns=["mp_id"])
         data.rename(columns={"pretty_formula": "Compound"}, inplace=True)
         data.set_index("Compound", inplace=True)
