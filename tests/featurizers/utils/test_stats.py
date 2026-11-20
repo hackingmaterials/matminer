@@ -71,11 +71,39 @@ class TestPropertyStats(TestCase):
         self._run_test("holder_mean::1", 1, 1, 2.0 / 3, 5.0 / 7)
         self._run_test("holder_mean::2", 1, 1, sqrt(5.0 / 6), 0.88640526)
 
-        # can't use run_test since it uses a sample with zero, which is not
-        # allowed for Holder mean with -1
+        # Check harmonic means with nonzero inputs.
         self.assertAlmostEqual(PropertyStats.holder_mean([1, 1, 2], power=-1), 1.2, places=3)
 
         self.assertAlmostEqual(PropertyStats.holder_mean([1, 2], [2, 1], power=-1), 1.2, places=3)
+
+    def test_weighted_harmonic_mean_with_zeros(self):
+        cases = [
+            ([0, 1], [1, 1], 0),
+            ([0, 1], [0, 1], 1),
+            ([0, 1, 2], [0, 2, 1], 1.2),
+            ([1, 0], [1, 1], 0),
+        ]
+        for values, weights, expected in cases:
+            for container in (list, np.array):
+                with self.subTest(values=values, weights=weights, container=container):
+                    self.assertAlmostEqual(
+                        PropertyStats.calc_stat(container(values), "holder_mean::-1", container(weights)), expected
+                    )
+
+    def test_weighted_harmonic_mean_nonfinite(self):
+        cases = [
+            ([0, np.nan], [1, 1]),
+            ([0, 1], [np.nan, 1]),
+            ([0, 1], [1, np.inf]),
+        ]
+        for values, weights in cases:
+            for reverse in (False, True):
+                with self.subTest(values=values, weights=weights, reverse=reverse):
+                    if reverse:
+                        values, weights = values[::-1], weights[::-1]
+                    with np.errstate(invalid="ignore"):
+                        result = PropertyStats.holder_mean(np.array(values), np.array(weights), power=-1)
+                    self.assertTrue(np.isnan(result))
 
     def test_geom_std_dev(self):
         # This is right. Yes, a list without variation has a geom_std_dev of 1
