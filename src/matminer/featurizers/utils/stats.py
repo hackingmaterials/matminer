@@ -280,7 +280,11 @@ class PropertyStats:
             if power == -1:
                 denom = 0
                 for idx, x in enumerate(data_lst):
-                    denom += weights[idx] / x
+                    if x == 0:
+                        if weights[idx] != 0:
+                            denom += np.copysign(np.inf, x) * weights[idx]
+                    else:
+                        denom += weights[idx] / x
 
                 return sum(weights) / denom
 
