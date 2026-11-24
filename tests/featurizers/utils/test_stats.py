@@ -65,6 +65,11 @@ class TestPropertyStats(TestCase):
         # Additional tests
         self.assertAlmostEqual(0, PropertyStats.mode([0, 1, 2], [1, 1, 1]))
 
+    def test_weighted_mode_rescaling(self):
+        self.assertEqual(26, PropertyStats.mode([8, 26], [0.49, 0.51]))
+        self.assertEqual(26, PropertyStats.mode([8, 26], [4.9e-8, 5.1e-8]))
+        self.assertEqual(8, PropertyStats.mode([8, 26], [5e-8, 5e-8]))
+
     def test_holder_mean(self):
         self._run_test("holder_mean::0", 1, 1, np.prod(self.sample_2), 0)
 
