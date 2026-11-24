@@ -2,6 +2,7 @@ from math import sqrt
 from unittest import TestCase
 
 import numpy as np
+from scipy.stats import gstd
 
 from matminer.featurizers.utils.stats import PropertyStats
 
@@ -82,8 +83,24 @@ class TestPropertyStats(TestCase):
         self.assertAlmostEqual(1, PropertyStats.geom_std_dev([1, 1, 1]))
 
         # Harder case
-        self.assertAlmostEqual(1.166860716, PropertyStats.geom_std_dev([0.5, 1.5, 1]))
-        self.assertAlmostEqual(1.352205875, PropertyStats.geom_std_dev([0.5, 1.5, 1], weights=[2, 1, 0]))
+        self.assertAlmostEqual(1.742896470, PropertyStats.geom_std_dev([0.5, 1.5, 1]))
+        self.assertAlmostEqual(2.174581428, PropertyStats.geom_std_dev([0.5, 1.5, 1], weights=[2, 1, 0]))
+
+    def test_geom_std_dev_reference(self):
+        for data in ([0.5, 1.5, 1], np.exp([-1, 1])):
+            for scale in (0.1, 1, 10):
+                values = np.multiply(data, scale)
+                with self.subTest(data=data, scale=scale):
+                    self.assertAlmostEqual(PropertyStats.geom_std_dev(values), gstd(values, ddof=1))
+                    self.assertAlmostEqual(
+                        PropertyStats.geom_std_dev(values, np.ones(len(values))), gstd(values, ddof=1)
+                    )
+
+        for weights in ([2, 1, 0], [0.2, 0.1, 0], [1, 2, 3]):
+            with self.subTest(weights=weights):
+                values = np.array([0.5, 1.5, 1])
+                expected = np.exp(np.sqrt(np.cov(np.log(values), aweights=weights, ddof=1)))
+                self.assertAlmostEqual(PropertyStats.geom_std_dev(values, weights), expected)
 
     def test_quantile(self):
         self._run_test("quantile::0.5", 1, 1, 0.5, 0.5)
