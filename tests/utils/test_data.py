@@ -1,3 +1,5 @@
+import os
+import shutil
 import unittest
 from math import isnan
 from unittest import TestCase
@@ -6,6 +8,7 @@ import pytest
 from pymatgen.core import Element
 from pymatgen.core.periodic_table import Specie
 
+import matminer.utils.data as data_module
 from matminer.utils.data import (
     DemlData,
     IUCrBondValenceData,
@@ -309,6 +312,29 @@ class TestTransportData(TestCase):
         self.assertAlmostEqual(cu_kappan, 1814544.75663, places=5)
         og_mn = self.data_source_imputed.get_elemental_property(elem="Og", property_name="m_n")
         self.assertAlmostEqual(og_mn, 0.03293018092682478)
+
+
+def test_transport_data_unpacks_into_saving_dir(tmp_path, monkeypatch):
+    # A read-only copy of the packaged data, as in a shared or system-wide install.
+    pkg_data = tmp_path / "pkg" / "data_files" / "mp_transport"
+    shutil.copytree(
+        os.path.join(data_module.module_dir, "data_files", "mp_transport"),
+        pkg_data,
+        ignore=shutil.ignore_patterns("transport_database.csv"),
+    )
+    pkg_data.chmod(0o555)
+    monkeypatch.setattr(data_module, "module_dir", str(tmp_path / "pkg"))
+    saving_dir = tmp_path / "save"
+    try:
+        TransportData(saving_dir=str(saving_dir), method="exact")
+        assert os.listdir(saving_dir) == ["transport_database.csv"]
+        assert sorted(os.listdir(pkg_data)) == ["transport_database.tar.xz", "transport_pure_elems.csv"]
+
+        # A second instance reuses the unpacked CSV instead of unpacking again.
+        monkeypatch.setattr(data_module.tarfile, "open", lambda *args, **kwargs: pytest.fail("unpacked again"))
+        TransportData(saving_dir=str(saving_dir), method="exact")
+    finally:
+        pkg_data.chmod(0o755)
 
 
 if __name__ == "__main__":

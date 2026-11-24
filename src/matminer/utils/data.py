@@ -1233,12 +1233,15 @@ class TransportData(AbstractData):
         self.method = method
         self.alpha = alpha
 
-        # Read the database as a compressed or csv file
+        # Read the database as a compressed or csv file.
+        # It is unpacked into saving_dir, as the package directory may not be writable.
         dfile = os.path.join(module_dir, "data_files/mp_transport/", "transport_database.csv")
+        if not os.path.isfile(dfile):
+            dfile = os.path.join(self.saving_dir, "transport_database.csv")
         dfile_tarred = os.path.join(module_dir, "data_files/mp_transport/", "transport_database.tar.xz")
         if not os.path.isfile(dfile) and os.path.isfile(dfile_tarred):
             with tarfile.open(dfile_tarred, mode="r:xz") as tar:
-                tar.extractall(os.path.join(module_dir, "data_files/mp_transport/"))
+                tar.extractall(self.saving_dir, filter="data")
         data = pd.read_csv(dfile).drop(columns=["mp_id"])
         data.rename(columns={"pretty_formula": "Compound"}, inplace=True)
         data.set_index("Compound", inplace=True)
