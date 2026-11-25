@@ -247,7 +247,7 @@ class PropertyStats:
             # Find the entry(s) with the largest weight
             data_lst = np.array(data_lst)
             weights = np.array(weights)
-            most_freq = np.isclose(weights, weights.max())
+            most_freq = np.isclose(weights, weights.max(), atol=0)
 
             # Return the minimum of the most-frequent entries
             return data_lst[most_freq].min()
