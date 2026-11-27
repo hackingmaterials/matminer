@@ -77,6 +77,36 @@ class TestFunctionFeaturizer(unittest.TestCase):
         ff = FunctionFeaturizer(latexify_labels=False)
         self.assertRaises(NotFittedError, ff.feature_labels)
 
+    def test_featurize_literal_column_labels(self):
+        values = [10.0, 20.0]
+        ff = FunctionFeaturizer(expressions=["log(x)"])
+        ff.set_n_jobs(1)
+
+        for label, feature_label in (
+            ("E", "log(E)"),
+            ("N", "log(N)"),
+            ("energy-gap", "log(energy-gap)"),
+            ("energy gap", "log(energy_gap)"),
+            (0, "log(0)"),
+        ):
+            with self.subTest(label=label):
+                df = pd.DataFrame({label: values})
+                result = ff.fit_featurize_dataframe(df, [label], pbar=False)
+                self.assertEqual(list(result.columns), [label, feature_label])
+                np.testing.assert_allclose(result[feature_label], np.log(values))
+
+        self.assertEqual(ff.fit(pd.Series(values, name=0)).feature_labels(), ["log(0)"])
+
+    def test_featurize_labels_matching_placeholders(self):
+        ff = FunctionFeaturizer(expressions=["x"], multi_feature_depth=2)
+        ff.set_n_jobs(1)
+        df = pd.DataFrame({"x1": [2.0, 3.0], "b": [5.0, 7.0]})
+
+        result = ff.fit_featurize_dataframe(df, ["x1", "b"], pbar=False)
+
+        self.assertEqual(list(result.columns), ["x1", "b", "b*x1"])
+        np.testing.assert_allclose(result["b*x1"], df["x1"] * df["b"])
+
     def test_helper_functions(self):
         test_combo_1 = generate_expressions_combinations(["1 / x", "x ** 2"], 1)
         self.assertEqual(len(test_combo_1), 2)
